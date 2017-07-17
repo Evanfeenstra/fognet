@@ -1,5 +1,5 @@
 import Document, { Head, Main, NextScript } from "next/document";
-import { ServerStyleSheet } from "styled-components";
+import { ServerStyleSheet, injectGlobal } from "styled-components";
 
 export default class MyDocument extends Document {
   render() {
@@ -22,3 +22,10 @@ export default class MyDocument extends Document {
     );
   }
 }
+
+injectGlobal`
+  body {
+    margin: 0 auto;
+    font-family: helvetica;
+  }
+`;
