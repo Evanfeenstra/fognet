@@ -15,8 +15,8 @@ const Header = styled.header`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  align-items: center;
   padding: 20px 0;
-  background: whitesmoke;
 `;
 
 const Anchor = styled.a`
@@ -34,19 +34,22 @@ const Content = styled.section`
   padding: 20px;
 `;
 
+const Satoshi = styled.img`height: 24px;`;
+
 const Footer = styled.footer`
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   padding: 20px 0;
+  color: white;
   background: palevioletred;
 `;
 
 export default props =>
   <Wrapper>
     <Header>
-      <div>Satoshi & Iota</div>
+      <Satoshi src="/static/satoshipay.png" />
       <nav>
         <Link href="/about">
           <Anchor>Home</Anchor>
@@ -63,6 +66,6 @@ export default props =>
       {props.children}
     </Content>
     <Footer>
-      <div>Demo things and stuff</div>
+      <div>demo things and stuff</div>
     </Footer>
   </Wrapper>;
