@@ -49,16 +49,18 @@ const Footer = styled.footer`
 export default props =>
   <Wrapper>
     <Header>
-      <Satoshi src="/static/satoshipay.png" />
+      <Link href="/">
+        <Satoshi src="/static/satoshipay.png" />
+      </Link>
       <nav>
-        <Link href="/about">
+        <Link href="/">
           <Anchor>Home</Anchor>
         </Link>
-        <Link href="/about">
+        <Link href="/case-study">
           <Anchor>Case Study</Anchor>
         </Link>
-        <Link href="/about">
-          <Anchor>Gallery</Anchor>
+        <Link href="/media">
+          <Anchor>Media Galley</Anchor>
         </Link>
       </nav>
     </Header>
