@@ -2,26 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
+import FAB from "../fab";
+import Header from "./header";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-`;
-
-const Header = styled.header`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  padding: 20px 0;
-`;
-
-const Anchor = styled.a`
-  text-decoration: none;
-  margin: 0 10px;
 `;
 
 const Content = styled.section`
@@ -33,8 +21,6 @@ const Content = styled.section`
   width: 80%;
   padding: 20px;
 `;
-
-const Satoshi = styled.img`height: 24px;`;
 
 const Footer = styled.footer`
   width: 100%;
@@ -48,25 +34,11 @@ const Footer = styled.footer`
 
 export default props =>
   <Wrapper>
-    <Header>
-      <Link href="/">
-        <Satoshi src="/static/satoshipay.png" />
-      </Link>
-      <nav>
-        <Link href="/">
-          <Anchor>Home</Anchor>
-        </Link>
-        <Link href="/case-study">
-          <Anchor>Case Study</Anchor>
-        </Link>
-        <Link href="/media">
-          <Anchor>Media Galley</Anchor>
-        </Link>
-      </nav>
-    </Header>
+    <Header />
     <Content>
       {props.children}
     </Content>
+    <FAB />
     <Footer>
       <div>demo things and stuff</div>
     </Footer>
