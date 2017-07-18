@@ -4,9 +4,12 @@ import Link from "next/link";
 
 import Eye from "./eye";
 
+import { Reducer } from "../../libs/utils";
+
 export default class extends React.Component {
   state = {
-    data: false
+    data: false,
+    price: this.props.price
   };
 
   purchase = () => {
@@ -15,6 +18,7 @@ export default class extends React.Component {
 
   render() {
     var { data } = this.state;
+    var { price } = this.props;
     return (
       <Container>
         {!data
@@ -23,10 +27,10 @@ export default class extends React.Component {
                 <SvgBox>
                   <Eye />
                 </SvgBox>
-                PAY 5K
+                PAY {Reducer(price)}
               </Button>
             </Paywall>
-          : <div dangerouslySetInnerHTML={{ __html: data }} />}
+          : <Content height={200} dangerouslySetInnerHTML={{ __html: data }} />}
       </Container>
     );
   }
@@ -43,6 +47,13 @@ const Paywall = styled.div`
   width: ${props => props.width + "px" || "100%"};
   background: linear-gradient(#ffeacc 90%, white 0);
   background-size: 100% 20px;
+`;
+
+const Content = styled.div`
+  position: relative;
+  flex: 1;
+  height: ${props => props.height + "px" || "100%"};
+  width: ${props => props.width + "px" || "100%"};
 `;
 
 const Button = styled.button`
