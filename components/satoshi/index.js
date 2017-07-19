@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import Button from "./button";
 import Paywall from "./paywall";
+import Content from "./content";
 
 export default class extends React.Component {
   state = {
@@ -13,7 +14,7 @@ export default class extends React.Component {
   };
 
   purchase = () => {
-    this.setState({ data: `<h2>Hello</h2>` });
+    this.setState({ data: true });
   };
 
   render() {
@@ -25,16 +26,7 @@ export default class extends React.Component {
         </Paywall>
       );
     } else {
-      return (
-        <Content {...this.props} dangerouslySetInnerHTML={{ __html: data }} />
-      );
+      return <Content {...this.props} />;
     }
   }
 }
-
-const Content = styled.div`
-  position: relative;
-  flex: 1;
-  height: ${props => props.height + "px" || "100%"};
-  width: ${props => props.width + "px" || "100%"};
-`;
