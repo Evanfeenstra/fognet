@@ -4,7 +4,7 @@ export default props => {
   if (props.type === "image") {
     return (
       <Paywall {...props}>
-        {props.image && <Image src={props.image} />}
+        {props.placeholder && <Image src={props.placeholder} />}
         {props.children}
       </Paywall>
     );
@@ -26,7 +26,7 @@ export default props => {
 
 const Paywall = styled.div`
   position: relative;
-  height: ${props => (props.height ? props.height + `px` : "100%")};
+  height: ${props => (props.height ? props.height + `px` : "auto")};
   min-width: 200px;
   min-height: 80px;
 `;
@@ -41,7 +41,7 @@ const Video = Paywall.extend`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background: url(${props => props.image}) no-repeat center center;
+  background: url(${props => props.placeholder}) no-repeat center center;
   background-size: cover;
 `;
 const Generic = Paywall.extend`
