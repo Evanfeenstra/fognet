@@ -13,13 +13,13 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.section`
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 80%;
-  padding: 20px;
+  width: 100%;
 `;
 
 const Footer = styled.footer`
@@ -34,12 +34,12 @@ const Footer = styled.footer`
 
 export default props =>
   <Wrapper>
-    <Header />
-    <Content>
+    <Header {...props} />
+    <Content spacer={props.spacer}>
       {props.children}
     </Content>
     <FAB />
     <Footer>
-      <div>demo things and stuff</div>
+      <div>IOTA Pay Demo</div>
     </Footer>
   </Wrapper>;
