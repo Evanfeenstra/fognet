@@ -6,6 +6,9 @@ export const Row = styled.div`
   flex-direction: row;
   justify-content: ${props => (props.justify ? props.justify : "space-around")};
   align-items: ${props => (props.align ? props.align : "center")};
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
 `;
 
 export const Col = styled.div`

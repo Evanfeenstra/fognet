@@ -26,6 +26,24 @@ export default class MyDocument extends Document {
 injectGlobal`
   body {
     margin: 0 auto;
-    font-family: helvetica;
+    font-family: quicksand;
+    font-weight: 400;
   }
+
+  @font-face {
+    font-family: 'quicksand';
+    src: url('/static/fonts/regular.ttf');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'quicksand';
+    src: url('/static/fonts/light.ttf');
+    font-weight: 200;
+  }
+  @font-face {
+    font-family: 'quicksand';
+    src: url('/static/fonts/medium.ttf');
+    font-weight: 600;
+  }
+
 `;
