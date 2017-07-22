@@ -6,7 +6,8 @@ import { Row, Col } from "../components/scaffold";
 import Satoshi from "../components/satoshi";
 
 export default () =>
-  <Layout>
+  <Layout dark>
+    <Spacer />
     <Row justify={"space-between"}>
       <Satoshi
         height={130}
@@ -50,3 +51,5 @@ export default () =>
       />
     </Row>
   </Layout>;
+
+const Spacer = styled.div`height: 100px;`;
