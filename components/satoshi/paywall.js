@@ -11,7 +11,10 @@ export default props => {
   } else if (props.type === "video") {
     return (
       <Video {...props}>
-        <img style={{ width: 40, height: 40 }} src={`/static/play.png`} />
+        <img
+          style={{ width: 100, height: 100, opacity: 0.3 }}
+          src={`/static/play.png`}
+        />
         {props.children}
       </Video>
     );
