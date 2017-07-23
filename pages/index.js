@@ -8,14 +8,14 @@ import Satoshi from "../components/satoshi";
 export default () =>
   <Layout dark>
     <Spacer />
-    <Row justify={"space-between"}>
+    <Row width={`80%`} justify={"space-between"}>
       <Satoshi
         height={130}
         price={5021000}
         content={`<p>Picanha tri-tip shank, chicken ham hock kevin shoulder ham. Shankle rump landjaeger corned beef jerky bacon boudin tri-tip. Boudin chicken short ribs ham salami kielbasa shank biltong frankfurter ball tip. Venison meatloaf burgdoggen, cow filet mignon meatball capicola spare ribs beef ribs ribeye corned beef. Venison pastrami tail landjaeger ball tip doner.</p>`}
       />
     </Row>
-    <Row justify={"space-around"}>
+    <Row width={`80%`} justify={"space-around"}>
       <Satoshi
         height={100}
         price={42000}
@@ -27,7 +27,7 @@ export default () =>
         price={100000000000000}
       />
     </Row>
-    <Row justify={"space-between"}>
+    <Row width={`80%`} justify={"space-between"}>
       <Satoshi
         type={`image`}
         placeholder={`/static/potatoplace.png`}
@@ -41,7 +41,7 @@ export default () =>
         price={100000000000000}
       />
     </Row>
-    <Row justify={"space-between"}>
+    <Row width={`80%`} justify={"space-between"}>
       <Satoshi
         type={`video`}
         height={480}
