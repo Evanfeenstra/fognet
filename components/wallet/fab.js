@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Link from "next/link";
+import { Reducer } from "../../libs/utils";
 
 const Fab = styled.div`
   position: fixed;
@@ -28,6 +28,8 @@ const Amount = styled.p`
 `;
 
 export default props =>
-  <Fab>
-    <Amount>0</Amount>
+  <Fab onClick={() => props.toggle()}>
+    <Amount>
+      {Reducer(props.balance)}
+    </Amount>
   </Fab>;
