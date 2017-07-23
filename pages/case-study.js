@@ -24,7 +24,7 @@ const Header = styled.section`
   box-sizing: border-box;
   padding: 4rem;
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-    url('/static/header.jpg') no-repeat center center;
+    url('/static/servers.jpeg') no-repeat center center;
   background-size: cover;
 `;
 
