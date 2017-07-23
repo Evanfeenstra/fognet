@@ -5,7 +5,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "iota.lib.js": "^0.3.8",
+    "iota.lib.js": "git+https://github.com/l3wi/iota.lib.js.git",
     "next": "^2.4.6",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

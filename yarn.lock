@@ -153,7 +153,7 @@ async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
 
-async@^2.1.2, async@^2.5.0:
+async@^2.1.2:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -1890,11 +1890,11 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-iota.lib.js@^0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/iota.lib.js/-/iota.lib.js-0.3.8.tgz#86f0e1b91f94c8acd7e7b35a770f16cc413c328c"
+"iota.lib.js@git+https://github.com/l3wi/iota.lib.js.git":
+  version "0.2.7"
+  resolved "git+https://github.com/l3wi/iota.lib.js.git#c341cf5ea13ba9578af7b4196c4c8f560ba0d087"
   dependencies:
-    async "^2.5.0"
+    async "^2.1.2"
     xmlhttprequest "^1.8.0"
 
 is-arrayish@^0.2.1:
