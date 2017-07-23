@@ -8,8 +8,7 @@ import Satoshi from "../components/satoshi";
 export default () =>
   <Layout dark>
     <Spacer />
-    <h2>Video Example</h2>
-    <Row justify={"space-between"}>
+    <Row width={`80%`} justify={"space-between"}>
       <Satoshi
         type={`video`}
         height={480}
