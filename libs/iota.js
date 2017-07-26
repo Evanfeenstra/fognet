@@ -1,5 +1,5 @@
 import IOTA from "iota.lib.js";
-
+import Api from "./api";
 // Create IOTA instance directly with provider
 var iota = new IOTA({
   provider: "https://node.tangle.works"
@@ -26,51 +26,82 @@ export default class Iota {
       console.log("No User");
       user = Iota.setupUser();
     }
-    // Now get an address
+    console.log(user);
   };
 
   static setupUser = async () => {
-    var user = { seed: seedGen(81), index: 1, addresses: [], purchases: [] };
-    user.addresses.push(await getAddress(user.seed, user.index));
+    // Make a user zero state
+    var user = { seed: seedGen(81), index: 0, addresses: [], purchases: [] };
+    // Push the first address to the array
+    user.addresses.push(await getAddress(user));
+    // Save the new user obj
     set("user", user);
     console.log(user);
     return user;
   };
 
-  static getBalance = () => {
-    iota.api.getNodeInfo(function(error, success) {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(success);
+  // Initiate transaction from anywhere in the app.
+  static purchaseItem = async item => {
+    // Get latest user object
+    var user = await get("user");
+    // Create new multisig address
+    const address = getAddress(user);
+
+    // Build a transfer obj.
+    const transfers = [
+      {
+        address,
+        value: item.price,
+        tag: item.id
       }
+    ];
+
+    // Generate partially signed budle
+    var partialBundle = iota.multisig.initiateTransfer(
+      4,
+      address,
+      address,
+      transfers,
+      callback // Does this need promises?
+    );
+
+    // Post the bundle to the server and wait for a response
+    const response = await Api("https://server.com/purchase", {
+      method: "POST",
+      body: JSON.stringify({ bundle: partialBundle })
     });
-  };
-  static purchaseItem = () => {
-    iota.api.getNodeInfo(function(error, success) {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(success);
-      }
-    });
+
+    // Handle error below
+    // ???????
+
+    // Update the react component which initiated the purchase
   };
 }
 
 ////// HELPERS
 
 // Get a new Address
-const getAddress = async (seed, index) => {
-  var digest = iota.multisig.getDigest(seed, index, 2);
-  console.log(digest);
-  return digest;
-  // try {
-  //   let response = await fetch("", { body: { digest, index } });
-  //   let responseJson = await response.json();
-  //   return responseJson.address;
-  // } catch (error) {
-  //   console.error(error);
-  // }
+const getAddress = async user => {
+  // Create new digest
+  var digest = iota.multisig.getDigest(user.seed, user.index + 1, 2);
+  // Send digest to server
+  const response = await Api("https://server.com/new-address", {
+    method: "POST",
+    body: JSON.stringify({ object: "goes here" })
+  });
+  // Check to see if response is valid
+  if (typeof response.address !== "string")
+    return alert(":( something went wrong");
+  // Save new address from the server
+  user.addresses.push(response.address);
+  // Add 1 to the index
+  user.index = user.index++;
+  // Save user
+  set("user", user);
+
+  console.log(response);
+  // respond with the address
+  return response.address;
 };
 
 // Generate a random seed. Higher security needed
