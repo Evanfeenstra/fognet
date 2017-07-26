@@ -10,7 +10,7 @@ const Wallet = styled.div`
   top: 0px;
   bottom: 0px;
   right: 0px;
-  width: 40vw;
+  width: 20rem;
   background: whitesmoke;
   display: flex;
   flex-direction: column;
@@ -68,17 +68,41 @@ const Content = styled.div`
   box-sizing: border-box;
   width: 100%;
   padding: 2vw;
+  word-wrap: break-word;
 `;
 
-export default props =>
-  <Wallet {...props}>
-    <Header>
-      <div>You have {Reducer(props.balance)} IOTA</div>{" "}
-      <Closed onClick={() => props.toggle()} src={"/static/multiply.svg"} />
-    </Header>
-    <Content>
-      <Button> Get 1 MIOTA</Button>
-      <Button onClick={() => Iota.info()}> See Purchases</Button>
-      <Button> Backup wallet</Button>
-    </Content>
-  </Wallet>;
+export default class extends React.Component {
+  state = { page: "home" };
+  render() {
+    var { page } = this.state;
+    return (
+      <Wallet {...this.props}>
+        <Header>
+          <div>You have {Reducer(this.props.balance)} IOTA</div>{" "}
+          {page !== "home"
+            ? <Closed
+                style={{ height: 30, width: 30 }}
+                onClick={() => this.setState({ page: "home" })}
+                src={"/static/back.svg"}
+              />
+            : <Closed
+                onClick={() => this.props.toggle()}
+                src={"/static/multiply.svg"}
+              />}
+        </Header>
+        {page === "home" &&
+          <Content>
+            <Button> Get 1 MIOTA</Button>
+            <Button onClick={() => Iota.info()}> See Purchases</Button>
+            <Button onClick={() => this.setState({ page: "backup" })}>
+              {" "}Backup wallet
+            </Button>
+          </Content>}
+        {page === "backup" &&
+          <Content>
+            {JSON.parse(localStorage.getItem("seed")).seed}
+          </Content>}
+      </Wallet>
+    );
+  }
+}
