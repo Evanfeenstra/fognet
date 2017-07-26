@@ -9,6 +9,8 @@ export default props => {
     );
   } else if (props.type === "video") {
     return <Video {...props} src={props.content} autoPlay controls />;
+  } else if (props.type === "audio") {
+    return <Audio {...props} src={props.content} autoPlay controls />;
   } else {
     return (
       <Content {...props} dangerouslySetInnerHTML={{ __html: props.content }} />
@@ -25,6 +27,12 @@ const Content = styled.div`
 `;
 
 const Image = styled.img`
+  height: ${props => (props.height ? props.height + `px` : "auto")};
+  max-width: 100%;
+`;
+
+const Audio = styled.audio`
+  min-height: 50px;
   height: ${props => (props.height ? props.height + `px` : "auto")};
   max-width: 100%;
 `;

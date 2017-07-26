@@ -23,6 +23,9 @@ export default class extends React.Component {
       return (
         <Paywall {...this.props}>
           <Button {...this.props} click={this.purchase} />
+          <Title>
+            {this.props.description}
+          </Title>
         </Paywall>
       );
     } else {
@@ -30,3 +33,9 @@ export default class extends React.Component {
     }
   }
 }
+
+const Title = styled.h4`
+  position: absolute;
+  top: .3rem;
+  left: 8rem;
+`;
