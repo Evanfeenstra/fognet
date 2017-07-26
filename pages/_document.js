@@ -9,7 +9,15 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
-          <title>Satoshi Pay</title>
+          <title>IOTA - Satoshi Pay</title>
+          <link
+            rel="shortcut icon"
+            type="image/png"
+            sizes="16x16"
+            href="/static/favicon.png"
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+
           {styleTags}
         </Head>
         <body>
