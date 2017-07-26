@@ -31,7 +31,7 @@ export default class Iota {
 
   static setupUser = async () => {
     var user = { seed: seedGen(81), index: 1, addresses: [], purchases: [] };
-    user.push(await getAddress(user.seed, user.index));
+    user.addresses.push(await getAddress(user.seed, user.index));
     set("user", user);
     console.log(user);
     return user;
@@ -63,6 +63,7 @@ export default class Iota {
 const getAddress = async (seed, index) => {
   var digest = iota.multisig.getDigest(seed, index, 2);
   console.log(digest);
+  return digest;
   // try {
   //   let response = await fetch("", { body: { digest, index } });
   //   let responseJson = await response.json();
