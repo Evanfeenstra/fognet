@@ -37,7 +37,7 @@ const Header = styled.div`
   width: 100%;
   color: white;
   font-size: 120%;
-  background: #ff9800;
+  background: rgba(255, 130, 0, 1);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -49,7 +49,7 @@ const Button = styled.button`
   width: 100%;
   color: white;
   font-size: 120%;
-  background: #ff9800;
+  background: #8b8680;
   padding: .5rem 1.3rem;
   margin-bottom: 1rem;
   &:active {
@@ -65,10 +65,17 @@ const Content = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   box-sizing: border-box;
   width: 100%;
   padding: 2vw;
   word-wrap: break-word;
+`;
+
+const Seed = styled.p`
+  word-wrap: break-word;
+  width: 15rem;
+  text-align: center;
 `;
 
 export default class extends React.Component {
@@ -83,11 +90,11 @@ export default class extends React.Component {
             ? <Closed
                 style={{ height: 30, width: 30 }}
                 onClick={() => this.setState({ page: "home" })}
-                src={"/static/back.svg"}
+                src={"/static/icons/back.svg"}
               />
             : <Closed
                 onClick={() => this.props.toggle()}
-                src={"/static/multiply.svg"}
+                src={"/static/icons/multiply.svg"}
               />}
         </Header>
         {page === "home" &&
@@ -100,7 +107,10 @@ export default class extends React.Component {
           </Content>}
         {page === "backup" &&
           <Content>
-            {JSON.parse(localStorage.getItem("seed")).seed}
+            <h3>This is your secret. Known as your seed. </h3>
+            <Seed>
+              {JSON.parse(localStorage.getItem("user")).seed}
+            </Seed>
           </Content>}
       </Wallet>
     );
