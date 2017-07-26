@@ -28,6 +28,7 @@ export default props => {
 };
 
 const Paywall = styled.div`
+  margin-bottom: ${props => (props.margin ? "2rem" : "none")};
   position: relative;
   height: ${props => (props.height ? props.height + `px` : "auto")};
   min-width: 200px;
