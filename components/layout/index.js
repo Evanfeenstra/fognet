@@ -4,6 +4,9 @@ import Link from "next/link";
 
 import FAB from "../wallet";
 import Header from "./header";
+
+import Iota from "../../libs/iota";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -28,12 +31,13 @@ const Footer = styled.footer`
   flex-direction: row;
   justify-content: space-around;
   padding: 20px 0;
-  color: white;
-  background: palevioletred;
+  color: #ddd;
+  background: white;
 `;
 
 export default props =>
   <Wrapper>
+    {Iota.initialise()}
     <Header {...props} />
     <Content spacer={props.spacer}>
       {props.children}
