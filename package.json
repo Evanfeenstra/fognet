@@ -1,11 +1,13 @@
 {
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "iota.lib.js": "git+https://github.com/l3wi/iota.lib.js.git",
+    "koa": "^2.3.0",
+    "koa-router": "^7.2.1",
     "next": "^2.4.6",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
