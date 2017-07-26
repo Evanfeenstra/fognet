@@ -60,7 +60,8 @@ const Header = styled.section`
   color: white;
   width: 100%;
   padding: 2rem 10rem;
-  min-height: 60vh;
+  height: 70vh;
+  min-height: 20rem;
   box-sizing: border-box;
   padding: 10vw;
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
