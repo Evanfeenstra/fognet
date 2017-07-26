@@ -20,6 +20,9 @@ const Anchor = styled.a`
   margin: 0 10px;
   cursor: pointer;
   color: ${props => (props.dark ? "black" : "white")};
+  @media screen and (max-width: 460px) {
+    font-size: calc(.4rem + 2vw);
+  }
 `;
 
 const Satoshi = styled.img`height: 2.5rem;`;
@@ -29,7 +32,9 @@ export default props =>
     <Link href="/">
       <Satoshi
         src={
-          props.dark ? "/static/satoshipay-dark.png" : "/static/satoshipay.png"
+          props.dark
+            ? "/static/icons/satoshipay-dark.png"
+            : "/static/icons/satoshipay.png"
         }
       />
     </Link>
