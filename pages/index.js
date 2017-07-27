@@ -9,7 +9,6 @@ export default () =>
   <Layout>
     <Header>
       <Row>
-        {/* <Img src={"/static/icons/iota.png"} /> */}
         <Title>Empowering creators with seamless payments</Title>
       </Row>
     </Header>
@@ -25,35 +24,44 @@ export default () =>
         </span>
       </Row>
     </Col>
-    <Row>
-      <Col margin={"2rem 0 10rem"} justify={"space-between"}>
-        <h2>Try it out</h2>
-        <span style={{ textAlign: "center" }}>
+    <h2>Try it out</h2>
+    <Row width={`40rem`}>
+      <span style={{ textAlign: "center" }}>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+        varius.
+      </span>
+    </Row>
+    <Row align={`flex-start`}>
+      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+        <Img src={`/static/images/header.jpg`} />
+        <h2>IOTA and St. Petersburg Polytechnic University</h2>
+        <span>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
           varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
           Sed egenisi.
         </span>
-      </Col>
-      <Col margin={"2rem 0 10rem"} justify={"space-between"}>
-        <h2>Try it out</h2>
-        <span style={{ textAlign: "center" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
-        </span>{" "}
-      </Col>
-      <Col margin={"2rem 0 10rem"} justify={"space-between"}>
-        <h2>Try it out</h2>
-        <span style={{ textAlign: "center" }}>
+      </Item>
+      <Item justify={"space-between"}>
+        <Img src={`/static/images/header.jpg`} />
+        <h2>Ether Review - IOTA with David Sønstebø</h2>
+        <span>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
           varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
           Sed egenisi.
         </span>
-      </Col>
+      </Item>
+      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+        <Img src={`/static/images/header.jpg`} />
+        <h2>The Tangle: an elegant topology</h2>
+        <span>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
+          Sed egenisi.
+        </span>
+      </Item>
     </Row>
 
-    <Col margin={"2rem 0 10rem"} justify={"space-between"}>
-      <h2>Try it out</h2>
+    {/* <Col margin={"2rem 0 10rem"} justify={"space-between"}>
       <Row margin={"2rem 0 0"} width={`40rem`}>
         <Satoshi
           type={`audio`}
@@ -62,7 +70,7 @@ export default () =>
           description={`Interview with Davo Sønstebø`}
         />
       </Row>
-    </Col>
+    </Col> */}
   </Layout>;
 
 const Spacer = styled.div`height: 100px;`;
@@ -88,4 +96,13 @@ const Title = styled.h1`
   max-width: 50rem;
 `;
 
-const Img = styled.img`width: 10rem;`;
+const Img = styled.img`width: 100%;`;
+
+const Item = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 1rem 10rem;
+  @media screen and (max-width: 640px) {
+    margin: 2rem 0rem 4rem;
+  }
+`;
