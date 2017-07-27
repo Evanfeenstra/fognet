@@ -49,7 +49,7 @@ const Button = styled.button`
   width: 100%;
   color: white;
   font-size: 120%;
-  background: #8b8680;
+  background: dimgray;
   padding: .5rem 1.3rem;
   margin-bottom: 1rem;
   &:active {
@@ -99,15 +99,46 @@ export default class extends React.Component {
         </Header>
         {page === "home" &&
           <Content>
-            <Button> Get 1 MIOTA</Button>
-            <Button onClick={() => Iota.info()}> See Purchases</Button>
+            <h3>Welcome to the Satoshipay IOTA Demo</h3>
+            <p>
+              This is a Proof-of-Concept of the SatoshiPay system based on the
+              IOTA token. The IOTA wallet used in this demo is live and utlising
+              The Tangle to pay for content in realtime.
+            </p>
+            <Button onClick={() => Iota.info()}> Get 1 MIOTA</Button>
+            <Button onClick={() => this.setState({ page: "transactions" })}>
+              {" "}See Purchases
+            </Button>
             <Button onClick={() => this.setState({ page: "backup" })}>
               {" "}Backup wallet
             </Button>
           </Content>}
+        {page === "transactions" &&
+          <Content>
+            <h3>Your purchases:</h3>
+            <Item>
+              <span>51 Mi purchase </span>
+              <span> 31/7/17</span>
+            </Item>
+            <Item>
+              <span>51 Mi purchase </span>
+              <span> 31/7/17</span>
+            </Item>
+            <Item>
+              <span>51 Mi purchase </span>
+              <span> 31/7/17</span>
+            </Item>
+            <Item>
+              <span>51 Mi purchase </span>
+              <span> 31/7/17</span>
+            </Item>
+          </Content>}
         {page === "backup" &&
           <Content>
-            <h3>This is your secret. Known as your seed. </h3>
+            <h3>
+              This is your private key. Know as your SEED. Ensure this is
+              secure.
+            </h3>
             <Seed>
               {JSON.parse(localStorage.getItem("user")).seed}
             </Seed>
@@ -116,3 +147,11 @@ export default class extends React.Component {
     );
   }
 }
+const Item = styled.div`
+  width: 90%;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .4);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
