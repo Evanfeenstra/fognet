@@ -73,6 +73,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
   padding: 4rem 2rem;
   max-width: 50rem;
   p {
