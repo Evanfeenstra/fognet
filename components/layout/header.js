@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -13,6 +14,11 @@ const Header = styled.header`
   align-items: center;
   padding: 20px 0;
   z-index: 10;
+  @media screen and (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+    position: ${props => (props.active ? `fixed` : `absolute`)};
+  }
 `;
 
 const Anchor = styled.a`
@@ -21,32 +27,115 @@ const Anchor = styled.a`
   cursor: pointer;
   color: ${props => (props.dark ? "black" : "white")};
   @media screen and (max-width: 460px) {
-    font-size: calc(.4rem + 2vw);
+    font-size: calc(2rem + 2vw);
+    padding-top: 2rem;
   }
+`;
+
+const MobileNav = styled.nav`
+  display: none;
+  flex-direction: row;
+  justify-content: space-around;
+  width: auto;
+  align-items: center;
+  @media screen and (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: rgba(0, 0, 0, .8);
+    height: 100vh;
+    width: 100vw;
+    padding-top: 7rem;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: all .6s ease;
+    opacity: ${props => (props.active ? `1` : `0`)};
+  }
+`;
+
+const Desktop = styled.nav`
+  display: flex;
+  @media screen and (max-width: 640px) {
+    display: none;
+  }
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @media screen and (max-width: 640px) {
+    width: 100%;
+    justify-content: space-around;
+    z-index: 10;
+  }
+`;
+
+const Menu = styled.div`
+  display: none;
+  @media screen and (max-width: 640px) {
+    display: block;
+    width: 30px;
+    height: 25px;
+  }
+`;
+
+const Line = styled.div`
+  padding-top: 5px;
+  border-bottom: 2px solid white;
 `;
 
 const Satoshi = styled.img`height: 2.5rem;`;
 
-export default props =>
-  <Header>
-    <Link href="/">
-      <Satoshi
-        src={
-          props.dark
-            ? "/static/icons/satoshipay-dark.png"
-            : "/static/icons/satoshipay.png"
-        }
-      />
-    </Link>
-    <nav>
-      <Link href="/">
-        <Anchor {...props}>Home</Anchor>
-      </Link>
-      <Link href="/case-study">
-        <Anchor {...props}>Case Study</Anchor>
-      </Link>
-      <Link href="/media">
-        <Anchor {...props}>Videos</Anchor>
-      </Link>
-    </nav>
-  </Header>;
+export default class extends React.Component {
+  state = {
+    open: false
+  };
+  render() {
+    return (
+      <Header active={this.state.open}>
+        <Row>
+          <Link href="/">
+            <Satoshi
+              src={
+                this.props.dark
+                  ? "/static/icons/satoshipay-dark.png"
+                  : "/static/icons/satoshipay.png"
+              }
+            />
+          </Link>
+          <Menu onClick={() => this.setState({ open: !this.state.open })}>
+            <Line no={1} />
+            <Line no={2} />
+            <Line no={3} />
+          </Menu>
+        </Row>
+
+        <Desktop active={this.state.open}>
+          <Link href="/">
+            <Anchor {...this.props}>Home</Anchor>
+          </Link>
+          <Link href="/faqs">
+            <Anchor {...this.props}>FAQs</Anchor>
+          </Link>
+          <Link href="/contact">
+            <Anchor {...this.props}>Contact</Anchor>
+          </Link>
+        </Desktop>
+        <MobileNav active={this.state.open}>
+          <Link href="/">
+            <Anchor {...this.props}>Home</Anchor>
+          </Link>
+          <Link href="/faqs">
+            <Anchor {...this.props}>FAQs</Anchor>
+          </Link>
+          <Link href="/contact">
+            <Anchor {...this.props}>Contact</Anchor>
+          </Link>
+        </MobileNav>
+      </Header>
+    );
+  }
+}
