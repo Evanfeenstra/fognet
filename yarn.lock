@@ -160,7 +160,7 @@ async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
 
-async@^2.1.2:
+async@^2.1.2, async@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -1258,6 +1258,10 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
 
+crypto-js@^3.1.9-1:
+  version "3.1.9-1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
+
 css-color-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"
@@ -1927,11 +1931,12 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-"iota.lib.js@git+https://github.com/l3wi/iota.lib.js.git":
-  version "0.2.7"
-  resolved "git+https://github.com/l3wi/iota.lib.js.git#c341cf5ea13ba9578af7b4196c4c8f560ba0d087"
+"iota.lib.js@git+https://github.com/peterwilli/iota.lib.js.webpack.git":
+  version "0.4.0"
+  resolved "git+https://github.com/peterwilli/iota.lib.js.webpack.git#37a5b5c99a273a5bd777a0e5588e2e4e8f60507b"
   dependencies:
-    async "^2.1.2"
+    async "^2.5.0"
+    crypto-js "^3.1.9-1"
     xmlhttprequest "^1.8.0"
 
 is-arrayish@^0.2.1:
@@ -2477,6 +2482,12 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+next-routes@^1.0.40:
+  version "1.0.40"
+  resolved "https://registry.yarnpkg.com/next-routes/-/next-routes-1.0.40.tgz#1987ed88be808440f7eb963d3836916f46938e73"
+  dependencies:
+    path-to-regexp "^1.7.0"
+
 next@^2.4.6:
   version "2.4.7"
   resolved "https://registry.yarnpkg.com/next/-/next-2.4.7.tgz#54cc71748e2bfb08013d301fd21d6f33a4fa9d5b"
@@ -2774,7 +2785,7 @@ path-parse@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
 
-path-to-regexp@^1.0.0, path-to-regexp@^1.1.1:
+path-to-regexp@^1.0.0, path-to-regexp@^1.1.1, path-to-regexp@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
   dependencies:

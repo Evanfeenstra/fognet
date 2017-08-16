@@ -5,10 +5,11 @@
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
-    "iota.lib.js": "git+https://github.com/l3wi/iota.lib.js.git",
+    "iota.lib.js": "git+https://github.com/peterwilli/iota.lib.js.webpack.git",
     "koa": "^2.3.0",
     "koa-router": "^7.2.1",
     "next": "^2.4.6",
+    "next-routes": "^1.0.40",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "styled-components": "^2.1.0"
