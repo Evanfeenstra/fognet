@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React from "react"
+import styled from "styled-components"
+import { Link } from "../../routes"
 
 const Header = styled.header`
   width: 100%;
@@ -19,7 +19,7 @@ const Header = styled.header`
     flex-direction: column;
     position: ${props => (props.active ? `fixed` : `absolute`)};
   }
-`;
+`
 
 const Anchor = styled.a`
   text-decoration: none;
@@ -30,10 +30,11 @@ const Anchor = styled.a`
     font-size: calc(2rem + 2vw);
     padding-top: 2rem;
   }
-`;
+`
 
 const MobileNav = styled.nav`
   display: none;
+  pointer-events: ${props => (props.active ? "auto" : "none")};
   flex-direction: row;
   justify-content: space-around;
   width: auto;
@@ -53,14 +54,14 @@ const MobileNav = styled.nav`
     transition: all .6s ease;
     opacity: ${props => (props.active ? `1` : `0`)};
   }
-`;
+`
 
 const Desktop = styled.nav`
   display: flex;
   @media screen and (max-width: 640px) {
     display: none;
   }
-`;
+`
 
 const Row = styled.div`
   display: flex;
@@ -71,7 +72,7 @@ const Row = styled.div`
     justify-content: space-around;
     z-index: 10;
   }
-`;
+`
 
 const Menu = styled.div`
   display: none;
@@ -80,19 +81,19 @@ const Menu = styled.div`
     width: 30px;
     height: 25px;
   }
-`;
+`
 
 const Line = styled.div`
   padding-top: 5px;
   border-bottom: 2px solid white;
-`;
+`
 
-const Satoshi = styled.img`height: 2.5rem;`;
+const Satoshi = styled.img`height: 2.5rem;`
 
 export default class extends React.Component {
   state = {
     open: false
-  };
+  }
   render() {
     return (
       <Header active={this.state.open}>
@@ -136,6 +137,6 @@ export default class extends React.Component {
           </Link>
         </MobileNav>
       </Header>
-    );
+    )
   }
 }

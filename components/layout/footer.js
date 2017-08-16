@@ -1,17 +1,17 @@
-import styled from "styled-components";
-import Link from "next/link";
+import styled from "styled-components"
+import { Link } from "../../routes"
 
 export default props =>
   <Footer>
     <Col>
       <Title>Pages</Title>
-      <Link href="/">
+      <Link route="/">
         <Anchor>Home</Anchor>
       </Link>
-      <Link href="/faqs">
+      <Link route="/faqs">
         <Anchor>FAQs</Anchor>
       </Link>
-      <Link href="/contact">
+      <Link route="/contact">
         <Anchor>Contact</Anchor>
       </Link>
     </Col>
@@ -28,7 +28,7 @@ export default props =>
       </Link>
     </Col>
     <Satoshi src={"/static/icons/satoshipay.png"} />
-  </Footer>;
+  </Footer>
 
 const Footer = styled.footer`
   width: 100%;
@@ -43,26 +43,26 @@ const Footer = styled.footer`
     flex-direction: column;
     align-items: flex-start;
   }
-`;
+`
 
 const Anchor = styled.a`
   padding: .3rem 0 0;
   color: rgba(255, 255, 255, .7);
   cursor: pointer;
-`;
+`
 
 const Col = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0rem 3rem;
-`;
+`
 
 const Title = styled.h3`
   padding: .1rem 0;
   font-size: 100%;
-`;
+`
 
 const Satoshi = styled.img`
   height: 2.5rem;
   padding: 2rem 3rem;
-`;
+`
