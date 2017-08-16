@@ -1,9 +1,10 @@
-import React from "react";
-import styled from "styled-components";
+import React from "react"
+import styled from "styled-components"
+import { Link } from "../routes"
 
-import Layout from "../components/layout";
-import { Row, Col } from "../components/scaffold";
-import Satoshi from "../components/satoshi";
+import Layout from "../components/layout"
+import { Row, Col } from "../components/scaffold"
+import Satoshi from "../components/satoshi"
 
 export default () =>
   <Layout>
@@ -12,18 +13,24 @@ export default () =>
         <Title>Empowering creators with seamless payments</Title>
       </Row>
     </Header>
-    <Col width={`60vw`} margin={"0rem 0 6rem"}>
-      <h2 style={{ textAlign: "center" }}>Next Generation Crypto</h2>
-      <Row width={`40rem`}>
+    <Row width={`60vw`} margin={"0rem 0 6rem"}>
+      <Col width={`30rem`}>
+        <h2 style={{ textAlign: "center" }}>Super-small payments</h2>
         <span style={{ textAlign: "center" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed eget turpis ipsum. Nulla blandit, nisi dapibus fermentum
-          fermentum, neque justo placerat nibh, ut ultrices ligula neque
-          imperdiet nisi.
+          SatoshiPay allows content creators to charge users per download,
+          second of video, or for an extra life in your game. There's a whole
+          universe of new monetisation possibilities.
         </span>
-      </Row>
-    </Col>
+      </Col>
+      <Col width={`30rem`}>
+        <h2 style={{ textAlign: "center" }}>Super-small payments</h2>
+        <span style={{ textAlign: "center" }}>
+          SatoshiPay allows content creators to charge users per download,
+          second of video, or for an extra life in your game. There's a whole
+          universe of new monetisation possibilities.
+        </span>
+      </Col>
+    </Row>
     <h2>Try it out</h2>
     <Row width={`40rem`}>
       <span style={{ textAlign: "center" }}>
@@ -32,33 +39,39 @@ export default () =>
       </span>
     </Row>
     <Row align={`flex-start`}>
-      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
-        <Img src={`/static/images/header.jpg`} />
-        <h2>IOTA and St. Petersburg Polytechnic University</h2>
-        <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
-        </span>
-      </Item>
-      <Item justify={"space-between"}>
-        <Img src={`/static/images/header.jpg`} />
-        <h2>Ether Review - IOTA with David Sønstebø</h2>
-        <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
-        </span>
-      </Item>
-      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
-        <Img src={`/static/images/header.jpg`} />
-        <h2>The Tangle: an elegant topology</h2>
-        <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
-        </span>
-      </Item>
+      <Link route={`/article/supercomputer`}>
+        <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+          <Img img={`/static/images/servers.jpeg`} />
+          <h2>IOTA and St. Petersburg Polytechnic University</h2>
+          <span>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
+            mi. Sed egenisi.
+          </span>
+        </Item>
+      </Link>
+      <Link route={`/article/supercomputer`}>
+        <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+          <Img img={`/static/images/tangle.jpg`} />
+          <h2>The Tangle: an elegant topology</h2>
+          <span>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
+            mi. Sed egenisi.
+          </span>
+        </Item>
+      </Link>
+      <Link route={`/article/etherreview`}>
+        <Item justify={"space-between"}>
+          <Img img={`/static/images/ether-thumb.jpg`} />
+          <h2>Ether Review - IOTA with David Sønstebø</h2>
+          <span>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
+            mi. Sed egenisi.
+          </span>
+        </Item>
+      </Link>
     </Row>
 
     {/* <Col margin={"2rem 0 10rem"} justify={"space-between"}>
@@ -71,9 +84,9 @@ export default () =>
         />
       </Row>
     </Col> */}
-  </Layout>;
+  </Layout>
 
-const Spacer = styled.div`height: 100px;`;
+const Spacer = styled.div`height: 100px;`
 
 const Header = styled.div`
   width: 100%;
@@ -86,7 +99,7 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
   margin-bottom: 5rem;
-`;
+`
 
 const Title = styled.h1`
   color: white;
@@ -94,15 +107,24 @@ const Title = styled.h1`
   font-weight: 400;
   text-align: center;
   max-width: 50rem;
-`;
+`
 
-const Img = styled.img`width: 100%;`;
+const Img = styled.div`
+  background: url(${props => props.img}) no-repeat center center;
+  background-size: cover;
+  width: 100%;
+  height: calc(4*4vw);
+  @media screen and (max-width: 640px) {
+    height: 250px;
+  }
+`
 
-const Item = styled.div`
+const Item = styled.a`
   display: flex;
+  flex: 1;
   flex-direction: column;
   margin: 2rem 1rem 10rem;
   @media screen and (max-width: 640px) {
     margin: 2rem 0rem 4rem;
   }
-`;
+`
