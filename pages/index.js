@@ -13,7 +13,7 @@ export default () =>
         <Title>Empowering creators with seamless payments</Title>
       </Row>
     </Header>
-    <Row width={`60vw`} margin={"0rem 0 6rem"}>
+    {/* <Row width={`60vw`} margin={"0rem 0 6rem"}>
       <Col width={`30rem`}>
         <h2 style={{ textAlign: "center" }}>Super-small payments</h2>
         <span style={{ textAlign: "center" }}>
@@ -30,7 +30,7 @@ export default () =>
           universe of new monetisation possibilities.
         </span>
       </Col>
-    </Row>
+    </Row> */}
     <h2>Try it out</h2>
     <Row width={`40rem`}>
       <span style={{ textAlign: "center" }}>

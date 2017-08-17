@@ -17,7 +17,6 @@ const Components = props => {
 export default class extends React.Component {
   static async getInitialProps({ query }) {
     console.log(query)
-
     return { article: Articles[query.slug] }
   }
   render() {
