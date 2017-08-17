@@ -5,16 +5,16 @@
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
-    "iota.flash.js": "git+https://github.com/l3wi/flashLib.git#no-promises/fixes",
-    "iota.lib.js": "git+https://github.com/peterwilli/iota.lib.js.webpack.git",
+    "iota.flash.js": "git+https://github.com/iotaledger/iota.flash.js.git",
+    "iota.lib.js": "git+https://github.com/l3wi/iota.lib.js.git",
     "koa": "^2.3.0",
     "koa-router": "^7.2.1",
-    "next": "^2.4.6",
+    "next": "^3.0.6",
     "next-routes": "^1.0.40",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "shortid": "^2.2.8",
-    "styled-components": "^2.1.0"
+    "styled-components": "^2.1.2"
   },
   "devDependencies": {
     "babel-preset-stage-2": "^6.24.1"
