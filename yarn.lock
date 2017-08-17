@@ -1931,6 +1931,18 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
+"iota.crypto.js@github:iotaledger/iota.crypto.js":
+  version "0.4.1"
+  resolved "https://codeload.github.com/iotaledger/iota.crypto.js/tar.gz/08b7cc889e3f4b6dd46b581c992eb2c9fefed7f5"
+  dependencies:
+    crypto-js "^3.1.9-1"
+
+"iota.flash.js@git+https://github.com/l3wi/flashLib.git#no-promises/fixes":
+  version "0.0.1"
+  resolved "git+https://github.com/l3wi/flashLib.git#1a1f22a7d5b395752640d6309eb434622c130d31"
+  dependencies:
+    iota.crypto.js "github:iotaledger/iota.crypto.js"
+
 "iota.lib.js@git+https://github.com/peterwilli/iota.lib.js.webpack.git":
   version "0.4.0"
   resolved "git+https://github.com/peterwilli/iota.lib.js.webpack.git#37a5b5c99a273a5bd777a0e5588e2e4e8f60507b"
@@ -3215,6 +3227,10 @@ shebang-command@^1.2.0:
 shebang-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
+
+shortid@^2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.8.tgz#033b117d6a2e975804f6f0969dbe7d3d0b355131"
 
 signal-exit@^3.0.0:
   version "3.0.2"
