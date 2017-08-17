@@ -16,13 +16,11 @@ export default {
         full underlying potential of the technology in great depth.`
       },
       {
-        type: "html",
-        tag: "img",
-        props: {
-          style: { minHeight: "10rem", width: "100%" },
-          src:
-            "https://cdn-images-1.medium.com/max/1600/1*S4WzpEONF0INUlnXcNk61g.jpeg"
-        }
+        type: "satoshi",
+        type: `image`,
+        price: 50000,
+        placeholder: "/static/images/front-server-blurred.jpg",
+        content: `/static/images/front-server.jpeg`
       },
       {
         type: "html",
@@ -39,13 +37,32 @@ export default {
         children: `We also intend to collaborate with this great team and their
         supercomputer on future IXI modules on top of IOTA, but that is news for
         another day.`
-      },
+      }
+    ]
+  },
+  tangle: {
+    image: "/static/images/tangle.jpg",
+    title: "This is IOTA. A brief overview of the tangle",
+    content: [
       {
         type: "satoshi",
-        type: `audio`,
-        price: 50000,
-        content: `http://feeds.soundcloud.com/stream/333680258-arthurfalls-ether-review-69-iota-the-post-blockchain-era.mp3`,
-        description: `Interview with Davo Sønstebø`
+        type: `video`,
+        price: 390000,
+        placeholder: "/static/images/iota-thumbnail.png",
+        content: `/static/iota.mp4`,
+        style: { height: 414 }
+      },
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "IOTA is also developing a novel standard for embedding minuscule ASIC chips in all IoT devices. These chips perform nominal proof-of-work hashes in order to prevent spam and Sybil attacks, and because the network is partition-tolerant and only eventually consistent, brute force hashing attacks are prevented."
+      },
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "With a transaction volume limited only by the speed of light, IOTA is a promising new solution to the limitations presented by blockchains."
       }
     ]
   },
