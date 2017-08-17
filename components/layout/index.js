@@ -1,11 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React from "react"
+import styled from "styled-components"
+import Link from "next/link"
 
-import FAB from "../wallet";
-import Header from "./header";
-import Footer from "./footer";
-import Iota from "../../libs/iota";
+import FAB from "../wallet"
+import Header from "./header"
+import Footer from "./footer"
+import Iota from "../../libs/iota"
 
 const Wrapper = styled.div`
   display: flex;
@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-`;
+`
 
 const Content = styled.section`
   position: relative;
@@ -23,7 +23,7 @@ const Content = styled.section`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-`;
+`
 
 export default props =>
   <Wrapper>
@@ -34,4 +34,4 @@ export default props =>
     </Content>
     <FAB />
     <Footer {...props} />
-  </Wrapper>;
+  </Wrapper>
