@@ -50,7 +50,7 @@ export default () =>
           </span>
         </Item>
       </Link>
-      <Link route={`/article/supercomputer`}>
+      <Link route={`/article/tangle`}>
         <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
           <Img img={`/static/images/tangle.jpg`} />
           <h2>The Tangle: an elegant topology</h2>
