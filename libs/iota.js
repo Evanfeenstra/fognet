@@ -1,5 +1,5 @@
 import IOTA from "iota.lib.js"
-import Api from "./api"
+import API from "./api"
 import shortid from "shortid"
 
 import Flash from "iota.flash.js"
@@ -12,116 +12,111 @@ var iota = new IOTA({
 })
 
 export default class Iota {
-  static info = () => {
-    iota.api.getNodeInfo(function(error, success) {
-      if (error) {
-        console.error(error)
-      } else {
-        console.log(success)
-      }
-    })
+  static info = async () => {
+    const info = await new Promise((resolve) => {
+      iota.api.getNodeInfo(function(error, success) {
+        if (error) {
+          console.error(error)
+          resolve(null)
+        } else {
+          console.log(success)
+          resolve(success)
+        }
+      })
+    });
+    return info;
   }
 
   static initialise = () => {
     // Escape the function when server rendering
     if (!isWindow()) return
     // Grab seed from local
-    var user = get("user")
+    var user = store.set("user")
     // No seed? Then go make one!
     if (user === null) {
       console.log("No User")
-      user = Iota.setupUser()
+      user = Iota.setupState({
+        'balance': 
+      });
     }
     console.log(user)
   }
 
-  static setupUser = async () => {
-    const userID = shortid.generate()
-    const userSeed = seedGen(81)
-    const otherSeed =
-      "GBANYOVNVX99RLMPEONK9GIKLJURDIWIYVCHN9EHLGWQIDOPJNVPMCWEAEQUKBVWJMXSYRYXIRRSALBQW"
-
-    // Request Digest 0 or
-    // var digest = API.get({uid: userID, cmd: 'initalDigests', index: 1})
-    var digest = multisig.getDigest(otherSeed, 0, 2)
-
-    // Get the mutlisig obj
-    let multisigs = [
-      multisig.composeAddress([multisig.getDigest(userSeed, 0, 2), digest])
-    ]
-
-    const flash = new Flash({
-      index: 0,
-      signersCount: 2,
-      balance: 1000,
-      deposit: [1000, 0],
-      stakes: [1, 0],
-      outputs: {},
-      transfers: [],
-      remainderAddress: multisigs[0].address
-    })
-
-    // Make a user zero state
-    var user = {
-      uid: userID,
-      seed: userSeed,
-      flash: flash
+  setupState = async ({balance = 0, deposit = [0, 0], stakes = [1, 0], signersCount = 2}) => {
+    
+    const localState = store.get("user")
+    if (localState) {
+      return localState;
     }
 
-    // Save the new user obj
-    set("user", user)
-    console.log(user)
-    return user
+    const userID = shortid.generate()
+    const userSeed = seedGen(81)
+    
+    // Initialize state object
+    const state = {
+      'index': 0, 
+      'security': 2
+    };
+
+    // Request Digest 0 or
+    const digests = [multisig.getDigest(userSeed, 0, 2)];
+    const otherDigests = await API.get('digests', {
+      'uid': userID,
+      'index': state.index
+    })
+    if (digests) {
+      digests.concat(otherDigests);
+    }
+    
+    // Get the mutlisig obj
+    state.multisigs = [
+      multisig.composeAddress(digests)
+    ]
+
+    this.flash = new Flash({
+      index: 0,
+      signersCount: signersCount,
+      balance: balance,
+      deposit: deposit,
+      stakes: stakes,
+      outputs: {},
+      transfers: [],
+      remainderAddress: multisigs[0].address,
+      onStateChange: (flashState) => {
+        const localState = store.get("user");        
+        localState.flash = flashState;
+        store.set("user", localState);
+      }
+    })
+
+    store.set("user", state)
+    
+    return state;
   }
 
   // Initiate transaction from anywhere in the app.
-  static purchaseItem = async item => {
-    var user = get("user", user)
+  purchaseItem = async (item) => {
+    
+    const state = store.get("user", user)
+    const flash = this.flash
 
-    const flash = new Flash(user.flash.state)
-    const seed = user.seed
-    const otherSeed =
-      "GBANYOVNVX99RLMPEONK9GIKLJURDIWIYVCHN9EHLGWQIDOPJNVPMCWEAEQUKBVWJMXSYRYXIRRSALBQW"
-
-    var digests = [
-      multisig.getDigest(seed, 1, 2),
-      multisig.getDigest(otherSeed, 1, 2)
-    ]
-
-    let multisigs = [multisig.composeAddress(digests)]
-
-    let bundles = flash.composeTransfer(multisigs, 0, [
-      {
-        address:
-          "ZGHXPZYDKXPEOSQTAQOIXEEI9K9YKFKCWKYYTYAUWXK9QZAVMJXWAIZABOXHHNNBJIEBEUQRTBWGLYMTX",
-        value: 50
-      }
-    ])
-
+    const bundles = flash.composeTransfer(multisigs, fromIndex, [{
+      address: item.address,
+      value: item.price
+    }])
+    
+    const signedBundles = flash.signTransfer(state.seed, state.index, state.security, state.multisigs, 0, bundles)
     console.log("Transfer", bundles)
 
-    let diff = flash.getTransferDiff(multisigs, bundles)
+    const res = await API('/purchase', {
+      'item': item.id,
+      'bundles': bundles
+    });
 
-    let signedBundles = flash.signTransfer(seed, 1, 2, multisigs, 0, bundles)
-    signedBundles = flash.signTransfer(
-      otherSeed,
-      1,
-      2,
-      multisigs,
-      0,
-      signedBundles
-    )
+    // 
+    // Render the response
+    //
 
-    signedBundles.forEach((bundle, i) => {
-      console.log(
-        "Sigs matching:",
-        IOTACrypto.utils.validateSignatures(bundle, multisigs[i].address)
-      )
-    })
-
-    diff = flash.getTransferDiff(multisigs, bundles)
-
-    console.log("Diff:", diff)
   }
 }
 
@@ -132,7 +127,7 @@ const getAddress = async user => {
   // Create new digest
   var digest = iota.multisig.getDigest(user.seed, user.index + 1, 2)
   // Send digest to server
-  const response = await Api("https://server.com/new-address", {
+  const response = await API("new-address", {
     method: "POST",
     body: JSON.stringify({ object: "goes here" })
   })
@@ -144,7 +139,7 @@ const getAddress = async user => {
   // Add 1 to the index
   user.index = user.index++
   // Save user
-  set("user", user)
+  store.set("user", user)
 
   console.log(response)
   // respond with the address
@@ -165,19 +160,23 @@ const seedGen = length => {
     return result
   } else
     throw new Error(
-      "Your browser sucks and can't generate secure random numbers"
+      "Your browser is outdated and can't generate secure random numbers"
     )
 }
 
-// GET from localStorage
-const get = item => {
-  return JSON.parse(localStorage.getItem(item))
+class Store {
+  constructor() {
+    this.localStorage = isWindow() ? {} : localStorage;
+  }
+  get(item) {
+    return JSON.parse(this.localStorage.getItem(item))
+  }
+  set(item, data) {
+    localStorage.setItem(item, JSON.stringify(data))
+  }
 }
 
-// SET item to localStorage
-const set = (item, data) => {
-  localStorage.setItem(item, JSON.stringify(data))
-}
+const store = new Store();
 
 // Check if window is available
 const isWindow = () => {
