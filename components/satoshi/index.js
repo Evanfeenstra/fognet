@@ -7,6 +7,7 @@ import Paywall from "./paywall"
 import Content from "./content"
 
 import Iota from "../../libs/iota"
+import Channel, { isWindow } from "../../libs/channel"
 
 export default class extends React.Component {
   state = {
@@ -19,11 +20,16 @@ export default class extends React.Component {
   purchase = async () => {
     this.setState({ loading: true })
 
-    await Iota.purchaseItem({ price: 1000, tag: "POTATO" })
+    await Channel.composeTransfer(
+      10,
+      `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`
+    )
     this.setState({ data: true })
   }
 
   render() {
+    isWindow()
+    Channel.initialize()
     var { data } = this.state
     if (!data) {
       return (
