@@ -10,8 +10,43 @@ export default class extends React.Component {
     drawerOpen: false
   }
 
+  componentDidMount() {
+    var state = store.get("state")
+    var purchases = store.get("purchases")
+
+    console.log(state)
+    this.setState({
+      balance: state.flash.balance,
+      state,
+      purchases
+    })
+  }
+  // componentWillUnmount() {
+  //   this.stopListenting()
+  // }
+
+  // listen = () => {
+  //   window.addEventListener("storage", this.updateState, false)
+  // }
+
+  // stopListenting = () => {
+  //   window.removeEventListener("storage", this.updateState, false)
+  // }
+  // updateState = event => {
+  //   console.log(event)
+  // }
+
   toggle = () => {
-    this.setState({ drawerOpen: !this.state.drawerOpen })
+    var state = store.get("state")
+    var purchases = store.get("purchases")
+
+    console.log(state)
+    this.setState({
+      drawerOpen: !this.state.drawerOpen,
+      balance: state.flash.balance,
+      state,
+      purchases
+    })
   }
 
   render() {

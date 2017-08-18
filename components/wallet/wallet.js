@@ -1,9 +1,9 @@
-import React from "react";
-import styled, { css } from "styled-components";
-import { Reducer } from "../../libs/utils";
-import Iota from "../../libs/iota";
+import React from "react"
+import styled, { css } from "styled-components"
+import { Reducer } from "../../libs/utils"
+import Iota from "../../libs/iota"
 
-const Show = props => {};
+const Show = props => {}
 
 const Wallet = styled.div`
   position: fixed;
@@ -22,7 +22,7 @@ const Wallet = styled.div`
   @media screen and (max-width: 640px) {
     width: 100vw;
   }
-`;
+`
 
 const Closed = styled.img`
   height: 40px;
@@ -30,7 +30,7 @@ const Closed = styled.img`
   position: absolute;
   left: 5%;
   cursor: pointer;
-`;
+`
 
 const Header = styled.div`
   height: 3.5rem;
@@ -42,7 +42,7 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-`;
+`
 
 const Button = styled.button`
   border: none;
@@ -58,7 +58,7 @@ const Button = styled.button`
   &:focus {
     outline: none;
   }
-`;
+`
 
 const Content = styled.div`
   display: flex;
@@ -70,18 +70,26 @@ const Content = styled.div`
   width: 100%;
   padding: 2vw;
   word-wrap: break-word;
-`;
+`
 
 const Seed = styled.p`
   word-wrap: break-word;
   width: 15rem;
   text-align: center;
-`;
+`
 
 export default class extends React.Component {
-  state = { page: "home" };
+  state = { page: "home" }
+
+  componentDidMount() {
+    this.setState({
+      channel: store.get("state"),
+      purchases: store.get("purchases")
+    })
+  }
+
   render() {
-    var { page } = this.state;
+    var { page, purchases, channel } = this.state
     return (
       <Wallet {...this.props}>
         <Header>
@@ -116,35 +124,30 @@ export default class extends React.Component {
         {page === "transactions" &&
           <Content>
             <h3>Your purchases:</h3>
-            <Item>
-              <span>51 Mi purchase </span>
-              <span> 31/7/17</span>
-            </Item>
-            <Item>
-              <span>51 Mi purchase </span>
-              <span> 31/7/17</span>
-            </Item>
-            <Item>
-              <span>51 Mi purchase </span>
-              <span> 31/7/17</span>
-            </Item>
-            <Item>
-              <span>51 Mi purchase </span>
-              <span> 31/7/17</span>
-            </Item>
+            {purchases.map((item, i) =>
+              <Item>
+                <span>
+                  {item.value}i purchase{" "}
+                </span>
+                <span>
+                  {" "}{item.id}
+                </span>
+              </Item>
+            )}
           </Content>}
         {page === "backup" &&
           <Content>
+            <h3>This is your private key. Know as your SEED.</h3>
             <h3>
-              This is your private key. Know as your SEED. Ensure this is
-              secure.
+              This is used to sign a multi-signature wallet between you and
+              SatoshiPay
             </h3>
             <Seed>
-              {JSON.parse(localStorage.getItem("user")).seed}
+              {channel.userSeed}
             </Seed>
           </Content>}
       </Wallet>
-    );
+    )
   }
 }
 const Item = styled.div`
@@ -153,5 +156,5 @@ const Item = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, .4);
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-`;
+  justify-content: space-between;
+`
