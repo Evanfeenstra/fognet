@@ -5,55 +5,68 @@ import Flash from "iota.flash.js"
 import multisig from "iota.flash.js/lib/multisig"
 
 export default class Channel {
-
   // Security level
-  static SECURITY = 2;
-  
+  static SECURITY = 2
+
   // Number of parties taking signing part in the channel
-  static SIGNERS_COUNT = 3;
+  static SIGNERS_COUNT = 3
 
   // Flash tree depth
-  static TREE_DEPTH = 4;
+  static TREE_DEPTH = 4
+
+  static flash = {}
 
   // Initiate the local state and store it localStorage
-  async initialize({
+  static async initialize(
     userID = shortid.generate(),
-    useSeed = seedGen(81),
     index = 0,
     singingIndex = 0,
-    security = SECURITY,
-    signersCount = SIGNERS_COUNT,
-    treeDepth = TREE_DEPTH,
+    security = Channel.SECURITY,
+    signersCount = Channel.SIGNERS_COUNT,
+    treeDepth = Channel.TREE_DEPTH,
     fromIndex = 0,
-    balance = 0,
-    deposit = Array(SIGNERS_COUNT).fill(0), 
-    stakes = [1].concat(Array(SIGNERS_COUNT-1).fill(0))
-  }) {
-
+    balance = 300,
+    deposit = Array(Channel.SIGNERS_COUNT).fill(0),
+    stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
+  ) {
     // Escape the function when server rendering
-    if (!isWindow()) return false;
+    if (!isWindow()) return false
+
+    var userSeed = seedGen(81)
 
     // Stop if local state exists
     const localState = store.get("state")
     if (localState) {
-      return localState;
+      return localState
     }
 
     store.set("state", {
-      'userID': userID
+      userID: userID
     })
-    
+
     // Get a new digest
-    const digest = this.getNewDigest(userSeed, index, security);
+    const digest = Channel.getNewDigest(userSeed, index, security)
 
     // Fetch a new multisig address
-    const address = await this.getNewAddress(digest);
-    
-    // Add address to multisigs
-    const multisigs = [address];
+    const address = await Channel.getNewAddress(digest)
 
-    // Create a flash instance
-    this.flash = new Flash({
+    // Add address to multisigs
+    const multisigs = [address]
+    console.log(multisigs)
+
+    // Initialize state object
+    const state = {
+      userID: userID,
+      userSeed: userSeed,
+      digestIndex: 0, /// IS THIS CORRECT?
+      signingIndex: signersCount, /// IS THIS MEANT TO BE SIGNERS COUNT?
+      security: security,
+      depth: treeDepth,
+      fromIndex: fromIndex,
+      multisigs: multisigs,
+      bundles: []
+    }
+    state.flash = {
       digestIndex: 0,
       signersCount: signersCount,
       balance: balance,
@@ -61,107 +74,125 @@ export default class Channel {
       stakes: stakes,
       outputs: {},
       transfers: [],
-      remainderAddress: multisigs[0].address, 
-      onStateChange: (flashState) => { 
+      remainderAddress: multisigs[0].address
+    }
+
+    // Create a flash instance
+    Channel.flash = new Flash({
+      ...state.flash,
+      onStateChange: flashState => {
         // Update local storage once flash state changes
-        const stateCopy = store.get("state");        
-        stateCopy.flash = flashState;
-        store.set("state", stateCopy);
+        const stateCopy = store.get("state")
+        stateCopy.flash = flashState
+        store.set("state", stateCopy)
       }
     })
 
-    // Initialize state object
-    const state = {
-      'userID': userID,
-      'userSeed': userSeed,
-      'digestIndex': digestIndex, 
-      'signingIndex': signingIndex,
-      'security': security,
-      'depth': treeDepth,
-      'fromIndex': fromIndex,
-      'multisigs': multisigs,
-      'bundles': []
-    };
-
+    console.log(state)
+    console.log(Channel.flash)
     // Initiate the state entry in state
     store.set("state", state)
-    
-    return state;
+
+    return state
   }
 
-  // Get a new digest and update index in state 
-  getNewDigest() {
-
+  // Get a new digest and update index in state
+  static getNewDigest(seed, digestIndex, security) {
     // Fetch state from localStorage
-    const state = store.get("state");
+    const state = store.get("state")
 
     // Create new digest
-    var digest = multisig.getDigest(state.seed, state.digestIndex, state.security)
-    
+    var digest = multisig.getDigest(
+      state.seed || seed,
+      state.digestIndex || digestIndex,
+      state.security || security
+    )
+
     // Increment digests key index
-    state.digestIndex++;
-    
+    state.digestIndex++
+
     // Update local state
     store.set("state", state)
 
-    return digest;
+    return digest
   }
 
-
   // Obtain address by sending digest, update multisigs in state
-  async getNewAddress(digest) {
-   
-    const state = get("state");
+  static async getNewAddress(digest) {
+    const state = await store.get("state")
 
     // Send digest to server and obtain new multisig address
-    const response = await API("address", {
-      method: "POST",
-      body: JSON.stringify({
-        'uid': state.userID,
-        'digest': digest
-      })
-    })
+    // const response = await API("address", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     uid: state.userID,
+    //     digest: digest
+    //   })
+    // })
 
-    console.log(response);
+    /// FOR TESTIING USE Above^
+    var digests = [
+      digest,
+      multisig.getDigest(
+        `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+        0,
+        2
+      )
+    ]
+
+    var response = multisig.composeAddress(digests)
+    console.log(response)
 
     // Check to see if response is valid
     if (typeof response.address !== "string")
       return alert(":( something went wrong")
 
-    const address = response.address;
-
-    return address;
+    return response
   }
 
   // Initiate transaction from anywhere in the app.
-  composeTransfer(value, settlementAddress) {
-   
+  static composeTransfer(value, settlementAddress) {
+    /// Check if Flash state exists
+    Channel.initFlash()
     // Get latest state from localstorage
     const state = store.get("state", state)
+    var purchases = store.get("purchases")
 
     // Compose transfer
-    const bundles = this.flash.composeTransfer(state.multisigs, state.fromIndex, [{
-      address: settlementAddress,
-      value: value
-    }]);
-    
-    // Sign transfer 
-    const signedBundles = this.flash.signTransfer(state.seed, state.signingIndex, state.security, state.multisigs, state.fromIndex, state.bundles);
-    
+    const bundles = Channel.flash.composeTransfer(
+      state.multisigs,
+      state.fromIndex,
+      [
+        {
+          address: settlementAddress,
+          value: value
+        }
+      ]
+    )
+
+    // Sign transfer
+    const signedBundles = Channel.flash.signTransfer(
+      state.userSeed,
+      state.signingIndex,
+      state.security,
+      state.multisigs,
+      state.fromIndex,
+      bundles
+    )
+
     console.log("Bundles", signedBundles)
 
     // Increment signing index
-    state.signingIndex++;
+    state.signingIndex++
 
     // Update bundles in local state
-    state.bundles = signedBundles;
+    state.bundles = signedBundles
 
-    store.set("state", state);
+    store.set("state", state)
 
     // Return signed bundles
-    return signedBundles;
 
-/* ////// Move this to higher level method, probably in the paywall widget
+    /* ////// Move this to higher level method, probably in the paywall widget
     
     // Get latest state from localstorage
     const state = store.get("state", state)
@@ -175,30 +206,51 @@ export default class Channel {
     })
 
     const res = await API('/purchase', params);
-
+    
     if (res) {
       // render item, save secret
       // TODO: update bundles in local state
       channel.applyTransferDiff(res.diff);
     }*/
 
+    if (!purchases) var purchases = []
+    purchases.push({ key: "djfksgfKHGgkss", id: "front-server.jpeg" })
+    store.set("purchases", purchases)
+
+    return signedBundles
   }
 
   // Update bundles in local state by applying the diff
-  applyTransferDiff(diff) {
-    
+  static applyTransferDiff(diff) {
     // Get state
-    const state = store.get('state');
+    const state = store.get("state")
 
     // Apply diff to bundles in state
     ///state.bundles = TODO: bundles with applied diff;
 
-    store.set('state', state);
+    store.set("state", state)
   }
 
+  // Update bundles in local state by applying the diff
+  static initFlash() {
+    // Get state
+    const state = store.get("state")
+
+    if (!Channel.flash.onStateChange) {
+      Channel.flash = new Flash({
+        ...state.flash,
+        onStateChange: flashState => {
+          // Update local storage once flash state changes
+          const stateCopy = store.get("state")
+          stateCopy.flash = flashState
+          store.set("state", stateCopy)
+        }
+      })
+    }
+  }
 }
 
-////// HELPERS 
+////// HELPERS
 //
 // Maybe move them outta channel ?
 
@@ -212,7 +264,7 @@ var iota = new IOTA({
 
 // Get node info
 const getNodeInfo = async () => {
-  const info = await new Promise((resolve) => {
+  const info = await new Promise(resolve => {
     iota.api.getNodeInfo(function(error, success) {
       if (error) {
         console.error(error)
@@ -222,8 +274,8 @@ const getNodeInfo = async () => {
         resolve(success)
       }
     })
-  });
-  return info;
+  })
+  return info
 }
 
 // Generate a random seed. Higher security needed
@@ -246,24 +298,22 @@ const seedGen = length => {
 
 // Store class utitlizing localStorage
 class Store {
-  constructor() {
-    this.localStorage = isWindow() ? {} : localStorage;
+  static get(item) {
+    return JSON.parse(localStorage.getItem(item))
   }
-  get(item) {
-    return JSON.parse(this.localStorage.getItem(item))
-  }
-  set(item, data) {
-    this.localStorage.setItem(item, JSON.stringify(data))
+  static set(item, data) {
+    localStorage.setItem(item, JSON.stringify(data))
   }
 }
 
 // Check if window is available
-const isWindow = () => {
+export const isWindow = () => {
   if (typeof window === "undefined" || typeof localStorage === "undefined") {
-    if (!('store' in global) || !(global.store instanceof Store)) {
-      global.store = Store();
+    if (!("store" in global) || !(global.store instanceof Store)) {
+      global.store = Store
     }
     return false
   }
+  global.store = Store
   return true
 }
