@@ -1,7 +1,6 @@
 import React from "react"
 import styled, { css } from "styled-components"
 import { Reducer } from "../../libs/utils"
-import Iota from "../../libs/iota"
 
 const Show = props => {}
 

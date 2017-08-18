@@ -6,7 +6,6 @@ import Button from "./button"
 import Paywall from "./paywall"
 import Content from "./content"
 
-import Iota from "../../libs/iota"
 import Channel from "../../libs/channel"
 
 export default class extends React.Component {
