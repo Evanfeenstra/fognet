@@ -212,12 +212,17 @@ export default class Channel {
       // TODO: update bundles in local state
       channel.applyTransferDiff(res.diff);
     }*/
-    var res = { key: "djfksgfKHGgkss", id }
 
+    // Emulate
+    var res = { key: "djfksgfKHGgkss", id, value }
+
+    // Check is purchases exists
     if (!purchases) var purchases = []
+    // Push the purchase recipt to the browser
     purchases.push(res)
+    // save purchases for reload
     store.set("purchases", purchases)
-
+    // Return recipt to be used by the calling function
     return res
   }
 

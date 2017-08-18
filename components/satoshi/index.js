@@ -31,7 +31,8 @@ export default class extends React.Component {
 
     var item = await Channel.composeTransfer(
       10,
-      `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`
+      `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+      this.props.content
     )
     this.setState({ itemKey: item.key })
   }
