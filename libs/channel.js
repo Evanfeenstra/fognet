@@ -20,7 +20,6 @@ export default class Channel {
   static async initialize(
     userID = shortid.generate(),
     index = 0,
-    singingIndex = 0,
     security = Channel.SECURITY,
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
@@ -58,8 +57,7 @@ export default class Channel {
     const state = {
       userID: userID,
       userSeed: userSeed,
-      digestIndex: 0, /// IS THIS CORRECT?
-      signingIndex: signersCount, /// IS THIS MEANT TO BE SIGNERS COUNT?
+      index: index,
       security: security,
       depth: treeDepth,
       fromIndex: fromIndex,
@@ -67,7 +65,6 @@ export default class Channel {
       bundles: []
     }
     state.flash = {
-      digestIndex: 0,
       signersCount: signersCount,
       balance: balance,
       deposit: deposit,
@@ -97,19 +94,19 @@ export default class Channel {
   }
 
   // Get a new digest and update index in state
-  static getNewDigest(seed, digestIndex, security) {
+  static getNewDigest(seed, index, security) {
     // Fetch state from localStorage
     const state = store.get("state")
 
     // Create new digest
     var digest = multisig.getDigest(
       state.seed || seed,
-      state.digestIndex || digestIndex,
+      state.index || index,
       state.security || security
     )
 
     // Increment digests key index
-    state.digestIndex++
+    state.index++;
 
     // Update local state
     store.set("state", state)
@@ -119,7 +116,12 @@ export default class Channel {
 
   // Obtain address by sending digest, update multisigs in state
   static async getNewAddress(digest) {
+    
     const state = await store.get("state")
+
+    if (!digest) {
+      digest = getNewDigest()
+    }
 
     // Send digest to server and obtain new multisig address
     // const response = await API("address", {
@@ -173,7 +175,7 @@ export default class Channel {
     // Sign transfer
     const signedBundles = Channel.flash.signTransfer(
       state.userSeed,
-      state.signingIndex,
+      state.index,
       state.security,
       state.multisigs,
       state.fromIndex,
@@ -181,10 +183,7 @@ export default class Channel {
     )
 
     console.log("Bundles", signedBundles)
-
-    // Increment signing index
-    state.signingIndex++
-
+    
     // Update bundles in local state
     state.bundles = signedBundles
 
