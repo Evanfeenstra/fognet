@@ -151,7 +151,7 @@ export default class Channel {
   }
 
   // Initiate transaction from anywhere in the app.
-  static composeTransfer(value, settlementAddress) {
+  static composeTransfer(value, settlementAddress, id) {
     /// Check if Flash state exists
     Channel.initFlash()
     // Get latest state from localstorage
@@ -212,12 +212,13 @@ export default class Channel {
       // TODO: update bundles in local state
       channel.applyTransferDiff(res.diff);
     }*/
+    var res = { key: "djfksgfKHGgkss", id }
 
     if (!purchases) var purchases = []
-    purchases.push({ key: "djfksgfKHGgkss", id: "front-server.jpeg" })
+    purchases.push(res)
     store.set("purchases", purchases)
 
-    return signedBundles
+    return res
   }
 
   // Update bundles in local state by applying the diff
