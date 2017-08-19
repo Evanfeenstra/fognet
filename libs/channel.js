@@ -185,16 +185,10 @@ export default class Channel {
     var purchases = store.get("purchases")
 
     // Compose transfer
-    const bundles = Channel.flash.composeTransfer(
-      state.multisigs,
-      state.fromIndex,
-      [
-        {
-          address: settlementAddress,
-          value: value
-        }
-      ]
-    )
+    const bundles = Flash.transfer.compose(state, [{
+      address: settlementAddress,
+      value: value
+    }]);
 
     // Sign transfer
     const signedBundles = Channel.flash.signTransfer(
@@ -265,9 +259,7 @@ export default class Channel {
     // Get state
     const state = store.get("state")
 
-    if (!Channel.flash.onStateChange) {
-      Channel.flash = new Flash({...state.flash})
-    }
+    Channel.flash = new Flash({...state.flash})
   }
 }
 
