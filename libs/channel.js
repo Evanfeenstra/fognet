@@ -93,7 +93,7 @@ export default class Channel {
       },
       method: "POST",
       body: JSON.stringify({
-        uid: userID,
+        id: userID,
         digests: digests
       })
     }
