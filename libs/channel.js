@@ -102,7 +102,7 @@ export default class Channel {
     })
     const serverDigests = response.digests;
     let multisigs = digests.map((digest, index) => 
-      multisig.finalizeAddress(multisig.initializeAddress(digest.index, [digest, serverDigests[index]]))
+      multisig.finalizeAddress(multisig.initializeAddress([digest, serverDigests[index]]))
     );
     const remainderAddress = multisigs.shift();
 
@@ -266,15 +266,7 @@ export default class Channel {
     const state = store.get("state")
 
     if (!Channel.flash.onStateChange) {
-      Channel.flash = new Flash({
-        ...state.flash,
-        onStateChange: flashState => {
-          // Update local storage once flash state changes
-          const stateCopy = store.get("state")
-          stateCopy.flash = flashState
-          store.set("state", stateCopy)
-        }
-      })
+      Channel.flash = new Flash({...state.flash})
     }
   }
 }
