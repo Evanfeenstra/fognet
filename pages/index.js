@@ -9,9 +9,10 @@ import Satoshi from "../components/satoshi"
 export default () =>
   <Layout>
     <Header>
-      <Row>
-        <Title>Empowering creators with seamless payments</Title>
-      </Row>
+      <Col>
+        <Title>Instant feeless microtransactions</Title>
+        <p>Powered by Flash Channels</p>
+      </Col>
     </Header>
     {/* <Row width={`60vw`} margin={"0rem 0 6rem"}>
       <Col width={`30rem`}>
@@ -31,14 +32,74 @@ export default () =>
         </span>
       </Col>
     </Row> */}
-    <h2>Try it out</h2>
+    <Title style={{ color: "#222", fontWeight: 600 }}>Flash, What?</Title>
     <Row width={`40rem`}>
-      <span style={{ textAlign: "center" }}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-        varius.
+      <span
+        style={{ textAlign: "center", padding: "3rem 0 5rem", lineHeight: 2 }}
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus dui
+        enim, porta a magna nec, mattis consectetur urna. Pellentesque congue
+        velit ac gravida eleifend. Mauris sed porttitor lectus.Lorem ipsum dolor
+        sit amet, consectetur adipiscing elit. Phasellus dui enim, porta a magna
+        nec, mattis consectetur urna. Pellentesque congue velit ac gravida
+        eleifend. Mauris sed porttitor lectus.
       </span>
     </Row>
-    <Row align={`flex-start`}>
+
+    <Features>
+      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+        <HeadWrap>
+          <Icon src={`/static/icons/fast.png`} />
+          <h2 style={{ marginLeft: "2rem" }}>Fast, Really Fast</h2>
+        </HeadWrap>
+
+        <span>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
+          Sed egenisi.
+        </span>
+      </Item>
+      <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
+        <HeadWrap>
+          <Icon src={`/static/icons/secure.png`} />
+          <h2 style={{ marginLeft: "2rem" }}>No Trust Needed</h2>
+        </HeadWrap>
+
+        <span>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
+          Sed egenisi.
+        </span>
+      </Item>
+      <Item justify={"space-between"}>
+        <HeadWrap>
+          <Icon src={`/static/icons/free.png`} />
+          <h2 style={{ marginLeft: "2rem" }}>101% Fee Free</h2>
+        </HeadWrap>
+
+        <span>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
+          Sed egenisi.
+        </span>
+      </Item>
+    </Features>
+
+    <h2 style={{ paddingTop: 20, marginBottom: 0, fontWeight: 600 }}>
+      See it in action
+    </h2>
+    <Row width={`40rem`}>
+      <span
+        style={{ textAlign: "center", padding: "2rem 0 5rem", lineHeight: 2 }}
+      >
+        Below are some articles about IOTA that have content protected by a
+        microtransaction paywall. SatoshiPay pioneered this system using
+        Bitcoin, but now they can get instant and feeless transactions using
+        IOTA.
+      </span>
+    </Row>
+
+    <Row align={`center`}>
       <Link route={`/article/supercomputer`}>
         <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
           <Img img={`/static/images/servers.jpeg`} />
@@ -86,19 +147,44 @@ export default () =>
     </Col> */}
   </Layout>
 
+const HeadWrap = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+`
+
 const Spacer = styled.div`height: 100px;`
+
+const Features = styled.section`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  background: #ededed;
+  padding: 5rem;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+  @media screen and (max-width: 40rem) {
+    flex-direction: column;
+  }
+`
 
 const Header = styled.div`
   width: 100%;
-  height: 88vh;
+  height: 70vh;
   min-height: 20rem;
-  background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .4)),
-    url('/static/images/intro.jpg') no-repeat center center;
+  background: linear-gradient(120deg, #d37290 20%, #73367c);
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 5rem;
+  color: white;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
 `
 
 const Title = styled.h1`
@@ -106,14 +192,19 @@ const Title = styled.h1`
   font-size: calc(1.5rem + 2vw);
   font-weight: 400;
   text-align: center;
-  max-width: 50rem;
+  max-width: 55rem;
+  margin: 0;
 `
-
+const Icon = styled.img`
+  height: 3rem;
+  width: 3rem;
+`
 const Img = styled.div`
   background: url(${props => props.img}) no-repeat center center;
   background-size: cover;
   width: 100%;
   height: calc(4*4vw);
+  max-height: 200px;
   @media screen and (max-width: 640px) {
     height: 250px;
   }
@@ -123,7 +214,8 @@ const Item = styled.a`
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin: 2rem 1rem 10rem;
+  max-width: 20rem;
+  margin: 2rem 1rem 6rem;
   @media screen and (max-width: 640px) {
     margin: 2rem 0rem 4rem;
   }
