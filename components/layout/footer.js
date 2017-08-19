@@ -4,19 +4,7 @@ import { Link } from "../../routes"
 export default props =>
   <Footer>
     <Col>
-      <Title>Pages</Title>
-      <Link route="/">
-        <Anchor>Home</Anchor>
-      </Link>
-      <Link route="/faqs">
-        <Anchor>FAQs</Anchor>
-      </Link>
-      <Link route="/contact">
-        <Anchor>Contact</Anchor>
-      </Link>
-    </Col>
-    <Col>
-      <Title>Content</Title>
+      <Title>Articles</Title>
       <Link>
         <Anchor>IOTA & St. Petersburg Polytechnic University</Anchor>
       </Link>
@@ -27,7 +15,10 @@ export default props =>
         <Anchor>The Tangle: an elegant topology</Anchor>
       </Link>
     </Col>
-    <Satoshi src={"/static/icons/satoshipay.png"} />
+    <Row>
+      <Satoshi src={"/static/icons/satoshipay.png"} />
+      <Satoshi src={"/static/icons/iota.png"} />
+    </Row>
   </Footer>
 
 const Footer = styled.footer`
@@ -36,9 +27,11 @@ const Footer = styled.footer`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 2rem 0 4rem;
+  padding: 2rem 0 2rem;
   color: white;
-  background: dimgrey;
+  background: linear-gradient(120deg, #d37290 20%, #73367c);
+  -webkit-clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
   @media screen and (max-width: 640px) {
     flex-direction: column;
     align-items: flex-start;
@@ -57,6 +50,17 @@ const Col = styled.div`
   padding: 0rem 3rem;
 `
 
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 0rem 0rem;
+  @media screen and (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0rem 0rem 0 3rem;
+  }
+`
+
 const Title = styled.h3`
   padding: .1rem 0;
   font-size: 100%;
@@ -64,5 +68,11 @@ const Title = styled.h3`
 
 const Satoshi = styled.img`
   height: 2.5rem;
-  padding: 2rem 3rem;
+  width: auto;
+  padding: 1rem 1rem 0rem;
+  @media screen and (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 0rem 0 0rem;
+  }
 `

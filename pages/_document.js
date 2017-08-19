@@ -36,6 +36,7 @@ injectGlobal`
     margin: 0 auto;
     font-family: quicksand;
     font-weight: 400;
+    color: #4A4A4A;
   }
 
   @font-face {
