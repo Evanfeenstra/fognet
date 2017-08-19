@@ -6,7 +6,7 @@ import Channel, { isWindow } from "../../libs/channel"
 
 export default class extends React.Component {
   state = {
-    balance: 1000000000,
+    balance: 0,
     drawerOpen: false
   }
 
@@ -15,8 +15,9 @@ export default class extends React.Component {
     var purchases = store.get("purchases")
 
     console.log(state)
+
     this.setState({
-      balance: state.flash.balance,
+      balance: state.flash ? state.flash.balance : 0,
       state,
       purchases
     })
@@ -43,7 +44,7 @@ export default class extends React.Component {
     console.log(state)
     this.setState({
       drawerOpen: !this.state.drawerOpen,
-      balance: state.flash.balance,
+      balance: state.flash ? state.flash.balance : 0,
       state,
       purchases
     })
