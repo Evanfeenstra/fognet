@@ -52,13 +52,15 @@ const Header = styled.section`
   color: white;
   width: 100%;
   padding: 2rem 10rem;
-  height: 70vh;
+  height: 50vh;
   min-height: 20rem;
   box-sizing: border-box;
   padding: 10vw;
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
     url(${props => props.image}) no-repeat center center;
   background-size: cover;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
 `
 
 const Content = styled.div`
