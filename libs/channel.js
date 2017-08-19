@@ -23,7 +23,6 @@ export default class Channel {
     security = Channel.SECURITY,
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
-    fromIndex = 0,
     balance = 300,
     deposit = Array(Channel.SIGNERS_COUNT).fill(0),
     stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
@@ -43,15 +42,15 @@ export default class Channel {
       userID: userID
     })
 
-    // Get a new digest
-    const digest = Channel.getNewDigest(userSeed, index, security)
 
-    // Fetch a new multisig address
-    const address = await Channel.getNewAddress(digest)
+    // Get a new digest
+    // Fetch new multisig addresses
+    // consists of { root, remainder }
+    const addresses = await Channel.register(Array(treeDepth + 1).fill(0).map(v => Channel.getNewDigest(userSeed, index++, security)), userID);
 
     // Add address to multisigs
-    const multisigs = [address]
-    console.log(multisigs)
+    console.log(addresses.remainder)
+    console.log(addresses.root)
 
     // Initialize state object
     const state = {
@@ -60,8 +59,7 @@ export default class Channel {
       index: index,
       security: security,
       depth: treeDepth,
-      fromIndex: fromIndex,
-      multisigs: multisigs,
+      root: addresses.root,
       bundles: []
     }
     state.flash = {
@@ -71,7 +69,7 @@ export default class Channel {
       stakes: stakes,
       outputs: {},
       transfers: [],
-      remainderAddress: multisigs[0].address
+      remainderAddress: addresses.remainder
     }
 
     // Create a flash instance
@@ -91,6 +89,32 @@ export default class Channel {
     store.set("state", state)
 
     return state
+  }
+
+  static async register(digests, userID) {
+    // Send digests to server and obtain new multisig addresses
+    const response = await API("register", {
+      method: "POST",
+      body: JSON.stringify({
+        uid: userID,
+        digests: digests
+      })
+    })
+    const serverDigests = response.digests;
+    let multisigs = digests.map((digest, index) => 
+      multisig.finalizeAddress(multisig.initializeAddress(digest.index, [digest, serverDigests[index]]))
+    );
+    const remainderAddress = multisigs.shift();
+
+    for(let i = 0; i < multisigs.length; i++) {
+      if(i>0) {
+        multisigs[i-1].children.push(multisigs[i]);
+      }
+    }
+    return {
+      remainder: remainderAddress,
+      root: multisigs.shift()
+    };
   }
 
   // Get a new digest and update index in state
