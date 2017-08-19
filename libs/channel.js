@@ -33,11 +33,11 @@ export default class Channel {
     var userSeed = seedGen(81)
 
     // Stop if local state exists
-    const localState = store.get("state")
-    if (localState) {
-      console.log(localState)
-      return localState
-    }
+    // const localState = store.get("state")
+    // if (localState) {
+    //   console.log(localState)
+    //   return localState
+    // }
 
     store.set("state", {
       userID: userID
@@ -85,14 +85,21 @@ export default class Channel {
   }
 
   static async register(digests, userID) {
-    // Send digests to server and obtain new multisig addresses
-    const response = await API("register", {
+
+    const opts = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
       method: "POST",
       body: JSON.stringify({
         uid: userID,
         digests: digests
       })
-    })
+    }
+    console.log(opts)
+    // Send digests to server and obtain new multisig addresses
+    const response = await API("register", opts)
 
     console.log('RESPONSE', response)
     const serverDigests = response.digests;
