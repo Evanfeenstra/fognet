@@ -33,25 +33,11 @@ export default class Channel {
     var userSeed = seedGen(81)
 
     // Stop if local state exists
-    // const localState = store.get("state")
-    // if (localState) {
-    //   console.log(localState)
-    //   return localState
-    // }
-
-    store.set("state", {
-      userID: userID
-    })
-
-
-    // Get a new digest
-    // Fetch new multisig addresses
-    // consists of { root, remainder }
-    const addresses = await Channel.register(Array(treeDepth + 1).fill(0).map(v => Channel.getNewDigest(userSeed, index++, security)), userID);
-
-    // Add address to multisigs
-    console.log(addresses.remainder)
-    console.log(addresses.root)
+    const localState = store.get("state")
+    if (localState) {
+       console.log(localState)
+       return localState
+    }
 
     // Initialize state object
     const state = {
@@ -60,31 +46,47 @@ export default class Channel {
       index: index,
       security: security,
       depth: treeDepth,
-      root: addresses.root,
-      bundles: []
+      bundles: [],
+      flash: {
+        signersCount: signersCount,
+        balance: balance,
+        deposit: deposit,
+        stakes: stakes,
+        outputs: {},
+        transfers: []
+      }
     }
-    state.flash = {
-      signersCount: signersCount,
-      balance: balance,
-      deposit: deposit,
-      stakes: stakes,
-      outputs: {},
-      transfers: [],
-      remainderAddress: addresses.remainder
+
+    // Initiate the state in local storage
+    store.set("state", state);
+
+    // Get a new digest
+    // Fetch new multisig addresses
+    // consists of { root, remainder }
+    const digests = [];
+    for (let i = 0; i < treeDepth + 1; i++) {
+      const digest = await Channel.getNewDigest();
+      digests.push(digest);
     }
+    const addresses = await Channel.register(digests, userID);
+
+    // Update root and remainder address
+    state.flash.remainderAddress = addresses.remainder;
+    state.root = addresses.root;
+
+    // Update root & remainder in state
+    store.set("state", state)
 
     // Create a flash instance
     Channel.flash = new Flash({
       ...state.flash
     })
 
-    // Initiate the state entry in state
-    store.set("state", state)
-
     return state
   }
 
   static async register(digests, userID) {
+console.log('regists: Digets', digests)
 
     const opts = {
       headers: {
@@ -120,22 +122,22 @@ export default class Channel {
   }
 
   // Get a new digest and update index in state
-  static getNewDigest(seed, index, security) {
+  static async getNewDigest() {
     // Fetch state from localStorage
-    const state = store.get("state")
+    const state = store.get("state");
 
     // Create new digest
-    var digest = multisig.getDigest(
-      state.seed || seed,
-      state.index || index,
-      state.security || security
-    )
+    const digest = multisig.getDigest(
+      state.userSeed,
+      state.index,
+      state.security
+    );
 
     // Increment digests key index
     state.index++;
 
     // Update local state
-    store.set("state", state)
+    await store.set("state", state)
 
     return digest
   }
