@@ -35,6 +35,7 @@ export default class Channel {
     // Stop if local state exists
     const localState = store.get("state")
     if (localState) {
+      console.log(localState)
       return localState
     }
 
@@ -74,17 +75,9 @@ export default class Channel {
 
     // Create a flash instance
     Channel.flash = new Flash({
-      ...state.flash,
-      onStateChange: flashState => {
-        // Update local storage once flash state changes
-        const stateCopy = store.get("state")
-        stateCopy.flash = flashState
-        store.set("state", stateCopy)
-      }
+      ...state.flash
     })
 
-    console.log(state)
-    console.log(Channel.flash)
     // Initiate the state entry in state
     store.set("state", state)
 
@@ -100,6 +93,8 @@ export default class Channel {
         digests: digests
       })
     })
+
+    console.log('RESPONSE', response)
     const serverDigests = response.digests;
     let multisigs = digests.map((digest, index) => 
       multisig.finalizeAddress(multisig.initializeAddress([digest, serverDigests[index]]))
