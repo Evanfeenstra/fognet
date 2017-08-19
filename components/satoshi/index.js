@@ -19,8 +19,8 @@ export default class extends React.Component {
   // Check for the purchase and attach the key
   async componentDidMount() {
     var purchases = await store.get("purchases")
-    var item = purchases.find(item => item.id === this.props.content)
-    if (item) {
+    if (purchases) {
+      var item = purchases.find(item => item.id === this.props.content)
       this.setState({ itemKey: item.key })
     }
   }
