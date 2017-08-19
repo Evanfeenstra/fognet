@@ -88,7 +88,10 @@ const Line = styled.div`
   border-bottom: 2px solid white;
 `
 
-const Satoshi = styled.img`height: 2.5rem;`
+const Satoshi = styled.img`
+  height: 2.5rem;
+  margin-right: 2rem;
+`
 
 export default class extends React.Component {
   state = {
@@ -97,7 +100,19 @@ export default class extends React.Component {
   render() {
     return (
       <Header active={this.state.open}>
-        <Row>
+        <Row
+          width={"80rem"}
+          style={{ justifyContent: "space-between", width: "75%" }}
+        >
+          <Link href="/">
+            <Satoshi
+              src={
+                this.props.dark
+                  ? "/static/icons/satoshipay-dark.png"
+                  : "/static/icons/iota.png"
+              }
+            />
+          </Link>
           <Link href="/">
             <Satoshi
               src={
@@ -107,14 +122,15 @@ export default class extends React.Component {
               }
             />
           </Link>
-          <Menu onClick={() => this.setState({ open: !this.state.open })}>
+
+          {/* <Menu onClick={() => this.setState({ open: !this.state.open })}>
             <Line no={1} />
             <Line no={2} />
             <Line no={3} />
-          </Menu>
+          </Menu> */}
         </Row>
 
-        <Desktop active={this.state.open}>
+        {/* <Desktop active={this.state.open}>
           <Link href="/">
             <Anchor {...this.props}>Home</Anchor>
           </Link>
@@ -135,7 +151,7 @@ export default class extends React.Component {
           <Link href="/contact">
             <Anchor {...this.props}>Contact</Anchor>
           </Link>
-        </MobileNav>
+        </MobileNav> */}
       </Header>
     )
   }
