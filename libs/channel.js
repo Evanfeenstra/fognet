@@ -190,7 +190,7 @@ export default class Channel {
       address: settlementAddress,
       value: value
     }]);
-    console.log(state)
+    console.log("Unsigned", bundles)
     // Sign transfer
     const signedBundles = transfer.sign(
       state.flash.root,
@@ -203,40 +203,42 @@ export default class Channel {
     // Update bundles in local state
     state.bundles = signedBundles
 
-    store.set("state", state)
+    // store.set("state", state)
 
     // Return signed bundles
 
-    /* ////// Move this to higher level method, probably in the paywall widget
-    
-    // Get latest state from localstorage
-    const state = store.get("state", state)
-    
-    const secret = getSecret(item.id);
-    const params = {
-      'uid': state.userID,
-      'item': item.id,
-      // TODO: replace with transfer diff
-      'bundles': channel.composeTransfer(item.value, item.settlementAddress)
-    })
+    const opts = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({
+        id: state.userID,
+        bundles: signedBundles,
+        item: id
+      })
+    }
+    console.log(opts)
 
-    const res = await API('/purchase', params);
+    const res = await API('purchase', opts);
     
     if (res) {
       // render item, save secret
       // TODO: update bundles in local state
-      channel.applyTransferDiff(res.diff);
-    }*/
+      console.log(res)
+      // channel.applyTransferDiff(res.diff);
+    }
 
-    // Emulate
-    var res = { key: "djfksgfKHGgkss", id, value }
+    // // Emulate
+    // var res = { key: "djfksgfKHGgkss", id, value }
 
-    // Check is purchases exists
-    if (!purchases) var purchases = []
-    // Push the purchase recipt to the browser
-    purchases.push(res)
-    // save purchases for reload
-    store.set("purchases", purchases)
+    // // Check is purchases exists
+    // if (!purchases) var purchases = []
+    // // Push the purchase recipt to the browser
+    // purchases.push(res)
+    // // save purchases for reload
+    // store.set("purchases", purchases)
     // Return recipt to be used by the calling function
     return res
   }
