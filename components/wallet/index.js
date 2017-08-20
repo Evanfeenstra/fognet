@@ -10,9 +10,9 @@ export default class extends React.Component {
     drawerOpen: false
   }
 
-  componentDidMount() {
-    var state = store.get("state")
-    var purchases = store.get("purchases")
+  async componentDidMount() {
+    var state = await store.get("state")
+    var purchases = await store.get("purchases")
 
     console.log(state)
 
