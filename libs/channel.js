@@ -186,7 +186,16 @@ export default class Channel {
     var purchases = await store.get("purchases")
     console.log(state)
     // Compose transfer
-    const bundles = transfer.compose(state.flash, [{
+    const flash = state.flash;
+    const bundles = transfer.compose(
+      flash.balance, 
+      flash.deposit, 
+      flash.outputs, 
+      flash.stakes, 
+      flash.root, 
+      flash.remainderAddress, 
+      flash.transfers, 
+      [{
       address: settlementAddress,
       value: value
     }]);
