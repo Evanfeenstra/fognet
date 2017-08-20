@@ -105,9 +105,13 @@ console.log('regists: Digets', digests)
 
     console.log('RESPONSE', response)
     const serverDigests = response.digests;
-    let multisigs = digests.map((digest, index) => 
-      multisig.finalizeAddress(multisig.initializeAddress([digest, serverDigests[index]]))
-    );
+    let multisigs = digests.map((digest, index) => {
+      let addy = multisig.composeAddress([digest, serverDigests[index]]);
+      addy.index = digest.index;
+      addy.securitySum = digest.securitySum + serverDigests[index].securitySum;
+      return addy;
+    });
+    
     const remainderAddress = multisigs.shift();
 
     for(let i = 0; i < multisigs.length; i++) {
@@ -115,6 +119,7 @@ console.log('regists: Digets', digests)
         multisigs[i-1].children.push(multisigs[i]);
       }
     }
+    console.log(multisigs[0]);
     return {
       remainder: remainderAddress,
       root: multisigs.shift()
