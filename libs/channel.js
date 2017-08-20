@@ -3,6 +3,7 @@ import shortid from "shortid"
 
 import Flash from "iota.flash.js"
 import multisig from "iota.flash.js/lib/multisig"
+import transfer from "iota.flash.js/lib/transfer"
 
 export default class Channel {
   // Security level
@@ -24,7 +25,7 @@ export default class Channel {
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
     balance = 300,
-    deposit = Array(Channel.SIGNERS_COUNT).fill(0),
+    deposit = Array(Channel.SIGNERS_COUNT).fill(100),
     stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
   ) {
     // Escape the function when server rendering
@@ -33,7 +34,7 @@ export default class Channel {
     var userSeed = seedGen(81)
 
     // Stop if local state exists
-    const localState = store.get("state")
+    const localState = await store.get("state")
     if (localState) {
        console.log(localState)
        return localState
@@ -58,7 +59,7 @@ export default class Channel {
     }
 
     // Initiate the state in local storage
-    store.set("state", state);
+    await store.set("state", state);
 
     // Get a new digest
     // Fetch new multisig addresses
@@ -72,10 +73,10 @@ export default class Channel {
 
     // Update root and remainder address
     state.flash.remainderAddress = addresses.remainder;
-    state.root = addresses.root;
+    state.flash.root = addresses.root;
 
     // Update root & remainder in state
-    store.set("state", state)
+    await store.set("state", state)
 
     // Create a flash instance
     Channel.flash = new Flash({
@@ -86,7 +87,7 @@ export default class Channel {
   }
 
   static async register(digests, userID) {
-console.log('regists: Digets', digests)
+    console.log('regists: Digets', digests)
 
     const opts = {
       headers: {
@@ -105,10 +106,11 @@ console.log('regists: Digets', digests)
 
     console.log('RESPONSE', response)
     const serverDigests = response.digests;
-    let multisigs = digests.map((digest, index) => {
+    let multisigs = digests.map((digest, index) => {      
       let addy = multisig.composeAddress([digest, serverDigests[index]]);
       addy.index = digest.index;
-      addy.securitySum = digest.securitySum + serverDigests[index].securitySum;
+      addy.securitySum = digest.security + serverDigests[index].security;
+      addy.security = digest.security;
       return addy;
     });
     
@@ -157,55 +159,42 @@ console.log('regists: Digets', digests)
     }
 
     // Send digest to server and obtain new multisig address
-    // const response = await API("address", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     uid: state.userID,
-    //     digest: digest
-    //   })
-    // })
-
-    /// FOR TESTIING USE Above^
-    var digests = [
-      digest,
-      multisig.getDigest(
-        `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
-        0,
-        2
-      )
-    ]
-
-    var response = multisig.composeAddress(digests)
+    const response = await API("address", {
+      method: "POST",
+      body: JSON.stringify({
+        id: state.userID,
+        digest: digest
+      })
+    })
+    
+    var addresses = multisig.composeAddress(digests)
     console.log(response)
 
     // Check to see if response is valid
-    if (typeof response.address !== "string")
+    if (typeof addresses.address !== "string")
       return alert(":( something went wrong")
 
-    return response
+    return addresses
   }
 
   // Initiate transaction from anywhere in the app.
-  static composeTransfer(value, settlementAddress, id) {
+  static async composeTransfer(value, settlementAddress, id) {
     /// Check if Flash state exists
-    Channel.initFlash()
+    await Channel.initFlash()
     // Get latest state from localstorage
-    const state = store.get("state", state)
-    var purchases = store.get("purchases")
-
+    const state = await store.get("state")
+    var purchases = await store.get("purchases")
+    console.log(state)
     // Compose transfer
-    const bundles = Flash.transfer.compose(state, [{
+    const bundles = transfer.compose(state.flash, [{
       address: settlementAddress,
       value: value
     }]);
-
+    console.log(state)
     // Sign transfer
-    const signedBundles = Channel.flash.signTransfer(
+    const signedBundles = transfer.sign(
+      state.flash.root,
       state.userSeed,
-      state.index,
-      state.security,
-      state.multisigs,
-      state.fromIndex,
       bundles
     )
 
@@ -264,11 +253,12 @@ console.log('regists: Digets', digests)
   }
 
   // Update bundles in local state by applying the diff
-  static initFlash() {
+  static async initFlash() {
     // Get state
-    const state = store.get("state")
+    const state = await store.get("state")
 
     Channel.flash = new Flash({...state.flash})
+    return
   }
 }
 
