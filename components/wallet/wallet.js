@@ -63,18 +63,18 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   box-sizing: border-box;
   width: 100%;
   padding: 2vw;
   word-wrap: break-word;
 `
 
-const Seed = styled.p`
+const Seed = styled.h3`
   word-wrap: break-word;
   width: 15rem;
-  text-align: center;
+  text-align: left;
 `
 
 export default class extends React.Component {
@@ -108,22 +108,25 @@ export default class extends React.Component {
           <Content>
             <h3>Welcome to the Satoshipay IOTA Demo</h3>
             <p>
-              This is a Proof-of-Concept of the SatoshiPay system based on the
-              IOTA token. The IOTA wallet used in this demo is live and utlising
-              The Tangle to pay for content in realtime.
+              This is a Proof-of-Concept of the SatoshiPay system based. It's on the
+              IOTA token. The IOTA wallet used in this demo is working on the mainnet 
+              and is using Flash Channels to pay for confirm payment in realtime.
             </p>
-            <Button onClick={() => Iota.info()}> Get 1 MIOTA</Button>
+            <p>
+              While the tokens are real, you will not be able to withdraw them.
+            </p>
+            <Button onClick={() => Iota.info()}>Fund the Channel</Button>
             <Button onClick={() => this.setState({ page: "transactions" })}>
-              {" "}See Purchases
+              {" "}Channel Transactions
             </Button>
-            <Button onClick={() => this.setState({ page: "backup" })}>
-              {" "}Backup wallet
+            <Button onClick={() => this.setState({ page: "closwe" })}>
+              {" "}Close Channel
             </Button>
           </Content>}
         {page === "transactions" &&
           <Content>
             <h3>Your purchases:</h3>
-            {purchases.map((item, i) =>
+            {purchases && purchases.map((item, i) =>
               <Item>
                 <span>
                   {item.value}i purchase{" "}
@@ -136,15 +139,16 @@ export default class extends React.Component {
           </Content>}
         {page === "backup" &&
           <Content>
-            <h3>This is your private key. Know as your SEED.</h3>
-            <h3>
-              This is used to sign a multi-signature wallet between you and
-              SatoshiPay
-            </h3>
+            <h3>This is your private key.</h3>
+            <p>
+              In IOTA this is known as your seed. This is used to sign a multi-signature wallet between you and
+              SatoshiPay. If you loose it, you are unable to use the wallet. So keep it safe! 
+            </p>
             <Seed>
               {channel.userSeed}
             </Seed>
           </Content>}
+          
       </Wallet>
     )
   }

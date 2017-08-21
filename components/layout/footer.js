@@ -16,8 +16,8 @@ export default props =>
       </Link> */}
     </Col>
     <Row>
-      <Satoshi src={"/static/icons/satoshipay.png"} />
       <Satoshi src={"/static/icons/iota.png"} />
+      <Satoshi src={"/static/icons/satoshipay.png"} />
     </Row>
   </Footer>
 

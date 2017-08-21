@@ -26,18 +26,19 @@ export default class extends React.Component {
   }
 
   purchase = async () => {
-    this.setState({ loading: true })
-
-    var item = await Channel.composeTransfer(
-      10,
-      `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
-      this.props.content
-    )
-    this.setState({ itemKey: item.key })
+    this.setState({ loading: true }, async() => {
+      var item = await Channel.composeTransfer(
+        10,
+        `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+        this.props.content
+      )
+  
+      this.setState({ itemKey: item.key })
+    })   
   }
 
   render() {
-    var { itemKey } = this.state
+    var { itemKey, loading } = this.state
     console.log(itemKey)
     if (!itemKey) {
       return (
@@ -46,6 +47,7 @@ export default class extends React.Component {
           <Title>
             {this.props.description}
           </Title>
+         {loading && <Spinner src={"/static/icons/loading.svg"} />}
         </Paywall>
       )
     } else {
@@ -53,6 +55,14 @@ export default class extends React.Component {
     }
   }
 }
+
+const Spinner = styled.img`
+  height: 5rem;
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  margin-left: -2.5rem
+`
 
 const Title = styled.h4`
   position: absolute;
