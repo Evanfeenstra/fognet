@@ -8,7 +8,7 @@ export default props => {
         {props.content &&
           <Image
             {...props}
-            src={`http://localhost:9000/${props.content}?key=${props.itemKey}`}
+            src={`http://localhost:9000/item/${props.content}/${props.itemKey}`}
           />}
       </Content>
     )
@@ -16,13 +16,13 @@ export default props => {
     return (
       <Video
         {...props}
-        src={`http://localhost:9000/${props.content}?key=${props.itemKey}`}
+        src={`http://localhost:9000/item/${props.content}/${props.itemKey}`}
         autoPlay
         controls
       />
     )
   } else if (props.type === "audio") {
-    return <Audio {...props} src={props.content} autoPlay controls />
+    return <Audio {...props} src={`http://localhost:9000/item/${props.content}/${props.itemKey}`} autoPlay controls />
   } else {
     return (
       <Content {...props} dangerouslySetInnerHTML={{ __html: props.content }} />
