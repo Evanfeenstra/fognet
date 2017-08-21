@@ -5,7 +5,7 @@ import Link from "next/link"
 import FAB from "../wallet"
 import Header from "./header"
 import Footer from "./footer"
-import Iota from "../../libs/iota"
+import Channel from "../../libs/channel"
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ const Content = styled.section`
 
 export default props =>
   <Wrapper>
-    {Iota.initialise()}
+    {/* {Channel.initialize()} */}
     <Header {...props} />
     <Content spacer={props.spacer}>
       {props.children}

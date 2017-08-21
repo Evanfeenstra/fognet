@@ -19,8 +19,8 @@ export default {
         type: "satoshi",
         type: `image`,
         price: 50000,
-        placeholder: "/static/images/front-server-blurred.jpg",
-        content: `/static/images/front-server.jpeg`
+        placeholder: "front-server-blurred.jpg",
+        content: `front-server.jpeg`
       },
       {
         type: "html",
@@ -48,8 +48,8 @@ export default {
         type: "satoshi",
         type: `video`,
         price: 390000,
-        placeholder: "/static/images/iota-thumbnail.png",
-        content: `/static/iota.mp4`,
+        placeholder: "iota.png",
+        content: `iota.mp4`,
         style: { height: 414 }
       },
       {

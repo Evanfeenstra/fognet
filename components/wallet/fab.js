@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { Reducer } from "../../libs/utils";
+import React from "react"
+import styled from "styled-components"
+import { Reducer } from "../../libs/utils"
 
 const Fab = styled.div`
   position: fixed;
@@ -16,7 +16,7 @@ const Fab = styled.div`
   align-items: center;
   cursor: pointer;
   box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
-`;
+`
 
 const Amount = styled.p`
   flex: 1;
@@ -25,11 +25,11 @@ const Amount = styled.p`
     courier, andale mono, free mono, monospace;
   text-align: center;
   padding: 0;
-`;
+`
 
 export default props =>
   <Fab onClick={() => props.toggle()}>
     <Amount>
-      {Reducer(props.balance)}
+      {props.balance && Reducer(props.balance)}
     </Amount>
-  </Fab>;
+  </Fab>

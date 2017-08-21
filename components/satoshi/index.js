@@ -6,26 +6,40 @@ import Button from "./button"
 import Paywall from "./paywall"
 import Content from "./content"
 
-import Iota from "../../libs/iota"
+import Channel from "../../libs/channel"
 
 export default class extends React.Component {
   state = {
-    data: false,
+    itemKey: false,
     loading: false,
     price: this.props.price,
     type: this.props.type
   }
 
+  // Check for the purchase and attach the key
+  async componentDidMount() {
+    var purchases = await store.get("purchases")
+    if (purchases) {
+      var item = purchases.find(item => item.id === this.props.content)
+      this.setState({ itemKey: item.key })
+    }
+  }
+
   purchase = async () => {
     this.setState({ loading: true })
 
-    await Iota.purchaseItem({ price: 1000, tag: "POTATO" })
-    this.setState({ data: true })
+    var item = await Channel.composeTransfer(
+      10,
+      `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+      this.props.content
+    )
+    this.setState({ itemKey: item.key })
   }
 
   render() {
-    var { data } = this.state
-    if (!data) {
+    var { itemKey } = this.state
+    console.log(itemKey)
+    if (!itemKey) {
       return (
         <Paywall {...this.props}>
           <Button {...this.props} click={this.purchase} />
@@ -35,7 +49,7 @@ export default class extends React.Component {
         </Paywall>
       )
     } else {
-      return <Content {...this.props} />
+      return <Content {...this.props} itemKey={itemKey} />
     }
   }
 }

@@ -4,13 +4,14 @@ export default props => {
   if (props.type === "image") {
     return (
       <Paywall {...props}>
-        {props.placeholder && <Image src={props.placeholder} />}
+        {props.placeholder &&
+          <Image src={"/static/images/" + props.placeholder} />}
         {props.children}
       </Paywall>
     )
   } else if (props.type === "video") {
     return (
-      <Video {...props}>
+      <Video {...props} placeImg={`/static/images/${props.placeholder}`}>
         {/* <img
           style={{ width: 100, height: 100, opacity: 0.3 }}
           src={`/static/play.png`}
@@ -45,7 +46,7 @@ const Video = Paywall.extend`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background: url(${props => props.placeholder}) no-repeat center center;
+  background: url(${props => props.placeImg}) no-repeat center center;
   background-size: cover;
 `
 const Generic = Paywall.extend`
