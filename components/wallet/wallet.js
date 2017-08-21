@@ -1,7 +1,7 @@
 import React from "react"
 import styled, { css } from "styled-components"
 import { Reducer } from "../../libs/utils"
-
+import Channel from "../../libs/channel"
 const Show = props => {}
 
 const Wallet = styled.div`
@@ -78,7 +78,7 @@ const Seed = styled.h3`
 `
 
 export default class extends React.Component {
-  state = { page: "home" }
+  state = { page: "home", loading: false }
 
   componentDidMount() {
     this.setState({
@@ -87,8 +87,27 @@ export default class extends React.Component {
     })
   }
 
+  close = async () => {
+    this.setState({ loading: true }, async () => {
+      var item = await Channel.close()
+      this.setState({ page: "closed", loading: false })
+    })
+  }
+
+  reset = async () => {
+    store.set("state", null)
+    store.set("purchases", null)
+
+    Channel.initialize()
+
+    this.setState({
+      page: "home",
+      loading: false
+    })
+  }
+
   render() {
-    var { page, purchases, channel } = this.state
+    var { page, purchases, channel, loading } = this.state
     return (
       <Wallet {...this.props}>
         <Header>
@@ -108,51 +127,74 @@ export default class extends React.Component {
           <Content>
             <h3>Welcome to the Satoshipay IOTA Demo</h3>
             <p>
-              This is a Proof-of-Concept of the SatoshiPay system based. It's on the
-              IOTA token. The IOTA wallet used in this demo is working on the mainnet 
-              and is using Flash Channels to pay for confirm payment in realtime.
+              This is a Proof-of-Concept of the SatoshiPay system based. It's on
+              the IOTA token. The IOTA wallet used in this demo is working on
+              the mainnet and is using Flash Channels to pay for confirm payment
+              in realtime.
             </p>
             <p>
               While the tokens are real, you will not be able to withdraw them.
             </p>
-            <Button onClick={() => Iota.info()}>Fund the Channel</Button>
-            <Button onClick={() => this.setState({ page: "transactions" })}>
-              {" "}Channel Transactions
-            </Button>
-            <Button onClick={() => this.setState({ page: "closwe" })}>
-              {" "}Close Channel
-            </Button>
+            {loading
+              ? <Spinner src={"/static/icons/loading-dark.svg"} />
+              : <div>
+                  <Button onClick={() => Iota.info()}>Fund the Channel</Button>
+                  <Button
+                    onClick={() => this.setState({ page: "transactions" })}
+                  >
+                    {" "}Channel Transactions
+                  </Button>
+                  <Button onClick={() => this.close()}> Close Channel</Button>
+                </div>}
           </Content>}
         {page === "transactions" &&
           <Content>
             <h3>Your purchases:</h3>
-            {purchases && purchases.map((item, i) =>
-              <Item>
-                <span>
-                  {item.value}i purchase{" "}
-                </span>
-                <span>
-                  {" "}{item.id}
-                </span>
-              </Item>
-            )}
+            {purchases &&
+              purchases.map((item, i) =>
+                <Item key={i}>
+                  <span>
+                    {Reducer(item.value)} purchase
+                  </span>
+                  <span>
+                    {item.id}
+                  </span>
+                </Item>
+              )}
           </Content>}
         {page === "backup" &&
           <Content>
             <h3>This is your private key.</h3>
             <p>
-              In IOTA this is known as your seed. This is used to sign a multi-signature wallet between you and
-              SatoshiPay. If you loose it, you are unable to use the wallet. So keep it safe! 
+              In IOTA this is known as your seed. This is used to sign a
+              multi-signature wallet between you and SatoshiPay. If you loose
+              it, you are unable to use the wallet. So keep it safe!
             </p>
             <Seed>
               {channel.userSeed}
             </Seed>
           </Content>}
-          
+        {page === "closed" &&
+          <Content>
+            <h3>The channel has been closed!</h3>
+            <p>Thank you for using the SatoshiPay demo of Flash channels.</p>
+            <p>
+              Your bundle has been attached. You can view it's status here on a
+              tangle explorer.
+            </p>
+            <Button onClick={() => this.reset()}>Reset the demo</Button>
+          </Content>}
       </Wallet>
     )
   }
 }
+
+const Spinner = styled.img`
+  height: 4rem;
+  width: 4rem;
+  margin: 0 auto;
+`
+
 const Item = styled.div`
   width: 90%;
   padding: 1rem 0;
