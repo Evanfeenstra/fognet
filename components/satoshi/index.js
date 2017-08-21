@@ -57,7 +57,7 @@ export default class extends React.Component {
 }
 
 const Spinner = styled.img`
-  height: 5rem;
+  height: 5rem !important;
   width: 5rem;
   position: absolute;
   left: 50%;

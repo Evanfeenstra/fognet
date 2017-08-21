@@ -44,6 +44,7 @@ const Image = styled.img`
 const Video = Paywall.extend`
   display: flex;
   flex: 1;
+  height: ${props => props.height + "px"};
   justify-content: center;
   align-items: center;
   background: url(${props => props.placeImg}) no-repeat center center;
