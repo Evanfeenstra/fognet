@@ -128,6 +128,43 @@ export default class Channel {
     };
   }
 
+  static async getNewBranch(userID, address, digests) {
+    console.log('branchists: Digets', digests)
+
+    const opts = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({
+        id: userID,
+        address: address.address,
+        digests: digests
+      })
+    }
+    console.log(opts)
+    // Send digests to server and obtain new multisig addresses
+    const response = await API("branch", opts)
+
+    console.log('RESPONSE', response)
+    const serverDigests = response.digests;
+    let multisigs = digests.map((digest, index) => {      
+      let addy = multisig.composeAddress([digest, serverDigests[index]]);
+      addy.index = digest.index;
+      addy.securitySum = digest.security + serverDigests[index].security;
+      addy.security = digest.security;
+      return addy;
+    });
+    
+    multisigs.unshift(address);
+    for(let i = 1; i < multisigs.length; i++) {
+        multisigs[i-1].children.push(multisigs[i]);
+    }
+    console.log(multisigs[0]);
+    return address;
+  }
+
   // Get a new digest and update index in state
   static async getNewDigest() {
     // Fetch state from localStorage
@@ -185,6 +222,16 @@ export default class Channel {
     const state = await store.get("state")
     var purchases = await store.get("purchases")
     console.log(state)
+    // TODO: check/generate tree
+    let toUse = multisig.updateLeafToRoot(state.flash.root);
+    if(toUse.generate != 0) {
+      // Tell the server to generate new addresses, attach to the multisig you give
+      const digests = await Promise.all(Array(toUse.generate).fill().map(() => Channel.getNewDigest()));
+      await Channel.getNewBranch(
+        state.userID,
+        toUse.multisig, 
+        digests);
+    }
     // Compose transfer
     const flash = state.flash;
     const bundles = transfer.compose(
@@ -192,7 +239,7 @@ export default class Channel {
       flash.deposit, 
       flash.outputs, 
       flash.stakes, 
-      flash.root, 
+      toUse.multisig, 
       flash.remainderAddress, 
       flash.transfers, 
       [{
@@ -235,6 +282,15 @@ export default class Channel {
     if (res) {
       // render item, save secret
       // TODO: update bundles in local state
+      transfer.applyTransfers(
+        state.flash.root, 
+        state.flash.deposit, 
+        state.flash.stakes, 
+        state.flash.outputs, 
+        state.flash.remainderAddress, 
+        state.flash.transfers, 
+        res.bundles);
+      await store.set("state", state)
       console.log(res)
       // channel.applyTransferDiff(res.diff);
     }
