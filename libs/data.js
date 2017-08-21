@@ -74,7 +74,7 @@ export default {
         type: "satoshi",
         type: `audio`,
         price: 50000,
-        content: `http://feeds.soundcloud.com/stream/333680258-arthurfalls-ether-review-69-iota-the-post-blockchain-era.mp3`,
+        content: `etherreview.mp3`,
         description: `Interview with Davo Sønstebø`
       },
       {
