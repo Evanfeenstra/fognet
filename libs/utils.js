@@ -1,5 +1,9 @@
 export const Reducer = amount => {
-  if (amount < Math.pow(10, 6)) {
+  if (amount < Math.pow(10, 3)) {
+    var num = amount
+    if (num % 1 != 0) return num.toFixed(2) + "i";
+    return num + "i";
+  } else if (amount < Math.pow(10, 6)) {
     var num = amount / Math.pow(10, 3);
     if (num % 1 != 0) return num.toFixed(2) + "Ki";
     return num + "Ki";
