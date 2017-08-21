@@ -21,20 +21,19 @@ export default class extends React.Component {
     var purchases = await store.get("purchases")
     if (purchases) {
       var item = purchases.find(item => item.id === this.props.content)
-      this.setState({ itemKey: item.key })
+      if (item.key) this.setState({ itemKey: item.key })
     }
   }
 
   purchase = async () => {
-    this.setState({ loading: true }, async() => {
+    this.setState({ loading: true }, async () => {
       var item = await Channel.composeTransfer(
         this.props.price,
         `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
         this.props.content
       )
-  
       this.setState({ itemKey: item.key })
-    })   
+    })
   }
 
   render() {
@@ -47,7 +46,8 @@ export default class extends React.Component {
           <Title>
             {this.props.description}
           </Title>
-         {loading && <Spinner src={"/static/icons/loading.svg"} />}
+          {loading &&
+            <Spinner {...this.props} src={"/static/icons/loading.svg"} />}
         </Paywall>
       )
     } else {
@@ -58,10 +58,12 @@ export default class extends React.Component {
 
 const Spinner = styled.img`
   height: 5rem;
+  width: 5rem;
   position: absolute;
   left: 50%;
   bottom: 50%;
-  margin-left: -2.5rem
+  margin-bottom: -2.5rem;
+  margin-left: -2.5rem;
 `
 
 const Title = styled.h4`
