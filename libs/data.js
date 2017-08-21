@@ -18,7 +18,7 @@ export default {
       {
         type: "satoshi",
         type: `image`,
-        price: 50000,
+        price: 100,
         placeholder: "front-server-blurred.jpg",
         content: `front-server.jpeg`
       },
@@ -47,7 +47,7 @@ export default {
       {
         type: "satoshi",
         type: `video`,
-        price: 390000,
+        price: 200,
         placeholder: "iota.png",
         content: `iota.mp4`,
         style: { height: 414 }
@@ -73,7 +73,7 @@ export default {
       {
         type: "satoshi",
         type: `audio`,
-        price: 50000,
+        price: 4000,
         content: `etherreview.mp3`,
         description: `Interview with Davo Sønstebø`
       },

@@ -28,7 +28,7 @@ export default class extends React.Component {
   purchase = async () => {
     this.setState({ loading: true }, async() => {
       var item = await Channel.composeTransfer(
-        10,
+        this.props.price,
         `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
         this.props.content
       )
