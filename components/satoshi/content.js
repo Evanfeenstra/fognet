@@ -1,14 +1,14 @@
 import styled from "styled-components"
+import Presets from '../../libs/presets'
 
 export default props => {
-  console.log(props)
   if (props.type === "image") {
     return (
       <Content {...props}>
         {props.content &&
           <Image
             {...props}
-            src={`http://localhost:9000/item/${props.content}/${props.itemKey}`}
+            src={`${Presets.API}item/${props.content}/${props.itemKey}`}
           />}
       </Content>
     )
@@ -16,13 +16,13 @@ export default props => {
     return (
       <Video
         {...props}
-        src={`http://localhost:9000/item/${props.content}/${props.itemKey}`}
+        src={`${Presets.API}item/${props.content}/${props.itemKey}`}
         autoPlay
         controls
       />
     )
   } else if (props.type === "audio") {
-    return <Audio {...props} src={`http://localhost:9000/item/${props.content}/${props.itemKey}`} autoPlay controls />
+    return <Audio {...props} src={`${Presets.API}item/${props.content}/${props.itemKey}`} autoPlay controls />
   } else {
     return (
       <Content {...props} dangerouslySetInnerHTML={{ __html: props.content }} />
