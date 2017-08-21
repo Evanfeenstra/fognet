@@ -17,7 +17,7 @@ export default class extends React.Component {
     console.log(state)
 
     this.setState({
-      balance: state.flash ? state.flash.balance : 0,
+      balance: state ? state.flash.balance : 0,
       state,
       purchases
     })
