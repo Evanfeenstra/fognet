@@ -53,14 +53,14 @@ const Header = styled.section`
   width: 100%;
   padding: 2rem 10rem;
   height: 50vh;
-  min-height: 20rem;
+  min-height: calc(10 * 4vw);
   box-sizing: border-box;
   padding: 10vw;
   background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
     url(${props => props.image}) no-repeat center center;
   background-size: cover;
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 93%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
 `
 
 const Content = styled.div`
@@ -96,7 +96,7 @@ const Author = styled.img`
 
 const Title = styled.h1`
   position: absolute;
-  bottom: 4rem;
+  bottom: calc(2 * 4vw);
   max-width: 60rem;
   font-size: 3vw;
   @media screen and (max-width: 640px) {

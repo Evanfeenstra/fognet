@@ -10,13 +10,16 @@ const Header = styled.header`
   height: auto;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
-  padding: 20px 0;
+  padding: 3rem 5rem;
   z-index: 10;
+  box-sizing: border-box;  
   @media screen and (max-width: 640px) {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
+    padding: 3rem 0rem;    
     position: ${props => (props.active ? `fixed` : `absolute`)};
   }
 `
@@ -90,7 +93,7 @@ const Line = styled.div`
 
 const Satoshi = styled.img`
   height: 2.5rem;
-  margin-right: 2rem;
+  margin: 1rem;
 `
 
 export default class extends React.Component {
@@ -100,10 +103,10 @@ export default class extends React.Component {
   render() {
     return (
       <Header active={this.state.open}>
-        <Row
+        {/* <Row
           width={"80rem"}
-          style={{ justifyContent: "space-between", width: "75%" }}
-        >
+          style={{ justifyContent: "flex", width: "75%" }}
+        > */}
           <Link href="/">
             <Satoshi
               src={
@@ -128,7 +131,7 @@ export default class extends React.Component {
             <Line no={2} />
             <Line no={3} />
           </Menu> */}
-        </Row>
+        {/* </Row> */}
 
         {/* <Desktop active={this.state.open}>
           <Link href="/">

@@ -4,7 +4,7 @@ import { Link } from "../../routes"
 export default props =>
   <Footer>
     <Col>
-      <Title>Articles</Title>
+      {/* <Title>Articles</Title>
       <Link>
         <Anchor>IOTA & St. Petersburg Polytechnic University</Anchor>
       </Link>
@@ -13,7 +13,7 @@ export default props =>
       </Link>
       <Link>
         <Anchor>The Tangle: an elegant topology</Anchor>
-      </Link>
+      </Link> */}
     </Col>
     <Row>
       <Satoshi src={"/static/icons/satoshipay.png"} />
@@ -26,12 +26,13 @@ const Footer = styled.footer`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
-  padding: 2rem 0 2rem;
+  justify-content: space-between;
+  padding: 3rem 5rem 2rem;
   color: white;
+  box-sizing: border-box;
   background: linear-gradient(120deg, #d37290 20%, #73367c);
-  -webkit-clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
-  clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
+  -webkit-clip-path: polygon(0 0, 100% 30%, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 30%, 100% 100%, 0 100%);
   @media screen and (max-width: 640px) {
     flex-direction: column;
     align-items: flex-start;
