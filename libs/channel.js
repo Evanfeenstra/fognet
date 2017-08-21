@@ -1,9 +1,10 @@
 import API from "./api"
 import shortid from "shortid"
-
 import Flash from "iota.flash.js"
 import multisig from "iota.flash.js/lib/multisig"
 import transfer from "iota.flash.js/lib/transfer"
+import {Attach} from "./iota"
+
 
 export default class Channel {
   // Security level
@@ -36,7 +37,6 @@ export default class Channel {
     // Stop if local state exists
     const localState = await store.get("state")
     if (localState) {
-       console.log(localState)
        return localState
     }
 
@@ -221,7 +221,7 @@ export default class Channel {
     // Get latest state from localstorage
     const state = await store.get("state")
     var purchases = await store.get("purchases")
-    console.log(state)
+
     // TODO: check/generate tree
     let toUse = multisig.updateLeafToRoot(state.flash.root);
     if(toUse.generate != 0) {
@@ -253,16 +253,12 @@ export default class Channel {
       state.userSeed,
       bundles
     )
-
     console.log("Bundles", signedBundles)
     
     // Update bundles in local state
     state.bundles = signedBundles
 
-    // store.set("state", state)
-
     // Return signed bundles
-
     const opts = {
       headers: {
         'Accept': 'application/json',
@@ -278,7 +274,6 @@ export default class Channel {
     console.log(opts)
 
     const res = await API('purchase', opts);
-    
     if (res) {
       // render item, save secret
       // TODO: update bundles in local state
@@ -319,38 +314,77 @@ export default class Channel {
   static async initFlash() {
     // Get state
     const state = await store.get("state")
-
     Channel.flash = new Flash({...state.flash})
     return
   }
-}
 
-////// HELPERS
-//
-// Maybe move them outta channel ?
+  static async close() {
+    /// Check if Flash state exists
+    await Channel.initFlash()
 
-// Create IOTA instance directly with provider
+    // Get latest state from localstorage
+    const state = await store.get("state")
 
-import IOTA from "iota.lib.js"
+    // TODO: check/generate tree
+    let toUse = multisig.updateLeafToRoot(state.flash.root);
+    if(toUse.generate != 0) {
+      // Tell the server to generate new addresses, attach to the multisig you give
+      const digests = await Promise.all(Array(toUse.generate).fill().map(() => Channel.getNewDigest()));
+      await Channel.getNewBranch(
+        state.userID,
+        toUse.multisig, 
+        digests);
+    }
+    
+    // Compose transfer
+    const flash = state.flash;
+    const bundles = transfer.compose(
+      flash.balance, 
+      flash.deposit, 
+      flash.outputs, 
+      flash.stakes, 
+      toUse.multisig, 
+      flash.remainderAddress, 
+      flash.transfers, 
+      [{
+      address: `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+      value: 10 }],
+      true);
+    console.log("Unsigned", bundles)
 
-var iota = new IOTA({
-  provider: "https://node.tangle.works"
-})
+    // Sign transfer
+    const signedBundles = transfer.sign(
+      state.flash.root,
+      state.userSeed,
+      bundles
+    )
+    console.log("Bundles", signedBundles)
+    
+    // Update bundles in local state
+    state.bundles = signedBundles
 
-// Get node info
-const getNodeInfo = async () => {
-  const info = await new Promise(resolve => {
-    iota.api.getNodeInfo(function(error, success) {
-      if (error) {
-        console.error(error)
-        resolve(null)
-      } else {
-        console.log(success)
-        resolve(success)
-      }
-    })
-  })
-  return info
+    // Return signed bundles
+    const opts = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({
+        id: state.userID,
+        bundles: signedBundles,
+        item: null
+      })
+    }
+    console.log(opts)
+    const res = await API('close', opts);
+    console.log(res)
+    if (!res.error) {
+      var result = await Attach.POWClosedBundle(res.bundles)
+      console.log(result)      
+      return result
+    }
+  }    
 }
 
 // Generate a random seed. Higher security needed
@@ -384,9 +418,9 @@ class Store {
 // Check if window is available
 export const isWindow = () => {
   if (typeof window === "undefined" || typeof localStorage === "undefined") {
-    if (!("store" in global) || !(global.store instanceof Store)) {
-      global.store = Store
-    }
+    // if (!("store" in global) || !(global.store instanceof Store)) {
+    //   global.store = Store
+    // }
     return false
   }
   global.store = Store
