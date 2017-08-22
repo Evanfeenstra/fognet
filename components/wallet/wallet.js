@@ -80,15 +80,20 @@ const Seed = styled.h3`
 export default class extends React.Component {
   state = { page: "home", loading: false }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const state = await store.get("state")
+    if (state.closed) this.setState({ page: "closed" })
     this.setState({
-      channel: store.get("state"),
+      channel: state,
       purchases: store.get("purchases")
     })
   }
 
   close = async () => {
-    this.setState({ loading: true }, async () => {
+    this.setState({ page: "loading" }, async () => {
+      const state = await store.get("state")
+      store.set("state", { ...state, closed: true })
+
       var item = await Channel.close()
       this.setState({ page: "closed", loading: false })
     })
@@ -146,6 +151,14 @@ export default class extends React.Component {
                   </Button>
                   <Button onClick={() => this.close()}> Close Channel</Button>
                 </div>}
+          </Content>}
+        {page === "loading" &&
+          <Content>
+            <h3>Closing and attaching channel</h3>
+            <p>
+              Please leave the window open until the loading icon disappears.
+            </p>
+            <Spinner src={"/static/icons/loading-dark.svg"} />
           </Content>}
         {page === "transactions" &&
           <Content>
