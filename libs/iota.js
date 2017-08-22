@@ -96,7 +96,7 @@ export class Attach {
       //   console.log(tips)
       //   var pow = await attachToTangle(tips.trunkTransaction, tips.branchTransaction, 15, trytes)
       //   console.log(pow)
-
+      if (isWindow()) curl.overrideAttachToTangle(iota.api)
       var result = await Attach.sendTrytes(trytes)
       results.push(result)
     }
@@ -114,6 +114,5 @@ export const isWindow = () => {
   if (typeof window === "undefined" || typeof localStorage === "undefined") {
     return false
   }
-  global.store = Store
   return true
 }
