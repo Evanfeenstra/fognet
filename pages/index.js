@@ -37,10 +37,10 @@ export default () =>
       <span
         style={{ textAlign: "center", padding: "3rem 0 5rem", lineHeight: 2 }}
       >
-      Flash channels provide a way to transact in high frequency without 
-      computing PoW constantly. This reduces the transaction overhead to a negligible 
-      level by creating transactions off network. The resulting channels free up users 
-      to transact securely with ease.
+        Flash channels provide a way to transact for free in high frequency
+        without computing PoW constantly. This reduces the transaction overhead
+        to a negligible level by creating transactions off network. The
+        resulting channels free up users to transact securely with instantly.
       </span>
     </Row>
 
@@ -52,8 +52,9 @@ export default () =>
         </HeadWrap>
 
         <span>
-          Flash Channels work by creating transactions off tangle. This frees up devices, such as sensors, to transact without
-           the burden of fees or continual Proof of Work.
+          Flash Channels work by creating transactions off tangle. This frees up
+          devices, such as sensors, to transact without the burden of fees or
+          continual Proof of Work.
         </span>
       </Item>
       <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
@@ -96,40 +97,77 @@ export default () =>
       </span>
     </Row>
 
-    <Row align={`center`}>
-      <Link route={`/article/supercomputer`}>
-        <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
-          <Img img={`/static/images/servers.jpeg`} />
-          <h2>IOTA and St. Petersburg Polytechnic University</h2>
-          <span>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
-            mi. Sed egenisi.
-          </span>
-        </Item>
-      </Link>
-      <Link route={`/article/tangle`}>
-        <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
-          <Img img={`/static/images/tangle.jpg`} />
-          <h2>The Tangle: an elegant topology</h2>
-          <span>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
-            mi. Sed egenisi.
-          </span>
-        </Item>
-      </Link>
-      <Link route={`/article/etherreview`}>
-        <Item justify={"space-between"}>
-          <Img img={`/static/images/ether-thumb.jpg`} />
-          <h2>Ether Review - IOTA with David Sønstebø</h2>
-          <span>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            varius aliquet convallis. Phasellus eu vulputate nulla, at blandit
-            mi. Sed egenisi.
-          </span>
-        </Item>
-      </Link>
+    <Row width={`60rem`} align={`flex-start`}>
+      <ArticleSection>
+        <Link route={`/article/supercomputer`}>
+          <Article>
+            <Img img={`/static/images/servers.jpeg`} />
+            <h2>IOTA and St. Petersburg Polytechnic University</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+        <Link route={`/article/tangle`}>
+          <Article>
+            <Img img={`/static/images/tangle.jpg`} />
+            <h2>The Tangle: an elegant topology</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+        <Link route={`/article/etherreview`}>
+          <Article justify={"space-between"}>
+            <Img img={`/static/images/ether-thumb.jpg`} />
+            <h2>Ether Review - IOTA with David Sønstebø</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+      </ArticleSection>
+      <ArticleSection margin>
+        <Link route={`/article/supercomputer`}>
+          <Article>
+            <Img img={`/static/images/servers.jpeg`} />
+            <h2>IOTA and St. Petersburg Polytechnic University</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+        <Link route={`/article/tangle`}>
+          <Article>
+            <Img img={`/static/images/tangle.jpg`} />
+            <h2>The Tangle: an elegant topology</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+        <Link route={`/article/etherreview`}>
+          <Article>
+            <Img img={`/static/images/ether-thumb.jpg`} />
+            <h2>Ether Review - IOTA with David Sønstebø</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
+      </ArticleSection>
     </Row>
 
     {/* <Col margin={"2rem 0 10rem"} justify={"space-between"}>
@@ -143,6 +181,42 @@ export default () =>
       </Row>
     </Col> */}
   </Layout>
+
+const ArticleSection = styled.section`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: ${props => (props.margin ? `18rem` : null)};
+  @media screen and (max-width: 640px) {
+    flex-direction: column;
+    margin-top: none;
+  }
+`
+
+const Article = styled.a`
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 5%;
+  padding: 2rem 5rem 6rem;
+  cursor: pointer;
+  @media screen and (max-width: 640px) {
+    width: 90%;
+    padding: 2rem 0rem 4rem;
+  }
+`
+const Img = styled.div`
+  background: url(${props => props.img}) no-repeat center center;
+  background-size: cover;
+  width: 100%;
+  height: calc(4*4vw);
+  min-height: 10rem;
+  max-height: 20rem;
+  @media screen and (max-width: 640px) {
+    height: 250px;
+  }
+`
 
 const HeadWrap = styled.div`
   display: flex;
@@ -196,24 +270,14 @@ const Icon = styled.img`
   height: 3rem;
   width: 3rem;
 `
-const Img = styled.div`
-  background: url(${props => props.img}) no-repeat center center;
-  background-size: cover;
-  width: 100%;
-  height: calc(4*4vw);
-  max-height: 200px;
-  @media screen and (max-width: 640px) {
-    height: 250px;
-  }
-`
 
 const Item = styled.a`
   display: flex;
-  flex: 1;
   flex-direction: column;
+  box-sizing: border-box;
   max-width: 20rem;
-  margin: 2rem 1rem 6rem;
+  padding: 2rem 1rem 6rem;
   @media screen and (max-width: 640px) {
-    margin: 2rem 0rem 4rem;
+    padding: 2rem 0rem 4rem;
   }
 `
