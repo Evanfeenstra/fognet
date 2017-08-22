@@ -4,6 +4,7 @@ import Flash from "iota.flash.js"
 import multisig from "iota.flash.js/lib/multisig"
 import transfer from "iota.flash.js/lib/transfer"
 import {Attach} from "./iota"
+import Presets from './presets'
 
 export default class Channel {
   // Security level
@@ -233,19 +234,29 @@ export default class Channel {
     }
     // Compose transfer
     const flash = state.flash;
-    const bundles = transfer.compose(
-      flash.balance, 
-      flash.deposit, 
-      flash.outputs, 
-      flash.stakes, 
-      toUse.multisig, 
-      flash.remainderAddress, 
-      flash.transfers, 
-      [{
-      address: settlementAddress,
-      value: value
-    }]);
+    let bundles;
+    try {
+       bundles = transfer.compose(
+        flash.balance, 
+        flash.deposit, 
+        flash.outputs, 
+        flash.stakes, 
+        toUse.multisig, 
+        flash.remainderAddress, 
+        flash.transfers, 
+        [{
+        address: settlementAddress,
+        value: value
+      }]);
+    } 
+    catch(e) {
+      console.log("Error: ", e)
+      console.log(e)
+       alert("Not enough funds")
+      return false
+    }
     console.log("Unsigned", bundles)
+    
     // Sign transfer
     const signedBundles = transfer.sign(
       state.flash.root,
@@ -346,7 +357,7 @@ export default class Channel {
       flash.remainderAddress, 
       flash.transfers, 
       [{
-      address: `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+      address: Presets.ADDRESS,
       value: 10 }],
       true);
     console.log("Unsigned", bundles)

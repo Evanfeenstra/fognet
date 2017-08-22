@@ -5,7 +5,7 @@ import Link from "next/link"
 import Button from "./button"
 import Paywall from "./paywall"
 import Content from "./content"
-
+import Presets from '../../libs/presets'
 import Channel from "../../libs/channel"
 
 export default class extends React.Component {
@@ -21,7 +21,7 @@ export default class extends React.Component {
     var purchases = await store.get("purchases")
     if (purchases) {
       var item = purchases.find(item => item.id === this.props.content)
-      if (item.key) this.setState({ itemKey: item.key })
+      if (item) this.setState({ itemKey: item.key })
     }
   }
 
@@ -29,9 +29,10 @@ export default class extends React.Component {
     this.setState({ loading: true }, async () => {
       var item = await Channel.composeTransfer(
         this.props.price,
-        `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+        Presets.ADDRESS,
         this.props.content
       )
+      if (!item) return      this.setState({ loading: false })        
       this.setState({ itemKey: item.key })
     })
   }
