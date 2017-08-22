@@ -5,7 +5,6 @@ import multisig from "iota.flash.js/lib/multisig"
 import transfer from "iota.flash.js/lib/transfer"
 import {Attach} from "./iota"
 
-
 export default class Channel {
   // Security level
   static SECURITY = 2

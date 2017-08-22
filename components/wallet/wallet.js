@@ -117,7 +117,7 @@ export default class extends React.Component {
       <Wallet {...this.props}>
         <Header>
           <div>You have {Reducer(this.props.balance)} IOTA</div>{" "}
-          {page !== "home"
+          {page !== "home" && page !== "loading"
             ? <Closed
                 style={{ height: 30, width: 30 }}
                 onClick={() => this.setState({ page: "home" })}
