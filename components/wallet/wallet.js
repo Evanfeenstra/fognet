@@ -82,7 +82,7 @@ export default class extends React.Component {
 
   async componentDidMount() {
     const state = await store.get("state")
-    if (state.closed) this.setState({ page: "closed" })
+    if (state && state.closed) this.setState({ page: "closed" })
     this.setState({
       channel: state,
       purchases: await store.get("purchases")
@@ -96,7 +96,7 @@ export default class extends React.Component {
 
     state.flash.deposit = [200,200]
     state.flash.balance = 400
-    
+    console.log(state)
     if(funded) {
       store.set("state", { ...state, funded: true })
       this.setState({ channel: {...state, funded: true}})      
