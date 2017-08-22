@@ -33,16 +33,14 @@ export default () =>
       </Col>
     </Row> */}
     <Title style={{ color: "#222", fontWeight: 600 }}>Flash, What?</Title>
-    <Row width={`40rem`}>
+    <Row width={`43rem`}>
       <span
         style={{ textAlign: "center", padding: "3rem 0 5rem", lineHeight: 2 }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus dui
-        enim, porta a magna nec, mattis consectetur urna. Pellentesque congue
-        velit ac gravida eleifend. Mauris sed porttitor lectus.Lorem ipsum dolor
-        sit amet, consectetur adipiscing elit. Phasellus dui enim, porta a magna
-        nec, mattis consectetur urna. Pellentesque congue velit ac gravida
-        eleifend. Mauris sed porttitor lectus.
+      Flash channels provide a way to transact in high frequency without 
+      computing PoW constantly. This reduces the transaction overhead to a negligible 
+      level by creating transactions off network. The resulting channels free up users 
+      to transact securely with ease.
       </span>
     </Row>
 
@@ -54,9 +52,8 @@ export default () =>
         </HeadWrap>
 
         <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
+          Flash Channels work by creating transactions off tangle. This frees up devices, such as sensors, to transact without
+           the burden of fees or continual Proof of Work.
         </span>
       </Item>
       <Item margin={"2rem 1rem 10rem"} justify={"space-between"}>
