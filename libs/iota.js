@@ -2,7 +2,6 @@ import IOTA from "iota.lib.js"
 import Presets from "./presets"
 
 var iota = new IOTA({
-  //   provider: "http://node.tangle.works:14265"
   provider: Presets.IOTA
 })
 
@@ -21,32 +20,6 @@ export const getNodeInfo = async () => {
   })
 }
 
-// // Get node info
-// export const getTips = async () => {
-//     return new Promise(function(resolve, reject) {
-//       iota.api.getTransactionsToApprove(6, (e, r) => {
-//         if(e) {
-//             reject(e)
-//         } else {
-//             resolve(r)
-//         }
-//       })
-//     })
-//   }
-
-// export const attachToTangle = (trunk, branch, depth, array) => {
-//     return new Promise(function(resolve, reject) {
-//         iota.api.attachToTangle(trunk, branch, depth, array, (e, r) => {
-//             console.log('sendTrytes', e, r);
-//             if(e) {
-//                 reject(e)
-//             }
-//             else {
-//                 resolve(r)
-//             }
-//         })
-//     });
-// }
 
 export class Attach {
   static bundleToTrytes(bundle) {
@@ -92,10 +65,6 @@ export class Attach {
     var results = []
     for (var trytes of trytesPerBundle) {
       console.log(trytes)
-      //   var tips = await getTips()
-      //   console.log(tips)
-      //   var pow = await attachToTangle(tips.trunkTransaction, tips.branchTransaction, 15, trytes)
-      //   console.log(pow)
       if (isWindow()) curl.overrideAttachToTangle(iota.api)
       var result = await Attach.sendTrytes(trytes)
       results.push(result)
