@@ -25,8 +25,8 @@ export default class Channel {
     security = Channel.SECURITY,
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
-    balance = 400,
-    deposit = Array(Channel.SIGNERS_COUNT).fill(200),
+    balance = 0,
+    deposit = Array(Channel.SIGNERS_COUNT).fill(0),
     stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
   ) {
     // Escape the function when server rendering
@@ -179,7 +179,7 @@ export default class Channel {
 
     // Increment digests key index
     state.index++;
-
+    state.init = true
     // Update local state
     await store.set("state", state)
 

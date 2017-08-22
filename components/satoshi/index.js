@@ -5,7 +5,7 @@ import Link from "next/link"
 import Button from "./button"
 import Paywall from "./paywall"
 import Content from "./content"
-import Presets from '../../libs/presets'
+import Presets from "../../libs/presets"
 import Channel from "../../libs/channel"
 
 export default class extends React.Component {
@@ -26,13 +26,15 @@ export default class extends React.Component {
   }
 
   purchase = async () => {
+    /// Make sure flash exists
+
     this.setState({ loading: true }, async () => {
       var item = await Channel.composeTransfer(
         this.props.price,
         Presets.ADDRESS,
         this.props.content
       )
-      if (!item) return   this.setState({ loading: false })        
+      if (!item) return this.setState({ loading: false })
       this.setState({ itemKey: item.key })
     })
   }
