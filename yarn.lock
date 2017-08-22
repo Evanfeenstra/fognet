@@ -1995,7 +1995,7 @@ invert-kv@^1.0.0:
 
 "iota.flash.js@git+https://github.com/iotaledger/iota.flash.js.git":
   version "0.0.1"
-  resolved "git+https://github.com/iotaledger/iota.flash.js.git#85d91ef5eb08f8197e7133d9ece0fe58ff9cdbe1"
+  resolved "git+https://github.com/iotaledger/iota.flash.js.git#82a221695a7ddb77b56c21b8ddfe0d9cf5674f92"
   dependencies:
     iota.crypto.js "github:iotaledger/iota.crypto.js"
 
