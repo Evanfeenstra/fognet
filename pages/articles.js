@@ -6,11 +6,12 @@ import { Row, Col } from "../components/scaffold"
 import Satoshi from "../components/satoshi"
 import Articles from "../libs/data"
 
-const Components = props => {
+const Components = (props, i) => {
   if (props.type === "html") {
-    return React.createElement(props.tag, props.props || {}, props.children)
+   var p = {...props.props, key: i}
+    return React.createElement(props.tag, p, props.children)
   } else {
-    return <Satoshi {...props} />
+    return <Satoshi {...props} key={i} />
   }
 }
 
@@ -29,7 +30,7 @@ export default class extends React.Component {
           </Title>
         </Header>
         <Content>
-          {article.content.map(item => Components(item))}
+          {article.content.map((item, i) => Components(item, i))}
           <Wrapper>
             <Author
               src={
