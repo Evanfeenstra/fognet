@@ -1,8 +1,8 @@
 import API from "./api"
 import shortid from "shortid"
-import Flash from "iota.flash.js"
-import multisig from "iota.flash.js/lib/multisig"
-import transfer from "iota.flash.js/lib/transfer"
+import Flash from "./flash/flash.js"
+import multisig from "./flash/multisig"
+import transfer from "./flash/transfer"
 import {Attach} from "./iota"
 import Presets from './presets'
 
@@ -251,8 +251,11 @@ export default class Channel {
     } 
     catch(e) {
       console.log("Error: ", e)
-      console.log(e)
-       alert("Not enough funds")
+      switch (e.message) {
+        case "2": alert("Not enough funds")
+        break
+        default: alert("An error occured. Please reset channel")
+      }
       return false
     }
     console.log("Unsigned", bundles)
