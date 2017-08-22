@@ -11,7 +11,7 @@ export default class Channel {
   static SECURITY = 2
 
   // Number of parties taking signing part in the channel
-  static SIGNERS_COUNT = 3
+  static SIGNERS_COUNT = 2
 
   // Flash tree depth
   static TREE_DEPTH = 4
@@ -25,8 +25,8 @@ export default class Channel {
     security = Channel.SECURITY,
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
-    balance = 300,
-    deposit = Array(Channel.SIGNERS_COUNT).fill(100),
+    balance = 400,
+    deposit = Array(Channel.SIGNERS_COUNT).fill(200),
     stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
   ) {
     // Escape the function when server rendering
@@ -351,18 +351,30 @@ export default class Channel {
     
     // Compose transfer
     const flash = state.flash;
-    const bundles = transfer.compose(
-      flash.balance, 
-      flash.deposit, 
-      flash.outputs, 
-      flash.stakes, 
-      toUse.multisig, 
-      flash.remainderAddress, 
-      flash.transfers, 
-      [{
-      address: Presets.ADDRESS,
-      value: 10 }],
-      true);
+    let bundles
+      try {
+         bundles = transfer.compose(
+          flash.balance, 
+          flash.deposit, 
+          flash.outputs, 
+          flash.stakes, 
+          toUse.multisig, 
+          flash.remainderAddress, 
+          flash.transfers, 
+          [{
+          address: Presets.ADDRESS,
+          value: 1 }],
+          true);
+     } 
+     catch(e) {
+       console.log("Error: ", e)
+       switch (e.message) {
+         case "2": alert("Not enough funds")
+         break
+         default: alert("An error occured. Please reset channel")
+       }
+       return false
+     }
     console.log("Unsigned", bundles)
 
     // Sign transfer
