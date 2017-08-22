@@ -22,20 +22,6 @@ export default class extends React.Component {
       purchases
     })
   }
-  // componentWillUnmount() {
-  //   this.stopListenting()
-  // }
-
-  // listen = () => {
-  //   window.addEventListener("storage", this.updateState, false)
-  // }
-
-  // stopListenting = () => {
-  //   window.removeEventListener("storage", this.updateState, false)
-  // }
-  // updateState = event => {
-  //   console.log(event)
-  // }
 
   toggle = () => {
     var state = store.get("state")
