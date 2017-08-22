@@ -32,7 +32,7 @@ export default class extends React.Component {
         Presets.ADDRESS,
         this.props.content
       )
-      if (!item) return      this.setState({ loading: false })        
+      if (!item) return   this.setState({ loading: false })        
       this.setState({ itemKey: item.key })
     })
   }

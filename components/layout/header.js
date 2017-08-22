@@ -103,10 +103,7 @@ export default class extends React.Component {
   render() {
     return (
       <Header active={this.state.open}>
-        {/* <Row
-          width={"80rem"}
-          style={{ justifyContent: "flex", width: "75%" }}
-        > */}
+
           <Link href="/">
             <Satoshi
               src={
@@ -126,35 +123,6 @@ export default class extends React.Component {
             />
           </Link>
 
-          {/* <Menu onClick={() => this.setState({ open: !this.state.open })}>
-            <Line no={1} />
-            <Line no={2} />
-            <Line no={3} />
-          </Menu> */}
-        {/* </Row> */}
-
-        {/* <Desktop active={this.state.open}>
-          <Link href="/">
-            <Anchor {...this.props}>Home</Anchor>
-          </Link>
-          <Link href="/faqs">
-            <Anchor {...this.props}>FAQs</Anchor>
-          </Link>
-          <Link href="/contact">
-            <Anchor {...this.props}>Contact</Anchor>
-          </Link>
-        </Desktop>
-        <MobileNav active={this.state.open}>
-          <Link href="/">
-            <Anchor {...this.props}>Home</Anchor>
-          </Link>
-          <Link href="/faqs">
-            <Anchor {...this.props}>FAQs</Anchor>
-          </Link>
-          <Link href="/contact">
-            <Anchor {...this.props}>Contact</Anchor>
-          </Link>
-        </MobileNav> */}
       </Header>
     )
   }
