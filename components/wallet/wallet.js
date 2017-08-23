@@ -18,8 +18,9 @@ const Wallet = styled.div`
   z-index: 30;
   transform: translateX(${props => (props.drawerOpen ? "0%" : "100%")});
   transition: all .4s ease;
+  box-sizing: border-box;
   @media screen and (max-width: 640px) {
-    width: 100vw;
+    width: 100%;
   }
 `
 
@@ -119,13 +120,13 @@ export default class extends React.Component {
   reset = async () => {
     store.set("state", null)
     store.set("purchases", null)
-
-    Channel.initialize()
-
     this.setState({
       page: "home",
-      loading: false
+      loading: false,
+      channel: {funded: false}
     })
+
+    Channel.initialize()
   }
 
   render() {

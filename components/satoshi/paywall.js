@@ -37,8 +37,8 @@ const Paywall = styled.div`
 `
 
 const Image = styled.img`
-  height: 100%;
-  max-width: 100%;
+  height: auto;
+  width: 100%;
 `
 
 const Video = Paywall.extend`

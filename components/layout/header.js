@@ -94,6 +94,7 @@ const Line = styled.div`
 const Satoshi = styled.img`
   height: 2.5rem;
   margin: 1rem;
+  cursor: pointer;
 `
 
 export default class extends React.Component {
