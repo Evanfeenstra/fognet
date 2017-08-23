@@ -31,7 +31,8 @@ export default class Channel {
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
-
+    console.log('Initialising Channel')
+    
     var userSeed = seedGen(81)
 
     // Stop if local state exists
@@ -87,7 +88,7 @@ export default class Channel {
   }
 
   static async register(digests, userID) {
-    console.log('regists: Digets', digests)
+    console.log('Address Digests: ', digests)
 
     const opts = {
       headers: {
@@ -116,13 +117,11 @@ export default class Channel {
     
     const remainderAddress = multisigs.shift();
 
-    for(let i = 0; i < multisigs.length; i++) {
-      if(i>0) {
+    for(let i = 1; i < multisigs.length; i++) {
         multisigs[i-1].children.push(multisigs[i]);
-      }
     }
     console.log(multisigs[0]);
-    console.log(iota.utils.addChecksum(multisigs.shift().address))
+    console.log(iota.utils.addChecksum(multisigs[0].address))
     
     return {
       remainder: remainderAddress,
@@ -131,7 +130,7 @@ export default class Channel {
   }
 
   static async getNewBranch(userID, address, digests) {
-    console.log('branchists: Digets', digests)
+    console.log('Branch Event', "Digests: ", digests)
 
     const opts = {
       headers: {
@@ -145,11 +144,11 @@ export default class Channel {
         digests: digests
       })
     }
-    console.log(opts)
+    console.log("Sending: ", opts.body)
     // Send digests to server and obtain new multisig addresses
     const response = await API("branch", opts)
 
-    console.log('RESPONSE', response)
+    console.log('Server Digests: ', response)
     const serverDigests = response.digests;
     let multisigs = digests.map((digest, index) => {      
       let addy = multisig.composeAddress([digest, serverDigests[index]]);
@@ -163,7 +162,6 @@ export default class Channel {
     for(let i = 1; i < multisigs.length; i++) {
         multisigs[i-1].children.push(multisigs[i]);
     }
-    console.log(multisigs[0]);
     return address;
   }
 
@@ -304,14 +302,15 @@ export default class Channel {
         res.bundles);
       await store.set("state", state)
       console.log(res)
-      // channel.applyTransferDiff(res.diff);
+      // Check is purchases exists
+       if (!purchases) var purchases = []
+      
+        // Push the purchase recipt to the browser
+      purchases.push({...res, value})
+      // save purchases for reload
+      store.set("purchases", purchases)
     }
-    // Check is purchases exists
-    if (!purchases) var purchases = []
-    // Push the purchase recipt to the browser
-    purchases.push({...res, value})
-    // save purchases for reload
-    store.set("purchases", purchases)
+ 
     // Return recipt to be used by the calling function
     return res
   }
