@@ -99,6 +99,17 @@ export default () =>
 
     <Row width={`60rem`} align={`flex-start`}>
       <ArticleSection>
+        <Link route={`/article/tangle`}>
+          <Article>
+            <Img img={`/static/images/tangle.jpg`} />
+            <h2>Introducing IOTA - A Crypto Currency</h2>
+            <span>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
+              at blandit mi. Sed egenisi.
+            </span>
+          </Article>
+        </Link>
         <Link route={`/article/supercomputer`}>
           <Article>
             <Img img={`/static/images/servers.jpeg`} />
@@ -110,21 +121,10 @@ export default () =>
             </span>
           </Article>
         </Link>
-        <Link route={`/article/tangle`}>
+        <Link route={`/article/ecosystem`}>
           <Article>
-            <Img img={`/static/images/tangle.jpg`} />
-            <h2>The Tangle: an elegant topology</h2>
-            <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
-            </span>
-          </Article>
-        </Link>
-        <Link route={`/article/etherreview`}>
-          <Article justify={"space-between"}>
-            <Img img={`/static/images/ether-thumb.jpg`} />
-            <h2>Ether Review - IOTA with David Sønstebø</h2>
+            <Img img={`/static/images/ecosystem-header.jpg`} />
+            <h2>IOTA Ecosystem Fund ($10 million USD)</h2>
             <span>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
@@ -134,21 +134,10 @@ export default () =>
         </Link>
       </ArticleSection>
       <ArticleSection margin>
-        <Link route={`/article/supercomputer`}>
+         <Link route={`/article/innovationnorway`}>
           <Article>
-            <Img img={`/static/images/servers.jpeg`} />
-            <h2>IOTA and St. Petersburg Polytechnic University</h2>
-            <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
-            </span>
-          </Article>
-        </Link>
-        <Link route={`/article/tangle`}>
-          <Article>
-            <Img img={`/static/images/tangle.jpg`} />
-            <h2>The Tangle: an elegant topology</h2>
+            <Img img={`/static/images/norway-header.jpg`} />
+            <h2>IOTA launches DLT Research & Innovation Network from Norway</h2>
             <span>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
@@ -189,7 +178,7 @@ const ArticleSection = styled.section`
   margin-top: ${props => (props.margin ? `18rem` : null)};
   @media screen and (max-width: 640px) {
     flex-direction: column;
-    margin-top: none;
+    margin-top: 0;
   }
 `
 

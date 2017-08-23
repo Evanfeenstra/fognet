@@ -1,7 +1,7 @@
 import IOTA from "iota.lib.js"
 import Presets from "./presets"
 
-var iota = new IOTA({
+export var iota = new IOTA({
   provider: Presets.IOTA
 })
 
