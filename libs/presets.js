@@ -4,7 +4,7 @@ export default  {
     API: prod
       ? 'https://iotapay-server.now.sh/'
       : 'http://localhost:9000/',
-      ADDRESS: `TRPSU9DSNROHLCPIXBXGDXPOLKPUOYZZBZJCEILRJNSIFZASLPKHCIDIDBRCJHASMENZMTICJMBZRANKM`,
+      ADDRESS: `GQMHDLS9XPSNURUCPKKJJTULZRPH9WSKUKQQQPJOY9CPRCNAUSIFWCLHVDSUHJJCPMQDARUIFFXKXFVQDBCXTTSCTD`,
       IOTA: prod
       ? 'https://node.tangle.works'
       : 'http://52.58.212.188:14700',
