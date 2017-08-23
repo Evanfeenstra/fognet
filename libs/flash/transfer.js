@@ -139,10 +139,10 @@ function applyTransfers(root, deposit, stakes, outputs, remainder, history, tran
   try {
     // getDiff doesn't fail (because negative output diff)
     let diff = getDiff(root, remainder, history, transfers);
-    // get the total amount of increase in outputs
-    let total = diff.filter(v => v.value > 0).reduce((a,b) => a+b, 0);
     // get the total amount of remaining deposits
     let remaining = deposit.reduce((a,b) => a+b, 0); 
+    // get the total amount of increase in outputs
+    let total = diff.filter(v => v.value > 0 && v.value != remaining).reduce((acc,tx) => acc+tx.value, 0);
     // You can't spend more than you have in deposits
     if (total > remaining) {
       throw new Error(TransferErrors.INSUFFICIENT_FUNDS);
@@ -256,14 +256,14 @@ function getDiff(root, remainder, history, bundles) {
     .filter(tx => tx.value > 0)
     .map(tx => Object({address: tx.address, value: tx.value}))
     .filter(tx => tx.address != remainder.address));
-  previousTransfer.filter(tx => tx.value > 0).map(tx => {
-    const existing = newCopy.filter(t => t.address == tx.address);
-    if(existing.length != 0) {
-      existing[0].value -= tx.value;
-    } else {
-      newCopy.push(tx);
-    }
-  });
+    previousTransfer.filter(tx => tx.value > 0).map(tx => {
+      const existing = newCopy.find(t => t.address == tx.address);
+      if(existing) {
+        existing.value -= tx.value;
+      } else {
+        newCopy.push({address: tx.address, value: tx.value});
+      }
+    });
   const negatives = newCopy.filter(tx => tx.value < 0);
   if(negatives.length != 0 ) {
     throw new Error(TransferErrors.INVALID_INPUT);
