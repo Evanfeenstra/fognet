@@ -36,13 +36,16 @@ function compose(balance, deposit, outputs, stakes, root, remainder, history, tr
     throw new Error(TransferErrors.INVALID_TRANSFER_OBJECT);
   }
   const amount = transfers.reduce((a,b) => a + b.value, 0);
+
+  for(let i = 0; i < stateCopy.stakes.length; i++) {
+    stateCopy.deposit[i] -= amount * stateCopy.stakes[i];
+  }
+
   const deposits = stateCopy.deposit.reduce((a,b) => a + b, 0);
   if( amount > deposits || deposits < 1) {
     throw new Error(TransferErrors.INSUFFICIENT_FUNDS);
   }
-  for(let i = 0; i < stateCopy.stakes.length; i++) {
-    stateCopy.deposit[i] -= amount * stateCopy.stakes[i];
-  }
+
   transfers = transfers.map( transfer => {
     if (!(transfer.address in stateCopy.outputs)) {
       stateCopy.outputs[transfer.address] = 0;
@@ -245,10 +248,10 @@ function getDiff(root, remainder, history, bundles) {
   }
   let previousTransfer = history.length == 0 ? []: history[history.length - 1];
   const lastTransfer = bundles[bundles.length - 1];
-  const previousRemainder = previousTransfer.filter(tx => tx.address == remainder.address && tx.value > 0).reduce((acc, v) => acc + v, 0);
+  const previousRemainder = previousTransfer.filter(tx => tx.address == remainder.address && tx.value > 0).reduce((acc, v) => acc + v.value, 0);
   const newRemainder = lastTransfer.filter(tx => tx.address == remainder.address)
     .map(tx => tx.value )
-    .reduce((acc, v) => acc + v, 0)
+    .reduce((acc, v) => acc + v.value, 0)
   if(newRemainder.value > previousRemainder.value) {
     throw new Error(TransferErrors.REMAINDER_INCREASED);
   }
@@ -256,14 +259,14 @@ function getDiff(root, remainder, history, bundles) {
     .filter(tx => tx.value > 0)
     .map(tx => Object({address: tx.address, value: tx.value}))
     .filter(tx => tx.address != remainder.address));
-    previousTransfer.filter(tx => tx.value > 0).map(tx => {
-      const existing = newCopy.find(t => t.address == tx.address);
-      if(existing) {
-        existing.value -= tx.value;
-      } else {
-        newCopy.push({address: tx.address, value: tx.value});
-      }
-    });
+  previousTransfer.filter(tx => tx.value > 0).map(tx => {
+    const existing = newCopy.find(t => t.address == tx.address);
+    if(existing) {
+      existing.value -= tx.value;
+    } else {
+      newCopy.push({address: tx.address, value: tx.value});
+    }
+  });
   const negatives = newCopy.filter(tx => tx.value < 0);
   if(negatives.length != 0 ) {
     throw new Error(TransferErrors.INVALID_INPUT);
