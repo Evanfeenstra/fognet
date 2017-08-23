@@ -14,8 +14,6 @@ export default class extends React.Component {
     var state = await store.get("state")
     var purchases = await store.get("purchases")
 
-    console.log(state)
-
     this.setState({
       balance: state ? state.flash.balance : 0,
       state,

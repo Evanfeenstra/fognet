@@ -183,7 +183,7 @@ export default {
         type: `image`,
         price: 100,
         placeholder: "ecosystem-library-blurred.jpg",
-        content: `ecosystem-library.jpeg`
+        content: `ecosystem-library.png`
       },
       {
         type: "html",
@@ -196,7 +196,7 @@ export default {
         type: `image`,
         price: 50,
         placeholder: "ecosystem-poc-blurred.jpg",
-        content: `ecosystem-poc.jpg`
+        content: `ecosystem-poc.png`
       },
       {
         type: "html",

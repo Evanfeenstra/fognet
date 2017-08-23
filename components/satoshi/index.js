@@ -41,7 +41,6 @@ export default class extends React.Component {
 
   render() {
     var { itemKey, loading } = this.state
-    console.log(itemKey)
     if (!itemKey) {
       return (
         <Paywall {...this.props}>

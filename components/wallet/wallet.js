@@ -95,9 +95,9 @@ export default class extends React.Component {
     var funded = true
     // var funded = await Channel.close(state.flash.root.address)
 
-    state.flash.deposit = [200,200]
+    state.flash.deposit = [400,0]
     state.flash.balance = 400
-    console.log(state)
+
     if(funded) {
       store.set("state", { ...state, funded: true })
       this.setState({ channel: {...state, funded: true}})      
