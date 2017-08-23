@@ -145,7 +145,7 @@ function applyTransfers(root, deposit, stakes, outputs, remainder, history, tran
     // get the total amount of remaining deposits
     let remaining = deposit.reduce((a,b) => a+b, 0); 
     // get the total amount of increase in outputs
-    let total = diff.filter(v => v.value > 0 && v.value != remaining).reduce((acc,tx) => acc+tx.value, 0);
+    let total = diff.filter(v => v.value > 0 && v.address != remainder.address).reduce((acc,tx) => acc+tx.value, 0);
     // You can't spend more than you have in deposits
     if (total > remaining) {
       throw new Error(TransferErrors.INSUFFICIENT_FUNDS);
