@@ -3,7 +3,7 @@ import shortid from "shortid"
 import Flash from "./flash/flash.js"
 import multisig from "./flash/multisig"
 import transfer from "./flash/transfer"
-import {Attach} from "./iota"
+import {Attach, iota} from "./iota"
 import Presets from './presets'
 
 export default class Channel {
@@ -122,6 +122,8 @@ export default class Channel {
       }
     }
     console.log(multisigs[0]);
+    console.log(iota.utils.addChecksum(multisigs.shift().address))
+    
     return {
       remainder: remainderAddress,
       root: multisigs.shift()
@@ -180,6 +182,8 @@ export default class Channel {
     // Increment digests key index
     state.index++;
     state.init = true
+
+
     // Update local state
     await store.set("state", state)
 
