@@ -33,13 +33,11 @@ export default class extends React.Component {
           {article.content.map((item, i) => Components(item, i))}
           <Wrapper>
             <Author
-              src={
-                "https://cdn-images-1.medium.com/fit/c/120/120/1*FTolJ7161fIrqxOUq9yyWg.jpeg"
-              }
+              src={article.authorImg}
             />
             <div>
-              <span>David Sønstebø</span>
-              <span>Founder of IOTA</span>
+              <span>{article.author}</span>
+              <span>{article.authorBio}</span>
             </div>
           </Wrapper>
         </Content>
@@ -75,6 +73,7 @@ const Content = styled.div`
     font-size: 120%;
   }
   @media screen and (max-width: 640px) {
+    padding: 4rem 0rem;
     width: 90vw;
   }
 `
