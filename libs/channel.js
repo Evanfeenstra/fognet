@@ -224,7 +224,7 @@ export default class Channel {
     // Get latest state from localstorage
     const state = await store.get("state")
     var purchases = await store.get("purchases")
-
+    
     // TODO: check/generate tree
     if (!state.flash.root) return
     let toUse = multisig.updateLeafToRoot(state.flash.root);
@@ -240,6 +240,11 @@ export default class Channel {
     const flash = state.flash;
     let bundles;
     try {
+      // No settlement addresses and Index is 0 as we are alsways sending from the client
+      let newTansfers = transfer.prepare([Presets.ADDRESS, null], flash.stakes, flash.deposit, 0, [{
+        address: settlementAddress,
+        value: value
+      }])
        bundles = transfer.compose(
         flash.balance, 
         flash.deposit, 
@@ -248,10 +253,7 @@ export default class Channel {
         toUse.multisig, 
         flash.remainderAddress, 
         flash.transfers, 
-        [{
-        address: settlementAddress,
-        value: value
-      }]);
+        newTansfers);
     } 
     catch(e) {
       console.log("Error: ", e)
@@ -301,7 +303,6 @@ export default class Channel {
         state.flash.remainderAddress, 
         state.flash.transfers, 
         res.bundles);
-
       // Save updated state
       await store.set("state", state)
 
@@ -355,22 +356,23 @@ export default class Channel {
         toUse.multisig, 
         digests);
     }
-    
+    console.log(state)
     // Compose transfer
     const flash = state.flash;
     let bundles
       try {
+          // No settlement addresses and Index is 0 as we are alsways sending from the client
+        let newTansfers = transfer.close([Presets.ADDRESS, null], flash.deposit)
+
          bundles = transfer.compose(
           flash.balance, 
           flash.deposit, 
           flash.outputs, 
           flash.stakes, 
-          toUse.multisig, 
+          flash.root, 
           flash.remainderAddress, 
           flash.transfers, 
-          [{
-          address: Presets.ADDRESS,
-          value: 1 }],
+          newTansfers,
           true);
      } 
      catch(e) {
@@ -410,6 +412,22 @@ export default class Channel {
     }
     console.log(opts)
     const res = await API('close', opts);
+
+    if (res.bundles) {
+        transfer.applyTransfers(
+        state.flash.root, 
+        state.flash.deposit, 
+        state.flash.stakes, 
+        state.flash.outputs, 
+        state.flash.remainderAddress, 
+        state.flash.transfers, 
+        res.bundles);
+      // Save updated state
+      await store.set("state", state)
+    } else {
+      return console.error(e)
+    }
+
     console.log(res)
     if (!res.error) {
       var result = await Attach.POWClosedBundle(res.bundles)
