@@ -32,7 +32,7 @@ export class Attach {
 
   static async sendTrytes(trytes) {
     return new Promise(function(resolve, reject) {
-      iota.api.sendTrytes(trytes, 5, 10, (e, r) => {
+      iota.api.sendTrytes(trytes, Presets.PROD ? 6 : 5, Presets.PROD ? 15 : 10, (e, r) => {
         console.log("sendTrytes", e, r)
         if (e !== null) {
           reject(e)
