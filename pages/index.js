@@ -188,7 +188,7 @@ const Article = styled.a`
   box-sizing: border-box;
   width: 100%;
   margin: 0 5%;
-  padding: 2rem 5rem 6rem;
+  padding: 2rem 4vw 6rem;
   cursor: pointer;
   @media screen and (max-width: 640px) {
     width: 90%;
