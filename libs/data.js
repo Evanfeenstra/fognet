@@ -83,7 +83,7 @@ export default {
       {
         type: "satoshi",
         type: `audio`,
-        price: 400,
+        price: 180,
         content: `etherreview.mp3`,
         description: `Interview with Davo Sønstebø`
       },
@@ -143,7 +143,7 @@ export default {
         type: `image`,
         price: 50,
         placeholder: "norway-blurred.jpg",
-        content: `norway.jpeg`
+        content: `norway.jpg`
       },
       {
         type: "html",
