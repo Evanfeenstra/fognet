@@ -19,11 +19,53 @@ const TransferErrors = {
 };
 
 /**
+ * Prepare transfers object
+ *
+ * @method prepare
+ * @param {array} settlement the settlement addresses for each user
+ * @param {array} stakes the percentage stake of each user
+ * @param {array} deposits the amount each user can still spend
+ * @param {number} fromIndex the index of the user used as an input
+ * @param {destinations} the `{value, address}` destination of the output bundle (excluding remainder)
+ * @returns {array} transfers
+ */
+function prepare(settlement, stakes, deposits, fromIndex, destinations) {
+  // total amount transacted this round
+  const total = destinations.reduce((acc, tx) => acc + tx.value, 0);
+  // reject if there isn't enough deposit for user
+  if(total > deposits[fromIndex]) {
+    throw new Error(TransferErrors.INSUFFICIENT_FUNDS);
+  }
+  // copy destinations
+  const transfer = helpers.deepClone(destinations);
+  // add deposit release to outputs
+  settlement.filter(tx => tx).map((s, i) => {
+    const current = transfer.find(tx => tx.address == s);
+    const stake = stakes[i] * total;
+    if(current) {
+      current.value += stake;
+    } else {
+      transfer.push({ address: s, value: stake})
+    }
+  });
+  // remove that amount from the sender
+  transfer.find(tx => tx.address == settlement[fromIndex]).value -= stakes[fromIndex] * total;
+  // return the positive ones
+  return transfer.filter(tx => tx.value > 0);
+}
+
+/**
  * Composes a Transfer
  *
  * @method compose
- * @param {array} multisig
- * @param {array} transfers
+ * @param {number} balance The total amount of iotas in the channel
+ * @param {array<number>} deposit the amount of iotas still available to each user to spend from
+ * @param {array<string>} outputs the accrued outputs through the channel
+ * @param {array<float>} stakes the float-mapped percentage of stakes
+ * @param {array<bundles>} history the leaf bundles
+ * @param {array<{addy, val}>} transfers the array of outputs for the transfer
+ * @param {bool} close whether to use the minimum tree or not
+ * @return {array<bundle>} prepared bundles
  */
 function compose(balance, deposit, outputs, stakes, root, remainder, history, transfers, close) {
   const valueTransfersLength = transfers.filter( transfer => transfer.value < 0 ).length; 
@@ -36,10 +78,6 @@ function compose(balance, deposit, outputs, stakes, root, remainder, history, tr
     throw new Error(TransferErrors.INVALID_TRANSFER_OBJECT);
   }
   const amount = transfers.reduce((a,b) => a + b.value, 0);
-
-  for(let i = 0; i < stateCopy.stakes.length; i++) {
-    stateCopy.deposit[i] -= amount * stateCopy.stakes[i];
-  }
 
   const deposits = stateCopy.deposit.reduce((a,b) => a + b, 0);
   if( amount > deposits || deposits < 1) {
@@ -110,6 +148,21 @@ function compose(balance, deposit, outputs, stakes, root, remainder, history, tr
 }
 
 /**
+ * creates transactions to close the channel
+ *
+ * @method close
+ * @param {array} settlement the settlement addresses for each user
+ * @param {array} deposits the amount each user can still spend
+ * @returns {array} transfers
+ */
+function close(settlement, deposits) {
+  // add deposit release to outputs
+  return settlement.filter(tx => tx).map((s, i) => {
+    return { address: s, value: deposits[i] };
+  }).filter(tx => tx.value > 0);
+}
+
+/**
  * Applies Transfers to State
  *
  * @method apply
@@ -145,7 +198,7 @@ function applyTransfers(root, deposit, stakes, outputs, remainder, history, tran
     // get the total amount of remaining deposits
     let remaining = deposit.reduce((a,b) => a+b, 0); 
     // get the total amount of increase in outputs
-    let total = diff.filter(v => v.value > 0 && v.address != remainder.address).reduce((acc,tx) => acc+tx.value, 0);
+    let total = diff.filter(v => v.value > 0 && v.value != remaining).reduce((acc,tx) => acc+tx.value, 0);
     // You can't spend more than you have in deposits
     if (total > remaining) {
       throw new Error(TransferErrors.INSUFFICIENT_FUNDS);
@@ -248,10 +301,10 @@ function getDiff(root, remainder, history, bundles) {
   }
   let previousTransfer = history.length == 0 ? []: history[history.length - 1];
   const lastTransfer = bundles[bundles.length - 1];
-  const previousRemainder = previousTransfer.filter(tx => tx.address == remainder.address && tx.value > 0).reduce((acc, v) => acc + v.value, 0);
+  const previousRemainder = previousTransfer.filter(tx => tx.address == remainder.address && tx.value > 0).reduce((acc, v) => acc + v, 0);
   const newRemainder = lastTransfer.filter(tx => tx.address == remainder.address)
     .map(tx => tx.value )
-    .reduce((acc, v) => acc + v.value, 0)
+    .reduce((acc, v) => acc + v, 0)
   if(newRemainder.value > previousRemainder.value) {
     throw new Error(TransferErrors.REMAINDER_INCREASED);
   }
@@ -275,7 +328,9 @@ function getDiff(root, remainder, history, bundles) {
 }
 
 module.exports = {
+  'prepare'        : prepare,
   'compose'        : compose,
+  'close'          : close,
   'getDiff'        : getDiff,
   'sign'           : sign,
   'applyTransfers' : applyTransfers,
