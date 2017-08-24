@@ -10,27 +10,31 @@ export default class extends React.Component {
     drawerOpen: false
   }
 
+  async componentWillReceiveProps() {
+    var state = await store.get("state")
+    var purchases = await store.get("purchases")
+
+    this.setState({
+      balance: state ? state.flash.deposit.reduce((a,b) => a+b, 0) : 0,
+      state,
+      purchases
+    })
+  }
+
   async componentDidMount() {
     var state = await store.get("state")
     var purchases = await store.get("purchases")
 
     this.setState({
-      balance: state ? state.flash.balance : 0,
+      balance: state ? state.flash.deposit.reduce((a,b) => a+b, 0) : 0,
       state,
       purchases
     })
   }
 
   toggle = () => {
-    var state = store.get("state")
-    var purchases = store.get("purchases")
-
-    console.log(state)
     this.setState({
-      drawerOpen: !this.state.drawerOpen,
-      balance: state.flash ? state.flash.balance : 0,
-      state,
-      purchases
+      drawerOpen: !this.state.drawerOpen
     })
   }
 

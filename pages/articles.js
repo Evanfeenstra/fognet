@@ -6,12 +6,12 @@ import { Row, Col } from "../components/scaffold"
 import Satoshi from "../components/satoshi"
 import Articles from "../libs/data"
 
-const Components = (props, i) => {
+const Components = (props, i, update) => {
   if (props.type === "html") {
    var p = {...props.props, key: i}
     return React.createElement(props.tag, p, props.children)
   } else {
-    return <Satoshi {...props} key={i} />
+    return <Satoshi {...props} update={update} key={i} />
   }
 }
 
@@ -19,6 +19,10 @@ export default class extends React.Component {
   static async getInitialProps({ query }) {
     console.log(query)
     return { article: Articles[query.slug] }
+  }
+
+  updateState = props => {
+    this.forceUpdate()
   }
   render() {
     var { article } = this.props
@@ -30,7 +34,7 @@ export default class extends React.Component {
           </Title>
         </Header>
         <Content>
-          {article.content.map((item, i) => Components(item, i))}
+          {article.content.map((item, i) => Components(item, i, this.updateState))}
           <Wrapper>
             <Author
               src={article.authorImg}

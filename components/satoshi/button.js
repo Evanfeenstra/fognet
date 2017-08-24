@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { Reducer } from "../../libs/utils"
 
 export default props =>
-  <Button onClick={() => props.click()}>
+  <Button loading={props.loading} onClick={() => !props.loading ? props.click() : null}>
     <SvgBox>
       <svg
         fill={"hsla(0, 0%, 100%, .8)"}
@@ -22,7 +22,7 @@ const Button = styled.button`
   top: 16px;
   left: 16px;
   display: flex;
-  background: #ff9800;
+  background: ${props => props.loading ? 'grey' : '#ff9800'};
   border-radius: 2px;
   cursor: pointer;
   padding: 8px;
@@ -33,6 +33,7 @@ const Button = styled.button`
     Segoe UI, Helvetica Neue, Lucida Grande, sans-serif;
   text-transform: uppercase;
   color: hsla(0, 0%, 100%, .8);
+  transitions: all .5s ease;
   &:focus {
     outline: none;
   }

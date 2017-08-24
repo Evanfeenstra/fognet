@@ -35,6 +35,7 @@ export default class extends React.Component {
         this.props.content
       )
       if (!item) return this.setState({ loading: false })
+      this.props.update()
       this.setState({ itemKey: item.key })
     })
   }
@@ -44,7 +45,7 @@ export default class extends React.Component {
     if (!itemKey) {
       return (
         <Paywall {...this.props}>
-          <Button {...this.props} click={this.purchase} />
+          <Button {...this.props} click={this.purchase} loading={loading} />
           <Title>
             {this.props.description}
           </Title>

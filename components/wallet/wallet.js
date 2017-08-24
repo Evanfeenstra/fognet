@@ -151,10 +151,9 @@ export default class extends React.Component {
           <Content>
             <h3>Welcome to the Satoshipay IOTA Demo</h3>
             <p>
-              This is a Proof-of-Concept of the SatoshiPay system based. It's on
-              the IOTA token. The IOTA wallet used in this demo is working on
-              the mainnet and is using Flash Channels to pay for confirm payment
-              in realtime.
+              This is a Proof-of-Concept of the SatoshiPay micropayment system. The 
+              IOTA wallet used in this demo is working on the mainnet and is using
+              Flash Channels to pay for confirm payment in realtime.
             </p>
             <p>
               While the tokens are real, you will not be able to withdraw them.
@@ -177,7 +176,7 @@ export default class extends React.Component {
           <Content>
             <h3>Closing and attaching channel</h3>
             <p>
-              Please leave the window open until the loading icon disappears. This can take upto 5min.
+              Please leave the window open until the loading icon disappears. This can take upto 3min.
             </p>
             <Spinner src={"/static/icons/loading-dark.svg"} />
           </Content>}

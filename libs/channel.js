@@ -31,7 +31,6 @@ export default class Channel {
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
-    console.log('Initialising Channel')
     
     var userSeed = seedGen(81)
 
@@ -40,6 +39,8 @@ export default class Channel {
     if (localState) {
        return localState
     }
+    console.log('Initialising Channel')
+    
 
     // Initialize state object
     const state = {
@@ -105,7 +106,7 @@ export default class Channel {
     // Send digests to server and obtain new multisig addresses
     const response = await API("register", opts)
 
-    console.log('RESPONSE', response)
+    console.log('Server Digests: ', response)
     const serverDigests = response.digests;
     let multisigs = digests.map((digest, index) => {      
       let addy = multisig.composeAddress([digest, serverDigests[index]]);
@@ -225,6 +226,7 @@ export default class Channel {
     var purchases = await store.get("purchases")
 
     // TODO: check/generate tree
+    if (!state.flash.root) return
     let toUse = multisig.updateLeafToRoot(state.flash.root);
     if(toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
@@ -289,9 +291,8 @@ export default class Channel {
     console.log(opts)
 
     const res = await API('purchase', opts);
-    if (res) {
-      // render item, save secret
-      // TODO: update bundles in local state
+    if (res.bundles) {
+
       transfer.applyTransfers(
         state.flash.root, 
         state.flash.deposit, 
@@ -300,15 +301,18 @@ export default class Channel {
         state.flash.remainderAddress, 
         state.flash.transfers, 
         res.bundles);
+
+      // Save updated state
       await store.set("state", state)
-      console.log(res)
+
       // Check is purchases exists
-       if (!purchases) var purchases = []
-      
-        // Push the purchase recipt to the browser
+      if (!purchases) var purchases = []
+      // Push the purchase recipt to the browser
       purchases.push({...res, value})
       // save purchases for reload
       store.set("purchases", purchases)
+    } else{
+      console.error(res)
     }
  
     // Return recipt to be used by the calling function
