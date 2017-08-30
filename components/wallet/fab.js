@@ -16,6 +16,7 @@ const Fab = styled.div`
   align-items: center;
   cursor: pointer;
   box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+  z-index: 10;
 `
 
 const Amount = styled.p`
