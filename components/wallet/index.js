@@ -38,13 +38,19 @@ export default class extends React.Component {
     })
   }
 
+  updateState = (state) => {
+    this.setState({
+      balance: state ? state.flash.deposit.reduce((a,b) => a+b, 0) : 0,
+      state
+    })
+  }
   render() {
     isWindow()
     Channel.initialize()
     var { drawerOpen, balance } = this.state
     return (
       <div>
-        <Wallet {...this.state} toggle={this.toggle} />
+        <Wallet {...this.state} toggle={this.toggle} updateState={this.updateState}/>
         <Fab balance={balance} toggle={this.toggle} />
       </div>
     )
