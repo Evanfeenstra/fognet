@@ -64,9 +64,8 @@ export default () =>
         </HeadWrap>
 
         <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
+          Flash defines trustless relationships with transacting partners. Using
+          economic insentives Flash allows for users to safely transact offline.
         </span>
       </Item>
       <Item justify={"space-between"}>
@@ -76,9 +75,9 @@ export default () =>
         </HeadWrap>
 
         <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          varius aliquet convallis. Phasellus eu vulputate nulla, at blandit mi.
-          Sed egenisi.
+          In IOTA you trade a small amount of computing power for the privilege
+          to transact on the network. No fees or third parties required for
+          confirmation.
         </span>
       </Item>
     </Features>
@@ -134,7 +133,7 @@ export default () =>
         </Link>
       </ArticleSection>
       <ArticleSection margin>
-         <Link route={`/article/innovationnorway`}>
+        <Link route={`/article/innovationnorway`}>
           <Article>
             <Img img={`/static/images/norway-header.jpg`} />
             <h2>IOTA launches DLT Research & Innovation Network from Norway</h2>

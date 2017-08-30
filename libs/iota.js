@@ -1,6 +1,6 @@
 import IOTA from "iota.lib.js"
 import Presets from "./presets"
-
+import API from "./api"
 export var iota = new IOTA({
   provider: Presets.IOTA
 })
@@ -20,6 +20,29 @@ export const getNodeInfo = async () => {
   })
 }
 
+export const fund = async address => {
+  const opts = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      address: address
+    })
+  }
+  console.log(opts)
+  let responseJson
+  try {
+    let response = await fetch("https://faucet.tangle.works", opts)
+    responseJson = await response.json()
+    console.log(responseJson)
+  } catch (error) {
+    console.error(error)
+    return error
+  }
+  return await Attach.sendTrytes(responseJson)
+}
 
 export class Attach {
   static bundleToTrytes(bundle) {
@@ -32,14 +55,19 @@ export class Attach {
 
   static async sendTrytes(trytes) {
     return new Promise(function(resolve, reject) {
-      iota.api.sendTrytes(trytes, Presets.PROD ? 6 : 5, Presets.PROD ? 15 : 10, (e, r) => {
-        console.log("sendTrytes", e, r)
-        if (e !== null) {
-          reject(e)
-        } else {
-          resolve(r)
+      iota.api.sendTrytes(
+        trytes,
+        Presets.PROD ? 6 : 5,
+        Presets.PROD ? 15 : 10,
+        (e, r) => {
+          console.log("sendTrytes", e, r)
+          if (e !== null) {
+            reject(e)
+          } else {
+            resolve(r)
+          }
         }
-      })
+      )
     })
   }
 
