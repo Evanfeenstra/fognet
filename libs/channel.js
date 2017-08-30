@@ -3,8 +3,10 @@ import shortid from "shortid"
 import Flash from "./flash/flash.js"
 import multisig from "./flash/multisig"
 import transfer from "./flash/transfer"
-import {Attach, iota} from "./iota"
-import Presets from './presets'
+import { Attach, iota } from "./iota"
+import Presets from "./presets"
+
+var initialising = false
 
 export default class Channel {
   // Security level
@@ -31,16 +33,19 @@ export default class Channel {
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
-    
+
     var userSeed = seedGen(81)
 
     // Stop if local state exists
     const localState = await store.get("state")
     if (localState) {
-       return localState
+      return localState
     }
-    console.log('Initialising Channel')
-    
+    //Block double call.
+    if (initialising) return
+    initialising = true
+
+    console.log("Initialising Channel")
 
     // Initialize state object
     const state = {
@@ -61,21 +66,21 @@ export default class Channel {
     }
 
     // Initiate the state in local storage
-    await store.set("state", state);
+    await store.set("state", state)
 
     // Get a new digest
     // Fetch new multisig addresses
     // consists of { root, remainder }
-    const digests = [];
+    const digests = []
     for (let i = 0; i < treeDepth + 1; i++) {
-      const digest = await Channel.getNewDigest();
-      digests.push(digest);
+      const digest = await Channel.getNewDigest()
+      digests.push(digest)
     }
-    const addresses = await Channel.register(digests, userID);
+    const addresses = await Channel.register(digests, userID)
 
     // Update root and remainder address
-    state.flash.remainderAddress = addresses.remainder;
-    state.flash.root = addresses.root;
+    state.flash.remainderAddress = addresses.remainder
+    state.flash.root = addresses.root
 
     // Update root & remainder in state
     await store.set("state", state)
@@ -84,17 +89,18 @@ export default class Channel {
     Channel.flash = new Flash({
       ...state.flash
     })
+    initialising = false
 
     return state
   }
 
   static async register(digests, userID) {
-    console.log('Address Digests: ', digests)
+    console.log("Address Digests: ", digests)
 
     const opts = {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       method: "POST",
       body: JSON.stringify({
@@ -106,37 +112,37 @@ export default class Channel {
     // Send digests to server and obtain new multisig addresses
     const response = await API("register", opts)
 
-    console.log('Server Digests: ', response)
-    const serverDigests = response.digests;
-    let multisigs = digests.map((digest, index) => {      
-      let addy = multisig.composeAddress([digest, serverDigests[index]]);
-      addy.index = digest.index;
-      addy.securitySum = digest.security + serverDigests[index].security;
-      addy.security = digest.security;
-      return addy;
-    });
-    
-    const remainderAddress = multisigs.shift();
+    console.log("Server Digests: ", response)
+    const serverDigests = response.digests
+    let multisigs = digests.map((digest, index) => {
+      let addy = multisig.composeAddress([digest, serverDigests[index]])
+      addy.index = digest.index
+      addy.securitySum = digest.security + serverDigests[index].security
+      addy.security = digest.security
+      return addy
+    })
 
-    for(let i = 1; i < multisigs.length; i++) {
-        multisigs[i-1].children.push(multisigs[i]);
+    const remainderAddress = multisigs.shift()
+
+    for (let i = 1; i < multisigs.length; i++) {
+      multisigs[i - 1].children.push(multisigs[i])
     }
-    console.log(multisigs[0]);
+    console.log(multisigs[0])
     console.log(iota.utils.addChecksum(multisigs[0].address))
-    
+
     return {
       remainder: remainderAddress,
       root: multisigs.shift()
-    };
+    }
   }
 
   static async getNewBranch(userID, address, digests) {
-    console.log('Branch Event', "Digests: ", digests)
+    console.log("Branch Event", "Digests: ", digests)
 
     const opts = {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       method: "POST",
       body: JSON.stringify({
@@ -149,39 +155,38 @@ export default class Channel {
     // Send digests to server and obtain new multisig addresses
     const response = await API("branch", opts)
 
-    console.log('Server Digests: ', response)
-    const serverDigests = response.digests;
-    let multisigs = digests.map((digest, index) => {      
-      let addy = multisig.composeAddress([digest, serverDigests[index]]);
-      addy.index = digest.index;
-      addy.securitySum = digest.security + serverDigests[index].security;
-      addy.security = digest.security;
-      return addy;
-    });
-    
-    multisigs.unshift(address);
-    for(let i = 1; i < multisigs.length; i++) {
-        multisigs[i-1].children.push(multisigs[i]);
+    console.log("Server Digests: ", response)
+    const serverDigests = response.digests
+    let multisigs = digests.map((digest, index) => {
+      let addy = multisig.composeAddress([digest, serverDigests[index]])
+      addy.index = digest.index
+      addy.securitySum = digest.security + serverDigests[index].security
+      addy.security = digest.security
+      return addy
+    })
+
+    multisigs.unshift(address)
+    for (let i = 1; i < multisigs.length; i++) {
+      multisigs[i - 1].children.push(multisigs[i])
     }
-    return address;
+    return address
   }
 
   // Get a new digest and update index in state
   static async getNewDigest() {
     // Fetch state from localStorage
-    const state = store.get("state");
+    const state = store.get("state")
 
     // Create new digest
     const digest = multisig.getDigest(
       state.userSeed,
       state.index,
       state.security
-    );
+    )
 
     // Increment digests key index
-    state.index++;
+    state.index++
     state.init = true
-
 
     // Update local state
     await store.set("state", state)
@@ -191,7 +196,6 @@ export default class Channel {
 
   // Obtain address by sending digest, update multisigs in state
   static async getNewAddress(digest) {
-    
     const state = await store.get("state")
 
     if (!digest) {
@@ -206,7 +210,7 @@ export default class Channel {
         digest: digest
       })
     })
-    
+
     var addresses = multisig.composeAddress(digests)
     console.log(response)
 
@@ -224,48 +228,57 @@ export default class Channel {
     // Get latest state from localstorage
     const state = await store.get("state")
     var purchases = await store.get("purchases")
-    
+
     // TODO: check/generate tree
     if (!state.flash.root) return
-    let toUse = multisig.updateLeafToRoot(state.flash.root);
-    if(toUse.generate != 0) {
+    let toUse = multisig.updateLeafToRoot(state.flash.root)
+    if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
-      const digests = await Promise.all(Array(toUse.generate).fill().map(() => Channel.getNewDigest()));
-      await Channel.getNewBranch(
-        state.userID,
-        toUse.multisig, 
-        digests);
+      const digests = await Promise.all(
+        Array(toUse.generate).fill().map(() => Channel.getNewDigest())
+      )
+      await Channel.getNewBranch(state.userID, toUse.multisig, digests)
     }
     // Compose transfer
-    const flash = state.flash;
-    let bundles;
+    const flash = state.flash
+    let bundles
     try {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
-      let newTansfers = transfer.prepare([Presets.ADDRESS, null], flash.stakes, flash.deposit, 0, [{
-        address: settlementAddress,
-        value: value
-      }])
-       bundles = transfer.compose(
-        flash.balance, 
-        flash.deposit, 
-        flash.outputs, 
-        flash.stakes, 
-        toUse.multisig, 
-        flash.remainderAddress, 
-        flash.transfers, 
-        newTansfers);
-    } 
-    catch(e) {
+      let newTansfers = transfer.prepare(
+        [Presets.ADDRESS, null],
+        flash.stakes,
+        flash.deposit,
+        0,
+        [
+          {
+            address: settlementAddress,
+            value: value
+          }
+        ]
+      )
+      bundles = transfer.compose(
+        flash.balance,
+        flash.deposit,
+        flash.outputs,
+        flash.stakes,
+        toUse.multisig,
+        flash.remainderAddress,
+        flash.transfers,
+        newTansfers
+      )
+    } catch (e) {
       console.log("Error: ", e)
       switch (e.message) {
-        case "2": alert("Not enough funds")
-        break
-        default: alert("An error occured. Please reset channel")
+        case "2":
+          alert("Not enough funds")
+          break
+        default:
+          alert("An error occured. Please reset channel")
       }
       return false
     }
     console.log("Unsigned", bundles)
-    
+
     // Sign transfer
     const signedBundles = transfer.sign(
       state.flash.root,
@@ -273,15 +286,15 @@ export default class Channel {
       bundles
     )
     console.log("Bundles", signedBundles)
-    
+
     // Update bundles in local state
     state.bundles = signedBundles
 
     // Return signed bundles
     const opts = {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       method: "POST",
       body: JSON.stringify({
@@ -292,30 +305,30 @@ export default class Channel {
     }
     console.log(opts)
 
-    const res = await API('purchase', opts);
+    const res = await API("purchase", opts)
     if (res.bundles) {
-
       transfer.applyTransfers(
-        state.flash.root, 
-        state.flash.deposit, 
-        state.flash.stakes, 
-        state.flash.outputs, 
-        state.flash.remainderAddress, 
-        state.flash.transfers, 
-        res.bundles);
+        state.flash.root,
+        state.flash.deposit,
+        state.flash.stakes,
+        state.flash.outputs,
+        state.flash.remainderAddress,
+        state.flash.transfers,
+        res.bundles
+      )
       // Save updated state
       await store.set("state", state)
 
       // Check is purchases exists
       if (!purchases) var purchases = []
       // Push the purchase recipt to the browser
-      purchases.push({...res, value})
+      purchases.push({ ...res, value })
       // save purchases for reload
       store.set("purchases", purchases)
-    } else{
+    } else {
       console.error(res)
     }
- 
+
     // Return recipt to be used by the calling function
     return res
   }
@@ -335,7 +348,7 @@ export default class Channel {
   static async initFlash() {
     // Get state
     const state = await store.get("state")
-    Channel.flash = new Flash({...state.flash})
+    Channel.flash = new Flash({ ...state.flash })
     return
   }
 
@@ -347,43 +360,44 @@ export default class Channel {
     const state = await store.get("state")
 
     // TODO: check/generate tree
-    let toUse = multisig.updateLeafToRoot(state.flash.root);
-    if(toUse.generate != 0) {
+    let toUse = multisig.updateLeafToRoot(state.flash.root)
+    if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
-      const digests = await Promise.all(Array(toUse.generate).fill().map(() => Channel.getNewDigest()));
-      await Channel.getNewBranch(
-        state.userID,
-        toUse.multisig, 
-        digests);
+      const digests = await Promise.all(
+        Array(toUse.generate).fill().map(() => Channel.getNewDigest())
+      )
+      await Channel.getNewBranch(state.userID, toUse.multisig, digests)
     }
     console.log(state)
     // Compose transfer
-    const flash = state.flash;
+    const flash = state.flash
     let bundles
-      try {
-          // No settlement addresses and Index is 0 as we are alsways sending from the client
-        let newTansfers = transfer.close([Presets.ADDRESS, null], flash.deposit)
+    try {
+      // No settlement addresses and Index is 0 as we are alsways sending from the client
+      let newTansfers = transfer.close([Presets.ADDRESS, null], flash.deposit)
 
-         bundles = transfer.compose(
-          flash.balance, 
-          flash.deposit, 
-          flash.outputs, 
-          flash.stakes, 
-          flash.root, 
-          flash.remainderAddress, 
-          flash.transfers, 
-          newTansfers,
-          true);
-     } 
-     catch(e) {
-       console.log("Error: ", e)
-       switch (e.message) {
-         case "2": alert("Not enough funds")
-         break
-         default: alert("An error occured. Please reset channel")
-       }
-       return false
-     }
+      bundles = transfer.compose(
+        flash.balance,
+        flash.deposit,
+        flash.outputs,
+        flash.stakes,
+        flash.root,
+        flash.remainderAddress,
+        flash.transfers,
+        newTansfers,
+        true
+      )
+    } catch (e) {
+      console.log("Error: ", e)
+      switch (e.message) {
+        case "2":
+          alert("Not enough funds")
+          break
+        default:
+          alert("An error occured. Please reset channel")
+      }
+      return false
+    }
     console.log("Unsigned", bundles)
 
     // Sign transfer
@@ -393,15 +407,15 @@ export default class Channel {
       bundles
     )
     console.log("Bundles", signedBundles)
-    
+
     // Update bundles in local state
     state.bundles = signedBundles
 
     // Return signed bundles
     const opts = {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       method: "POST",
       body: JSON.stringify({
@@ -411,17 +425,18 @@ export default class Channel {
       })
     }
     console.log(opts)
-    const res = await API('close', opts);
+    const res = await API("close", opts)
 
     if (res.bundles) {
-        transfer.applyTransfers(
-        state.flash.root, 
-        state.flash.deposit, 
-        state.flash.stakes, 
-        state.flash.outputs, 
-        state.flash.remainderAddress, 
-        state.flash.transfers, 
-        res.bundles);
+      transfer.applyTransfers(
+        state.flash.root,
+        state.flash.deposit,
+        state.flash.stakes,
+        state.flash.outputs,
+        state.flash.remainderAddress,
+        state.flash.transfers,
+        res.bundles
+      )
       // Save updated state
       await store.set("state", state)
     } else {
@@ -431,10 +446,10 @@ export default class Channel {
     console.log(res)
     if (!res.error) {
       var result = await Attach.POWClosedBundle(res.bundles)
-      console.log(result)      
+      console.log(result)
       return result
     }
-  }    
+  }
 }
 
 // Generate a random seed. Higher security needed
