@@ -1,11 +1,15 @@
-const prod = process.env.NODE_ENV === 'production'
+// const prod = process.env.NODE_ENV === 'production'
+const prod = false
 
 export default  {
     API: prod
-      ? 'https://iotapay-server.now.sh/'
-      : 'http://localhost:9000/',
+      ? 'https://satoshipay.iotaledger.net/'
+      : 'https://satoshipay.iotaledger.net/',
       ADDRESS: `GQMHDLS9XPSNURUCPKKJJTULZRPH9WSKUKQQQPJOY9CPRCNAUSIFWCLHVDSUHJJCPMQDARUIFFXKXFVQD`,
       IOTA: prod
       ? 'https://node.tangle.works'
-      : 'http://52.58.212.188:14700',
+      : 'https://testnet.tangle.works',
+      PROD: prod
+      ? true : false,
   }
+  //http://52.58.212.188:14700
