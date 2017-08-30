@@ -2,6 +2,9 @@ import React from "react"
 import styled, { css } from "styled-components"
 import { Reducer } from "../../libs/utils"
 import Channel from "../../libs/channel"
+import Presets from "../../libs/presets"
+import { fund } from "../../libs/iota"
+
 const Show = props => {}
 
 const Wallet = styled.div`
@@ -59,15 +62,23 @@ const Button = styled.button`
     outline: none;
   }
 `
-
+const Reset = Button.extend`
+  position: fixed;
+  bottom: 10px;
+  width: 90%;
+  left: 5%;
+  background: none;
+  color: rgba(255, 130, 0, 1);
+`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
   box-sizing: border-box;
   width: 100%;
+  height: 100%;
   padding: 2vw;
   word-wrap: break-word;
 `
@@ -79,7 +90,12 @@ const Seed = styled.h3`
 `
 
 export default class extends React.Component {
-  state = { page: "home", loading: false, channel: {} }
+  state = {
+    page: "home",
+    loading: false,
+    channel: { funded: false },
+    message: `Closing and attaching channel`
+  }
 
   async componentDidMount() {
     const state = await store.get("state")
@@ -92,51 +108,74 @@ export default class extends React.Component {
 
   fund = async () => {
     const state = await store.get("state")
-    var funded = true
-    // var funded = await Channel.close(state.flash.root.address)
+    if (!state.flash.root)
+      return alert(
+        `Please wait a few more seconds for the wallet to initialise`
+      )
 
-    state.flash.deposit = [400,0]
-    state.flash.balance = 400
+    this.setState(
+      { page: "loading", message: "Funding the channel!" },
+      async () => {
+        var funded = await fund(state.flash.root.address)
 
-    if(funded) {
-      store.set("state", { ...state, funded: true })
-      this.setState({ channel: {...state, funded: true}})      
-    } else {
-      alert("There was an error funding your channel.")
-    }
+        console.log("Funded!", funded)
+        state.flash.deposit = [400, 0]
+        state.flash.balance = 400
+
+        if (funded) {
+          this.props.updateState({ ...state, funded: true })
+          store.set("state", { ...state, funded: true })
+          this.setState({ channel: { ...state, funded: true }, page: "home" })
+        } else {
+          alert("There was an error funding your channel.")
+        }
+      }
+    )
   }
-
 
   close = async () => {
     this.setState({ page: "loading" }, async () => {
       const state = await store.get("state")
       var item = await Channel.close()
-      
-      store.set("state", { ...state, closed: true, final: item })
-      this.setState({ page: "closed", loading: false, channel: {...state, final: item}})
+
+      store.set("state", { ...state, closed: true, final: item, funded: false })
+      this.setState({
+        page: "closed",
+        loading: false,
+        channel: { ...state, funded: false, final: item }
+      })
     })
   }
 
-  reset = async () => {
+  clear = async () => {
     store.set("state", null)
     store.set("purchases", null)
     this.setState({
       page: "home",
       loading: false,
-      channel: {funded: false}
+      channel: { funded: false }
     })
+    this.props.updateState(null)
+    this.props.toggle()
 
     Channel.initialize()
   }
 
+  reset = () => {
+    this.setState({ page: "loading" }, async () => {
+      this.clear()
+    })
+  }
+
   render() {
-    var { page, channel, loading, final } = this.state
+    var { page, channel, loading, final, message } = this.state
+    if (!channel) var channel = { funded: false }
     var { purchases } = this.props
     return (
       <Wallet {...this.props}>
         <Header>
           <div>You have {Reducer(this.props.balance)} IOTA</div>{" "}
-          {page !== "home" && page !== "loading"
+          {page !== "home" && (page !== "closed" && page !== "loading")
             ? <Closed
                 style={{ height: 30, width: 30 }}
                 onClick={() => this.setState({ page: "home" })}
@@ -151,9 +190,9 @@ export default class extends React.Component {
           <Content>
             <h3>Welcome to the Satoshipay IOTA Demo</h3>
             <p>
-              This is a Proof-of-Concept of the SatoshiPay micropayment system. The 
-              IOTA wallet used in this demo is working on the mainnet and is using
-              Flash Channels to pay for confirm payment in realtime.
+              This is a Proof-of-Concept of the SatoshiPay micropayment system.
+              The IOTA wallet used in this demo is working on the mainnet and is
+              using Flash Channels to pay for confirm payment in realtime.
             </p>
             <p>
               While the tokens are real, you will not be able to withdraw them.
@@ -161,22 +200,35 @@ export default class extends React.Component {
             {loading
               ? <Spinner src={"/static/icons/loading-dark.svg"} />
               : <div>
-                  {channel && !channel.funded ? <Button onClick={() => this.fund()}>Fund the Channel</Button>: <p>
-                    Channel is now funded with 400 IOTA. Enough to demonstrate the Flash Channels.
-                  </p>}
+                  {!channel.funded
+                    ? <Button onClick={() => this.fund()}>
+                        Fund the Channel
+                      </Button>
+                    : <p>
+                        <strong>
+                          Channel is now funded with 400 IOTA. Enough to
+                          demonstrate the Flash Channels.
+                        </strong>
+                      </p>}
                   <Button
                     onClick={() => this.setState({ page: "transactions" })}
                   >
                     {" "}Channel Transactions
                   </Button>
-                  <Button onClick={() => this.close()}> Close Channel</Button>
+                  {channel.funded &&
+                    <Button onClick={() => this.close()}>
+                      {" "}Close Channel
+                    </Button>}
+                  <Reset onClick={() => this.reset()}>Reset the demo</Reset>
                 </div>}
           </Content>}
         {page === "loading" &&
           <Content>
-            <h3>Closing and attaching channel</h3>
+            <h3>
+              {message}
+            </h3>
             <p>
-              Please leave the window open until the loading icon disappears. This can take upto 3min.
+              Please leave the window open until the loading icon disappears.
             </p>
             <Spinner src={"/static/icons/loading-dark.svg"} />
           </Content>}
@@ -215,7 +267,19 @@ export default class extends React.Component {
               Your bundle has been attached. You can view it's status here on a
               tangle explorer.
             </p>
-            {channel && channel.final ? <Bundle target={`_blank`} href={`https://tanglertestnet.codebuffet.co/search/?kind=transaction&hash=` + channel.final[0][0].hash}>View Transaction</Bundle> : null}
+            {channel && channel.final
+              ? <Bundle
+                  target={`_blank`}
+                  href={
+                    (Presets.PROD
+                      ? `https://thetangle.org/bundle/`
+                      : `https://tanglertestnet.codebuffet.co/search/?kind=bundle&hash=`) +
+                    channel.final[0][0].bundle
+                  }
+                >
+                  View Transaction
+                </Bundle>
+              : null}
             <Button onClick={() => this.reset()}>Reset the demo</Button>
           </Content>}
       </Wallet>
