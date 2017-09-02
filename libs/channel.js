@@ -1,8 +1,8 @@
 import API from "./api"
 import shortid from "shortid"
-import Flash from "./flash/flash.js"
-import multisig from "./flash/multisig"
-import transfer from "./flash/transfer"
+import Flash from "../git_modules/flash/lib/flash.js"
+import multisig from "../git_modules/flash/lib/multisig"
+import transfer from "../git_modules/flash/lib/transfer"
 import { Attach, iota } from "./iota"
 import Presets from "./presets"
 
@@ -29,7 +29,6 @@ export default class Channel {
     treeDepth = Channel.TREE_DEPTH,
     balance = 0,
     deposit = Array(Channel.SIGNERS_COUNT).fill(0),
-    stakes = [1].concat(Array(Channel.SIGNERS_COUNT - 1).fill(0))
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
@@ -59,7 +58,6 @@ export default class Channel {
         signersCount: signersCount,
         balance: balance,
         deposit: deposit,
-        stakes: stakes,
         outputs: {},
         transfers: []
       }
@@ -246,7 +244,6 @@ export default class Channel {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
       let newTansfers = transfer.prepare(
         [Presets.ADDRESS, null],
-        flash.stakes,
         flash.deposit,
         0,
         [
@@ -260,7 +257,6 @@ export default class Channel {
         flash.balance,
         flash.deposit,
         flash.outputs,
-        flash.stakes,
         toUse.multisig,
         flash.remainderAddress,
         flash.transfers,
@@ -310,7 +306,6 @@ export default class Channel {
       transfer.applyTransfers(
         state.flash.root,
         state.flash.deposit,
-        state.flash.stakes,
         state.flash.outputs,
         state.flash.remainderAddress,
         state.flash.transfers,
@@ -380,7 +375,6 @@ export default class Channel {
         flash.balance,
         flash.deposit,
         flash.outputs,
-        flash.stakes,
         flash.root,
         flash.remainderAddress,
         flash.transfers,
@@ -431,7 +425,6 @@ export default class Channel {
       transfer.applyTransfers(
         state.flash.root,
         state.flash.deposit,
-        state.flash.stakes,
         state.flash.outputs,
         state.flash.remainderAddress,
         state.flash.transfers,
