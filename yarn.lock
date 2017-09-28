@@ -1993,15 +1993,15 @@ invert-kv@^1.0.0:
   dependencies:
     crypto-js "^3.1.9-1"
 
-"iota.flash.js@git+https://github.com/iotaledger/iota.flash.js.git":
+iota.flash.js@iotaledger/iota.flash.js.git:
   version "0.0.1"
-  resolved "git+https://github.com/iotaledger/iota.flash.js.git#b7ac628effea698ca62f58962aa39be241cfe509"
+  resolved "https://codeload.github.com/iotaledger/iota.flash.js/tar.gz/0254038e2003cec62c1d63337f0886f7c86174bd"
   dependencies:
     iota.crypto.js "github:iotaledger/iota.crypto.js"
 
-"iota.lib.js@git+https://github.com/l3wi/iota.lib.js.git":
-  version "0.4.0"
-  resolved "git+https://github.com/l3wi/iota.lib.js.git#047693a95c1e1d9198afad0679ac0fdb82525a64"
+iota.lib.js@l3wi/iota.lib.js.git:
+  version "0.4.1"
+  resolved "https://codeload.github.com/l3wi/iota.lib.js/tar.gz/3c340d5f0a7d65e49bf6ac64e195de7a8f8e71a0"
   dependencies:
     async "^2.5.0"
     crypto-js "^3.1.9-1"

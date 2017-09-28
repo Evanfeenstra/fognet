@@ -1,8 +1,6 @@
 import API from "./api"
 import shortid from "shortid"
-import Flash from "../git_modules/flash/lib/flash.js"
-import multisig from "../git_modules/flash/lib/multisig"
-import transfer from "../git_modules/flash/lib/transfer"
+import { Flash, multisig, transfer } from "iota.flash.js"
 import { Attach, iota } from "./iota"
 import Presets from "./presets"
 
@@ -28,7 +26,7 @@ export default class Channel {
     signersCount = Channel.SIGNERS_COUNT,
     treeDepth = Channel.TREE_DEPTH,
     balance = 0,
-    deposit = Array(Channel.SIGNERS_COUNT).fill(0),
+    deposit = Array(Channel.SIGNERS_COUNT).fill(0)
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
@@ -233,7 +231,9 @@ export default class Channel {
     if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
       const digests = await Promise.all(
-        Array(toUse.generate).fill().map(() => Channel.getNewDigest())
+        Array(toUse.generate)
+          .fill()
+          .map(() => Channel.getNewDigest())
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
     }
@@ -359,7 +359,9 @@ export default class Channel {
     if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
       const digests = await Promise.all(
-        Array(toUse.generate).fill().map(() => Channel.getNewDigest())
+        Array(toUse.generate)
+          .fill()
+          .map(() => Channel.getNewDigest())
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
     }

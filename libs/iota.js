@@ -5,6 +5,8 @@ export var iota = new IOTA({
   provider: Presets.IOTA
 })
 
+require("isomorphic-fetch")
+
 // Get node info
 export const getNodeInfo = async () => {
   return new Promise(function(resolve, reject) {
@@ -21,27 +23,32 @@ export const getNodeInfo = async () => {
 }
 
 export const fund = async address => {
-  const opts = {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      address: address
-    })
-  }
-  console.log(opts)
-  let responseJson
-  try {
-    let response = await fetch("https://faucet.tangle.works", opts)
-    responseJson = await response.json()
-    console.log(responseJson)
-  } catch (error) {
-    console.error(error)
-    return error
-  }
-  return await Attach.sendTrytes(responseJson)
+  // Get your free seeeed
+  var response = await fetch("https://seeds.tangle.works/")
+  var wallet = await response.json()
+
+  var transfers = [{ address, value: 400 }]
+
+  return new Promise(function(resolve, reject) {
+    if (isWindow()) {
+      curl.init()
+      curl.prepare()
+      console.log(curl.overrideAttachToTangle(iota.api))
+    }
+    iota.api.sendTransfer(
+      `NNVAXYRNHYCVLVRAGWMYICLMTASJSZIYDXSKTHF9IGACAAOEMZAGKK9IZTICSUYHLQTSMYJUJERCDZHPZ`,
+      5,
+      9,
+      transfers,
+      (e, r) => {
+        if (e !== null) {
+          reject(e)
+        } else {
+          resolve(r)
+        }
+      }
+    )
+  })
 }
 
 export class Attach {

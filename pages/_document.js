@@ -2,6 +2,10 @@ import Document, { Head, Main, NextScript } from "next/document"
 import { ServerStyleSheet, injectGlobal } from "styled-components"
 
 export default class MyDocument extends Document {
+  componentDidMount() {
+    curl.init()
+  }
+
   render() {
     const sheet = new ServerStyleSheet()
     const main = sheet.collectStyles(<Main />)
@@ -21,9 +25,7 @@ export default class MyDocument extends Document {
           {styleTags}
         </Head>
         <body>
-          <div className="root">
-            {main}
-          </div>
+          <div className="root">{main}</div>
           <NextScript />
         </body>
       </html>

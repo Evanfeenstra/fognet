@@ -6,8 +6,8 @@
     "postinstall": "git submodule update --init --recursive"
   },
   "dependencies": {
-    "iota.flash.js": "git+https://github.com/iotaledger/iota.flash.js.git",
-    "iota.lib.js": "git+https://github.com/l3wi/iota.lib.js.git",
+    "iota.flash.js": "iotaledger/iota.flash.js.git",
+    "iota.lib.js": "l3wi/iota.lib.js.git",
     "koa": "^2.3.0",
     "koa-router": "^7.2.1",
     "next": "^3.0.6",
