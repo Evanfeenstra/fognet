@@ -24,30 +24,25 @@ export const getNodeInfo = async () => {
 
 export const fund = async address => {
   // Get your free seeeed
-  var response = await fetch("https://seeds.tangle.works/")
-  var wallet = await response.json()
+  // var response = await fetch("https://seeds.tangle.works/")
+  // var wallet = await response.json()
+  var wallet = {
+    seed:
+      "ESUZUPSAHBDNNNJTAITAKTPCARUEJMBFSPEGZBYNBJFVTDUOONIMNI9NWKOPGWXCWZDPMKHNSALFAHZKD"
+  }
 
   var transfers = [{ address, value: 400 }]
+  console.log(transfers)
 
   return new Promise(function(resolve, reject) {
-    if (isWindow()) {
-      curl.init()
-      curl.prepare()
-      console.log(curl.overrideAttachToTangle(iota.api))
-    }
-    iota.api.sendTransfer(
-      `NNVAXYRNHYCVLVRAGWMYICLMTASJSZIYDXSKTHF9IGACAAOEMZAGKK9IZTICSUYHLQTSMYJUJERCDZHPZ`,
-      5,
-      9,
-      transfers,
-      (e, r) => {
-        if (e !== null) {
-          reject(e)
-        } else {
-          resolve(r)
-        }
+    iota.api.sendTransfer(wallet.seed, 5, 9, transfers, (e, r) => {
+      console.log(e, r)
+      if (e !== null) {
+        reject(e)
+      } else {
+        resolve(r)
       }
-    )
+    })
   })
 }
 
@@ -100,7 +95,6 @@ export class Attach {
     var results = []
     for (var trytes of trytesPerBundle) {
       console.log(trytes)
-      if (isWindow()) curl.overrideAttachToTangle(iota.api)
       var result = await Attach.sendTrytes(trytes)
       results.push(result)
     }
