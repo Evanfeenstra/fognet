@@ -30,6 +30,8 @@ export default class Channel {
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
+    if (isWindow()) curl.init()
+    if (isWindow()) curl.overrideAttachToTangle(iota)
 
     var userSeed = seedGen(81)
 
@@ -82,9 +84,6 @@ export default class Channel {
     await store.set("state", state)
 
     // Create a flash instance
-    Channel.flash = new Flash({
-      ...state.flash
-    })
     initialising = false
 
     return state
@@ -219,8 +218,6 @@ export default class Channel {
 
   // Initiate transaction from anywhere in the app.
   static async composeTransfer(value, settlementAddress, id) {
-    /// Check if Flash state exists
-    await Channel.initFlash()
     // Get latest state from localstorage
     const state = await store.get("state")
     var purchases = await store.get("purchases")
@@ -339,18 +336,7 @@ export default class Channel {
     store.set("state", state)
   }
 
-  // Update bundles in local state by applying the diff
-  static async initFlash() {
-    // Get state
-    const state = await store.get("state")
-    Channel.flash = new Flash({ ...state.flash })
-    return
-  }
-
   static async close() {
-    /// Check if Flash state exists
-    await Channel.initFlash()
-
     // Get latest state from localstorage
     const state = await store.get("state")
 
