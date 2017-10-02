@@ -96,7 +96,7 @@ export default () =>
       </span>
     </Row>
 
-    <Row width={`60rem`} align={`flex-start`}>
+    <Row width={`70rem`} align={`flex-start`}>
       <ArticleSection>
         <Link route={`/article/tangle`}>
           <Article>
@@ -200,7 +200,7 @@ const Img = styled.div`
   width: 100%;
   height: calc(4*4vw);
   min-height: 10rem;
-  max-height: 20rem;
+  max-height: 15rem;
   @media screen and (max-width: 640px) {
     height: 250px;
   }
