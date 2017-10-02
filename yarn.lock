@@ -1987,17 +1987,17 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-"iota.crypto.js@github:iotaledger/iota.crypto.js":
+"iota.crypto.js@github:l3wi/iota.crypto.js":
   version "0.4.1"
-  resolved "https://codeload.github.com/iotaledger/iota.crypto.js/tar.gz/08b7cc889e3f4b6dd46b581c992eb2c9fefed7f5"
+  resolved "https://codeload.github.com/l3wi/iota.crypto.js/tar.gz/b5df9599359d81522046ab697eadff32ef475f78"
   dependencies:
     crypto-js "^3.1.9-1"
 
-iota.flash.js@iotaledger/iota.flash.js.git:
+iota.flash.js@l3wi/iota.flash.js.git:
   version "0.0.1"
-  resolved "https://codeload.github.com/iotaledger/iota.flash.js/tar.gz/0254038e2003cec62c1d63337f0886f7c86174bd"
+  resolved "https://codeload.github.com/l3wi/iota.flash.js/tar.gz/7f7f530a55779241afbc76cc761f48f4e832a2ae"
   dependencies:
-    iota.crypto.js "github:iotaledger/iota.crypto.js"
+    iota.crypto.js "github:l3wi/iota.crypto.js"
 
 iota.lib.js@l3wi/iota.lib.js.git:
   version "0.4.1"

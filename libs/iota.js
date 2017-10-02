@@ -1,9 +1,11 @@
 import IOTA from "iota.lib.js"
 import Presets from "./presets"
 import API from "./api"
+import {localAttachToTangle} from './curl'
 export var iota = new IOTA({
   provider: Presets.IOTA
 })
+iota.api.attachToTangle = localAttachToTangle
 
 require("isomorphic-fetch")
 
@@ -24,12 +26,12 @@ export const getNodeInfo = async () => {
 
 export const fund = async address => {
   // Get your free seeeed
-  // var response = await fetch("https://seeds.tangle.works/")
-  // var wallet = await response.json()
-  var wallet = {
-    seed:
-      "ESUZUPSAHBDNNNJTAITAKTPCARUEJMBFSPEGZBYNBJFVTDUOONIMNI9NWKOPGWXCWZDPMKHNSALFAHZKD"
-  }
+  var response = await fetch("https://seeds.tangle.works/")
+  var wallet = await response.json()
+  // var wallet = {
+  //   seed:
+  //     "FQLYDKWEBVIFC9UQKYWXNCDFVRNMAPADSTLXNHPQQFGTCSCJABEULUKBIZCGGRWYFSPTKMKIRBATVCMAZ"
+  // }
 
   var transfers = [{ address, value: 400 }]
   console.log(transfers)
@@ -50,6 +52,7 @@ export class Attach {
   static bundleToTrytes(bundle) {
     var bundleTrytes = []
     bundle.forEach(function(bundleTx) {
+      bundleTx.obsoleteTag = bundleTx.tag
       bundleTrytes.push(iota.utils.transactionTrytes(bundleTx))
     })
     return bundleTrytes.reverse()
@@ -84,21 +87,27 @@ export class Attach {
   }
 
   static async POWClosedBundle(bundles) {
-    console.log("attachAndPOWClosedBundle", bundles)
-    bundles = Attach.getBundles(bundles)
-    var trytesPerBundle = []
-    for (var bundle of bundles) {
-      var trytes = Attach.bundleToTrytes(bundle)
-      trytesPerBundle.push(trytes)
+    try {
+      console.log("attachAndPOWClosedBundle", bundles)
+      var trytesPerBundle = []
+      for (var bundle of bundles) {
+        var trytes = Attach.bundleToTrytes(bundle)
+        trytesPerBundle.push(trytes)
+      }
+      console.log(bundles[0][0])      
+      console.log(iota.utils.transactionTrytes(bundles[0][0]).length)
+      console.log("closing room with trytes", trytesPerBundle)
+      console.log("closing room with trytes", trytesPerBundle[0][0].length)
+      
+      var results = []
+      for (var trytes of trytesPerBundle) {
+        var result = await Attach.sendTrytes(trytes)
+        results.push(result)
+      }
+      return results
+    } catch (e) {
+      return e
     }
-    console.log("closing room with trytes", trytesPerBundle)
-    var results = []
-    for (var trytes of trytesPerBundle) {
-      console.log(trytes)
-      var result = await Attach.sendTrytes(trytes)
-      results.push(result)
-    }
-    return results
   }
 }
 

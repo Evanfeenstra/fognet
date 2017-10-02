@@ -5,7 +5,7 @@
     "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
-    "iota.flash.js": "iotaledger/iota.flash.js.git",
+    "iota.flash.js": "l3wi/iota.flash.js.git",
     "iota.lib.js": "l3wi/iota.lib.js.git",
     "koa": "^2.3.0",
     "koa-router": "^7.2.1",
