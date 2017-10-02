@@ -1,6 +1,6 @@
 import API from "./api"
 import shortid from "shortid"
-import { Flash, multisig, transfer } from "iota.flash.js"
+import { multisig, transfer } from "iota.flash.js"
 import { Attach, iota } from "./iota"
 import Presets from "./presets"
 
@@ -30,9 +30,7 @@ export default class Channel {
   ) {
     // Escape the function when server rendering
     if (!isWindow()) return false
-    if (isWindow()) curl.init()
-    if (isWindow()) curl.overrideAttachToTangle(iota)
-
+    
     var userSeed = seedGen(81)
 
     // Stop if local state exists
@@ -79,7 +77,7 @@ export default class Channel {
     // Update root and remainder address
     state.flash.remainderAddress = addresses.remainder
     state.flash.root = addresses.root
-
+    
     // Update root & remainder in state
     await store.set("state", state)
 
@@ -112,6 +110,7 @@ export default class Channel {
     let multisigs = digests.map((digest, index) => {
       let addy = multisig.composeAddress([digest, serverDigests[index]])
       addy.index = digest.index
+      addy.signingIndex = 0 * digest.security      
       addy.securitySum = digest.security + serverDigests[index].security
       addy.security = digest.security
       return addy
@@ -155,6 +154,7 @@ export default class Channel {
     let multisigs = digests.map((digest, index) => {
       let addy = multisig.composeAddress([digest, serverDigests[index]])
       addy.index = digest.index
+      addy.signingIndex = 0 * digest.security            
       addy.securitySum = digest.security + serverDigests[index].security
       addy.security = digest.security
       return addy
@@ -233,6 +233,9 @@ export default class Channel {
           .map(() => Channel.getNewDigest())
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
+      // state was modified
+      let modifiedState = await store.get("state")
+      state.index = modifiedState.index
     }
     // Compose transfer
     const flash = state.flash
@@ -271,18 +274,15 @@ export default class Channel {
       return false
     }
     console.log("Unsigned", bundles)
-
+    state.bundles = bundles
+    
     // Sign transfer
-    const signedBundles = transfer.sign(
-      state.flash.root,
-      state.userSeed,
-      bundles
-    )
-    console.log("Bundles", signedBundles)
-
+    const signatures = transfer.sign(toUse.multisig, state.userSeed, bundles)
+    console.log("Signatures", signatures)
+   
     // Update bundles in local state
-    state.bundles = signedBundles
-
+    let partiallySigned = transfer.appliedSignatures(bundles, signatures)
+    console.log(partiallySigned)
     // Return signed bundles
     const opts = {
       headers: {
@@ -292,7 +292,7 @@ export default class Channel {
       method: "POST",
       body: JSON.stringify({
         id: state.userID,
-        bundles: signedBundles,
+        bundles: partiallySigned,
         item: id
       })
     }
@@ -350,6 +350,9 @@ export default class Channel {
           .map(() => Channel.getNewDigest())
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
+      // state was modified
+      let modifiedState = await store.get("state")
+      state.index = modifiedState.index
     }
     console.log(state)
     // Compose transfer
@@ -357,18 +360,19 @@ export default class Channel {
     let bundles
     try {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
-      let newTansfers = transfer.close([Presets.ADDRESS, null], flash.deposit)
+      let newTansfers = transfer.close([Presets.ADDRESS, Presets.ADDRESS], flash.deposit)
 
       bundles = transfer.compose(
         flash.balance,
         flash.deposit,
         flash.outputs,
-        flash.root,
+        toUse.multisig,
         flash.remainderAddress,
         flash.transfers,
         newTansfers,
         true
       )
+      
     } catch (e) {
       console.log("Error: ", e)
       switch (e.message) {
@@ -381,17 +385,15 @@ export default class Channel {
       return false
     }
     console.log("Unsigned", bundles)
-
-    // Sign transfer
-    const signedBundles = transfer.sign(
-      state.flash.root,
-      state.userSeed,
-      bundles
-    )
-    console.log("Bundles", signedBundles)
-
     // Update bundles in local state
-    state.bundles = signedBundles
+    state.bundles = bundles
+    // Sign transfer
+    const signatures = transfer.sign(toUse.multisig, state.userSeed, bundles)
+    console.log("Signatures", signatures)
+   
+    // Update bundles in local state
+    let partiallySigned = transfer.appliedSignatures(bundles, signatures)
+    console.log(partiallySigned)
 
     // Return signed bundles
     const opts = {
@@ -402,7 +404,7 @@ export default class Channel {
       method: "POST",
       body: JSON.stringify({
         id: state.userID,
-        bundles: signedBundles,
+        bundles: partiallySigned,
         item: null
       })
     }
