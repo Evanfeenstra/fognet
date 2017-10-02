@@ -273,8 +273,8 @@ export default class extends React.Component {
                   href={
                     (Presets.PROD
                       ? `https://thetangle.org/bundle/`
-                      : `https://tanglertestnet.codebuffet.co/search/?kind=bundle&hash=`) +
-                    channel.final[0][0].bundle
+                      : `https://explorer.tangle.works/#/addr/`) +
+                    channel.final[0][0].address
                   }
                 >
                   View Transaction
