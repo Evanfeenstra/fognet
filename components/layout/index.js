@@ -46,15 +46,19 @@ export default class extends React.Component {
     this.setState({ password, active })
   }
   render() {
-    return (
-      <Wrapper>
-        <Password {...this.state} update={this.update} />
-        {/* {Channel.initialize()} */}
-        <Header {...this.props} />
-        <Content spacer={this.props.spacer}>{this.props.children}</Content>
-        <FAB />
-        <Footer {...this.props} />
-      </Wrapper>
-    )
+    var { active } = this.state
+
+    if (active) {
+      return (
+        <Wrapper>
+          <Header {...this.props} />
+          <Content spacer={this.props.spacer}>{this.props.children}</Content>
+          <FAB />
+          <Footer {...this.props} />
+        </Wrapper>
+      )
+    } else {
+      return <Password {...this.state} update={this.update} />
+    }
   }
 }
