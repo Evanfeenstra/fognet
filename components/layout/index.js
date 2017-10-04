@@ -5,6 +5,8 @@ import Link from "next/link"
 import FAB from "../wallet"
 import Header from "./header"
 import Footer from "./footer"
+import Password from "./password"
+
 import Channel from "../../libs/channel"
 
 const Wrapper = styled.div`
@@ -25,13 +27,34 @@ const Content = styled.section`
   width: 100%;
 `
 
-export default props =>
-  <Wrapper>
-    {/* {Channel.initialize()} */}
-    <Header {...props} />
-    <Content spacer={props.spacer}>
-      {props.children}
-    </Content>
-    <FAB />
-    <Footer {...props} />
-  </Wrapper>
+export default class extends React.Component {
+  state = { password: "" }
+
+  componentDidMount() {
+    // "auth"
+    var auth = localStorage.getItem("password")
+    console.log(auth)
+    if (auth) this.setState({ active: true })
+  }
+
+  update = password => {
+    var active = false
+    if (password === "micropayments") {
+      localStorage.setItem("password", 1)
+      active = true
+    }
+    this.setState({ password, active })
+  }
+  render() {
+    return (
+      <Wrapper>
+        <Password {...this.state} update={this.update} />
+        {/* {Channel.initialize()} */}
+        <Header {...this.props} />
+        <Content spacer={this.props.spacer}>{this.props.children}</Content>
+        <FAB />
+        <Footer {...this.props} />
+      </Wrapper>
+    )
+  }
+}

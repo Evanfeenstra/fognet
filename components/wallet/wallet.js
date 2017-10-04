@@ -12,7 +12,8 @@ const Wallet = styled.div`
   top: 0px;
   bottom: 0px;
   right: 0px;
-  width: 20rem;
+  width: 100%;
+  max-width: 27rem;
   background: whitesmoke;
   display: flex;
   flex-direction: column;
@@ -20,7 +21,7 @@ const Wallet = styled.div`
   align-items: center;
   z-index: 30;
   transform: translateX(${props => (props.drawerOpen ? "0%" : "100%")});
-  transition: all .4s ease;
+  transition: all 0.4s ease;
   box-sizing: border-box;
   @media screen and (max-width: 640px) {
     width: 100%;
@@ -53,7 +54,7 @@ const Button = styled.button`
   color: white;
   font-size: 120%;
   background: dimgray;
-  padding: .5rem 1.3rem;
+  padding: 0.5rem 1.3rem;
   margin-bottom: 1rem;
   &:active {
     outline: none;
@@ -175,79 +176,85 @@ export default class extends React.Component {
       <Wallet {...this.props}>
         <Header>
           <div>You have {Reducer(this.props.balance)} IOTA</div>{" "}
-          {page !== "home" && (page !== "closed" && page !== "loading")
-            ? <Closed
-                style={{ height: 30, width: 30 }}
-                onClick={() => this.setState({ page: "home" })}
-                src={"/static/icons/back.svg"}
-              />
-            : <Closed
-                onClick={() => this.props.toggle()}
-                src={"/static/icons/multiply.svg"}
-              />}
+          {page !== "home" && (page !== "closed" && page !== "loading") ? (
+            <Closed
+              style={{ height: 30, width: 30 }}
+              onClick={() => this.setState({ page: "home" })}
+              src={"/static/icons/back.svg"}
+            />
+          ) : (
+            <Closed
+              onClick={() => this.props.toggle()}
+              src={"/static/icons/multiply.svg"}
+            />
+          )}
         </Header>
-        {page === "home" &&
+        {page === "home" && (
           <Content>
             <h3>Welcome to the Satoshipay IOTA Demo</h3>
             <p>
               This is a Proof-of-Concept of the SatoshiPay micropayment system.
-              The IOTA wallet used in this demo is working on the mainnet and is
+              The IOTA wallet used in this demo is working on the testnet and is
               using Flash Channels to pay for confirm payment in realtime.
             </p>
-            <p>
-              While the tokens are real, you will not be able to withdraw them.
-            </p>
-            {loading
-              ? <Spinner src={"/static/icons/loading-dark.svg"} />
-              : <div>
-                  {!channel.funded
-                    ? <Button onClick={() => this.fund()}>
-                        Fund the Channel
-                      </Button>
-                    : <p>
-                        <strong>
-                          Channel is now funded with 400 IOTA. Enough to
-                          demonstrate the Flash Channels.
-                        </strong>
-                      </p>}
-                  <Button
-                    onClick={() => this.setState({ page: "transactions" })}
-                  >
-                    {" "}Channel Transactions
-                  </Button>
-                  {channel.funded &&
-                    <Button onClick={() => this.close()}>
-                      {" "}Close Channel
-                    </Button>}
-                  <Reset onClick={() => this.reset()}>Reset the demo</Reset>
-                </div>}
-          </Content>}
-        {page === "loading" &&
+            {loading ? (
+              <Spinner src={"/static/icons/loading-dark.svg"} />
+            ) : (
+              <div>
+                {!channel.funded ? (
+                  <Button onClick={() => this.fund()}>Fund the Channel</Button>
+                ) : (
+                  <p>
+                    <strong>
+                      Channel is now funded with 400 IOTA. Enough to demonstrate
+                      the Flash Channels.
+                    </strong>
+                  </p>
+                )}
+                <Button onClick={() => this.setState({ page: "transactions" })}>
+                  {" "}
+                  Channel Transactions
+                </Button>
+                {channel.funded && (
+                  <Button onClick={() => this.close()}> Close Channel</Button>
+                )}
+                <Reset onClick={() => this.reset()}>Reset the demo</Reset>
+              </div>
+            )}
+          </Content>
+        )}
+        {page === "loading" && (
           <Content>
-            <h3>
-              {message}
-            </h3>
+            <h3>{message}</h3>
             <p>
-              Please leave the window open until the loading icon disappears.
+              You are now computing Proof of Work. This shouldn't take more than
+              15 seconds.
             </p>
             <Spinner src={"/static/icons/loading-dark.svg"} />
-          </Content>}
-        {page === "transactions" &&
+          </Content>
+        )}
+        {page === "transactions" && (
           <Content>
             <h3>Your purchases:</h3>
             {purchases &&
-              purchases.map((item, i) =>
+              purchases.map((item, i) => (
                 <Item key={i}>
-                  <span>
-                    {Reducer(item.value)} purchase
-                  </span>
-                  <span>
-                    {item.id}
-                  </span>
+                  {console.log(item)}
+                  <Row>
+                    <span>{Reducer(item.value)} purchase</span>
+                    <span>{item.id}</span>
+                  </Row>
+                  <Row>
+                    <span>
+                      Tx Hash: {item.bundles[0][0].bundle.substring(0, 8)}...
+                    </span>
+                    <span>Timestamp: {item.bundles[0][0].timestamp}</span>
+                  </Row>
                 </Item>
-              )}
-          </Content>}
-        {page === "backup" &&
+              ))}
+          </Content>
+        )}
+        {page === "backup" && (
           <Content>
             <h3>This is your private key.</h3>
             <p>
@@ -255,11 +262,10 @@ export default class extends React.Component {
               multi-signature wallet between you and SatoshiPay. If you loose
               it, you are unable to use the wallet. So keep it safe!
             </p>
-            <Seed>
-              {channel.userSeed}
-            </Seed>
-          </Content>}
-        {page === "closed" &&
+            <Seed>{channel.userSeed}</Seed>
+          </Content>
+        )}
+        {page === "closed" && (
           <Content>
             <h3>The channel has been closed!</h3>
             <p>Thank you for using the SatoshiPay demo of Flash channels.</p>
@@ -267,21 +273,22 @@ export default class extends React.Component {
               Your bundle has been attached. You can view it's status here on a
               tangle explorer.
             </p>
-            {channel && channel.final
-              ? <Bundle
-                  target={`_blank`}
-                  href={
-                    (Presets.PROD
-                      ? `https://thetangle.org/bundle/`
-                      : `https://explorer.tangle.works/#/addr/`) +
-                    channel.final[0][0].address
-                  }
-                >
-                  View Transaction
-                </Bundle>
-              : null}
+            {channel && channel.final ? (
+              <Bundle
+                target={`_blank`}
+                href={
+                  (Presets.PROD
+                    ? `https://thetangle.org/bundle/`
+                    : `https://explorer.tangle.works/#/addr/`) +
+                  channel.final[0][0].address
+                }
+              >
+                View Transaction
+              </Bundle>
+            ) : null}
             <Button onClick={() => this.reset()}>Reset the demo</Button>
-          </Content>}
+          </Content>
+        )}
       </Wallet>
     )
   }
@@ -302,8 +309,13 @@ const Bundle = styled.a`
 const Item = styled.div`
   width: 90%;
   padding: 1rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, .4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
+`
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
 `
