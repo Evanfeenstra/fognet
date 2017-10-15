@@ -101,11 +101,9 @@ export default () =>
         <Link route={`/article/tangle`}>
           <Article>
             <Img img={`/static/images/tangle.jpg`} />
-            <h2>Introducing IOTA - A Crypto Currency</h2>
+            <h2>Video: IOTA explained in a nutshell</h2>
             <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
+              An animation by a team of Cambridge University scientists. Since we perceive the off-blockchain solution not only as elegant but also necessary for any further crypto currency adaption, we created this video.
             </span>
           </Article>
         </Link>
@@ -114,9 +112,7 @@ export default () =>
             <Img img={`/static/images/servers.jpeg`} />
             <h2>IOTA and St. Petersburg Polytechnic University</h2>
             <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
+              IOTA is working with software titan Luxoft and a great team at the Peter the Great St. Petersburg Polytechnic University who possesses a 1.1 PetaFLOP supercomputer.
             </span>
           </Article>
         </Link>
@@ -125,9 +121,7 @@ export default () =>
             <Img img={`/static/images/ecosystem-header.jpg`} />
             <h2>IOTA Ecosystem Fund ($10 million USD)</h2>
             <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
+              Every great open source project has a great ecosystem surrounding it, in many ways it is the defining characteristic that separates a mediocre project from a great one.
             </span>
           </Article>
         </Link>
@@ -138,9 +132,7 @@ export default () =>
             <Img img={`/static/images/norway-header.jpg`} />
             <h2>IOTA launches DLT Research & Innovation Network from Norway</h2>
             <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
+              Norway has always been world leading in adopting digital technologies across both the public and private sectors and is now awaking to the potential of Distributed Ledger Technologies (DLT).
             </span>
           </Article>
         </Link>
@@ -149,9 +141,7 @@ export default () =>
             <Img img={`/static/images/ether-thumb.jpg`} />
             <h2>Ether Review - IOTA with David Sønstebø</h2>
             <span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Vestibulum varius aliquet convallis. Phasellus eu vulputate nulla,
-              at blandit mi. Sed egenisi.
+              David Sønstebø, co-founder of IOTA, discusses this next-generation post-blockchain platform designed to serve as the backbone for the Internet-of-Things (IoT).
             </span>
           </Article>
         </Link>
