@@ -48,7 +48,8 @@ export default {
     author: `Robin Kohze`,
     authorBio: `Biochemist, R, Python, JS`,
     authorImg: `/static/icons/robin.jpeg`,
-    title: "Introducing IOTA - A Crypto Currency (Bitcoin, Ethereum, Ripple Comparison)",
+    title:
+      "Introducing IOTA - A Crypto Currency (Bitcoin, Ethereum, Ripple Comparison)",
     content: [
       {
         type: "html",
@@ -70,6 +71,88 @@ export default {
         tag: "p",
         children:
           "This video was animated by a team of Cambridge University scientists. Since we perceive the off-blockchain solution not only as elegant but also necessary for any further crypto currency adaption, we created this video."
+      }
+    ]
+  },
+  iotastanglemeetsinternetthings: {
+    image: "/static/images/iota-header.jpg",
+    author: `Ian Allison`,
+    authorBio: `Ian is a financial technology reporter at International Business Times with particular interests in crypto-economics and machine learning. `,
+    authorImg: `/static/icons/ian-allison.png`,
+    title:
+      "IOTA's Tangle meets Internet of Things requirements better than any blockchain",
+    content: [
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "It's not surprising that Internet of Things (IoT) transactional settlement and data transfer layer IOTA is a co-founding partner of IoT consortium the Trusted Internet of Things Alliance."
+      },
+
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "As well as other blockchain IoT specialists like Filament and Chronicled, the new consortium features heavyweight industry players such as Bosch and Cisco."
+      },
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "IOTA's Tangle ledger is a Directed Acyclic Graph(DAG), as opposed to a linear blockchain design, allowing the system to settle transactions with zero fees enabling devices to trade exact amounts of resources on-demand, as well as store data from sensors and dataloggers securely and verified on the ledger."
+      },
+      {
+        type: "html",
+        tag: "p",
+        children:
+          "IOTA founder David Sønstebø explained that big corporate entities such as Bosch and Cisco have tested the likes of Ethereum and are increasingly coming to the conclusion that it alone will not work for IoT; the next go-to ledger tends to be Hyperledger."
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `"But Hyperledger has its own limitations and its own problems," said Sønstebø. "While it might be good for enterprise solutions in the future, it's ultimately a permissioned ledger, and that's the antithesis of IoT, which has to be open in order to realise its true potential."`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `"It can't be a closed ecosystem because that's literally the opposite of interoperability. The problem we are seeing with Hyperledger is that it's very corporate driven; it's the typical old school way of doing things, which is fine for certain use cases, but not open ecosystems. The only IoT use case that they have experimented with, as far as I know, is the shipping one, where you track the supply chain for provenance etc - even those pilot projects have not really amounted to anything other than headlines. That being said there could of course be overlap between permissioned blockchains like Hyperledger and permissionless IOTA, as long as they are used in their correct domains."`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `Sønstebø pointed to three things that prevent traditional blockchains from being useful in the IoT world: fees, scalability and throughput, and the rigidity of infrastructure.`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `Because public blockchains like Bitcoin are essentially used by two types of participants – users and validators – there will always be an issue of transaction fees. Validators are only running their systems to earn fees, and as blockchains become popular this leads to bottlenecks and higher fees.`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `This is fatal for a situation that involves processing micro-transactions between machines. "If I'm a sensor and I want to purchase storage, analytics or bandwidth, those transactions will most likely be something like one cent or two cents. Imagine paying dollar-plus fees to send one cent – that's not a good business model," said Sønstebø.`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `"This also prohibits using the ledger for data integrity because the beauty of a distributed ledger is of course that you get this tamper-proofing – but if I have to pay dollars for each data packet and I have billions of data packets that I want to send, there is no way to put it on the blockchain in real time."`
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `The second issue is scaling or throughput: 10 or 20 transactions per second wouldn't even really cover one connected vehicle, said Sønstebø. "When you have millions or billions of devices that are sending insane quantities of data and transactions, 20 transactions per second [tx/s] globally is not feasible for any kind of real world deployment."`
+      },
+      {
+        type: "satoshi",
+        type: `text`,
+        price: 45,
+        content: `tanglemeets`,
+        style: { height: 800 }
+      },
+      {
+        type: "html",
+        tag: "p",
+        children: `Regarding the rigidness of blockchain infrastructure requirements, IOTA adopts partition tolerance and eventual consistency in the CAP theorem sense, which means the Tangle is a lot more malleable. "If you issue a transaction in a cluster that's not connected to the internet but instead just communicates with other devices via some local protocol, then you can still retain the integrity of that cluster and then when you connect back into the main internet," said Sønstebø. "You seamlessly get this entangled kind of web, and that makes it a lot more versatile and agile in IoT ecosystem."`
       }
     ]
   },
@@ -213,8 +296,7 @@ export default {
       {
         type: "html",
         tag: "p",
-        children:
-          `If you are interested in applying for funding in any of these categories, head over to the F6S form. There you will simply have to fill out some basic questions, including the ones about the total desired budget for the project, its scope, description, timeline and so on.`
+        children: `If you are interested in applying for funding in any of these categories, head over to the F6S form. There you will simply have to fill out some basic questions, including the ones about the total desired budget for the project, its scope, description, timeline and so on.`
       }
     ]
   }
