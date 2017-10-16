@@ -1,15 +1,18 @@
 import styled from "styled-components"
-import Presets from '../../libs/presets'
+import Presets from "../../libs/presets"
+import Html from "./html"
 
 export default props => {
+  console.log(props)
   if (props.type === "image") {
     return (
       <Content {...props}>
-        {props.content &&
+        {props.content && (
           <Image
             {...props}
             src={`${Presets.API}item/${props.content}/${props.itemKey}`}
-          />}
+          />
+        )}
       </Content>
     )
   } else if (props.type === "video") {
@@ -22,21 +25,18 @@ export default props => {
       />
     )
   } else if (props.type === "audio") {
-    return <Audio {...props} src={`${Presets.API}item/${props.content}/${props.itemKey}`} autoPlay controls />
-  } else {
     return (
-      <Content {...props} dangerouslySetInnerHTML={{ __html: props.content }} />
+      <Audio
+        {...props}
+        src={`${Presets.API}item/${props.content}/${props.itemKey}`}
+        autoPlay
+        controls
+      />
     )
+  } else {
+    return <Html {...props} API={Presets.API} />
   }
 }
-
-const Content = styled.div`
-  position: relative;
-  min-width: 200px;
-  width: auto;
-  min-height: 80px;
-  height: auto;
-`
 
 const Image = styled.img`
   height: ${props => (props.height ? props.height + `px` : "auto")};
