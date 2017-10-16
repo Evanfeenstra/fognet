@@ -98,6 +98,17 @@ export default () => (
 
     <Row width={`70rem`} align={`flex-start`}>
       <ArticleSection>
+        <Link route={`/article/innovationnorway`}>
+          <Article>
+            <Img img={`/static/images/norway-header.jpg`} />
+            <h2>IOTA launches DLT Research & Innovation Network from Norway</h2>
+            <span>
+              Norway has always been world leading in adopting digital
+              technologies across both the public and private sectors and is now
+              awaking to the potential of Distributed Ledger Technologies (DLT).
+            </span>
+          </Article>
+        </Link>
         <Link route={`/article/tangle`}>
           <Article>
             <Img img={`/static/images/tangle.jpg`} />
@@ -107,17 +118,6 @@ export default () => (
               we perceive the off-blockchain solution not only as elegant but
               also necessary for any further crypto currency adaption, we
               created this video.
-            </span>
-          </Article>
-        </Link>
-        <Link route={`/article/supercomputer`}>
-          <Article>
-            <Img img={`/static/images/servers.jpeg`} />
-            <h2>IOTA and St. Petersburg Polytechnic University</h2>
-            <span>
-              IOTA is working with software titan Luxoft and a great team at the
-              Peter the Great St. Petersburg Polytechnic University who
-              possesses a 1.1 PetaFLOP supercomputer.
             </span>
           </Article>
         </Link>
@@ -134,17 +134,6 @@ export default () => (
         </Link>
       </ArticleSection>
       <ArticleSection margin>
-        <Link route={`/article/innovationnorway`}>
-          <Article>
-            <Img img={`/static/images/norway-header.jpg`} />
-            <h2>IOTA launches DLT Research & Innovation Network from Norway</h2>
-            <span>
-              Norway has always been world leading in adopting digital
-              technologies across both the public and private sectors and is now
-              awaking to the potential of Distributed Ledger Technologies (DLT).
-            </span>
-          </Article>
-        </Link>
         <Link route={`/article/iotastanglemeetsinternetthings`}>
           <Article>
             <Img img={`/static/images/iota-header.jpg`} />
@@ -155,6 +144,17 @@ export default () => (
             <span>
               IOTA is a co-founding partner of new IoT consortium, the Trusted
               Internet of Things Alliance.
+            </span>
+          </Article>
+        </Link>
+        <Link route={`/article/supercomputer`}>
+          <Article>
+            <Img img={`/static/images/servers.jpeg`} />
+            <h2>IOTA and St. Petersburg Polytechnic University</h2>
+            <span>
+              IOTA is working with software titan Luxoft and a great team at the
+              Peter the Great St. Petersburg Polytechnic University who
+              possesses a 1.1 PetaFLOP supercomputer.
             </span>
           </Article>
         </Link>
