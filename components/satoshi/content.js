@@ -37,6 +37,13 @@ export default props => {
     return <Html {...props} API={Presets.API} />
   }
 }
+const Content = styled.div`
+  position: relative;
+  min-width: 200px;
+  width: auto;
+  min-height: 80px;
+  height: auto;
+`
 
 const Image = styled.img`
   height: ${props => (props.height ? props.height + `px` : "auto")};
