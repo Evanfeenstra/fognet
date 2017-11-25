@@ -1,5 +1,5 @@
-import Document, { Head, Main, NextScript } from "next/document"
-import { ServerStyleSheet, injectGlobal } from "styled-components"
+import Document, { Head, Main, NextScript } from 'next/document'
+import { ServerStyleSheet, injectGlobal } from 'styled-components'
 
 export default class MyDocument extends Document {
   render() {
@@ -17,7 +17,7 @@ export default class MyDocument extends Document {
             href="/static/favicon.png"
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <script src={"/static/curl.min.js"} />
+          <script src={'/static/curl.min.js'} />
           {styleTags}
         </Head>
         <body>
@@ -32,7 +32,7 @@ export default class MyDocument extends Document {
 injectGlobal`
   body {
     margin: 0 auto;
-    font-family: quicksand;
+    font-family: quicksand, sans-serif;
     font-weight: 400;
     color: #4A4A4A;
   }

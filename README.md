@@ -1,14 +1,6 @@
 # Satoshi Pay - IOTA demo
 Simple proof of concept for utilising IOTA as the medium for the Satoshi Pay platform. 
 
-## Aims
-
-* Live IOTA wallet
-  * Users to receive 1 euro of IOTA
-* Pay for content with IOTA tokens
-  * Show live transaction receipts
-* Show 'content authors' wallet.
-
 ## What's inside
 - [**Next.js**](https://github.com/zeit/next.js) v2.4
 - [**React**](https://facebook.github.io/react/) v15.6
