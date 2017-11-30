@@ -1,6 +1,5 @@
 import IOTA from "iota.lib.js"
 import Presets from "./presets"
-import API from "./api"
 import {localAttachToTangle} from './curl'
 export var iota = new IOTA({
   provider: Presets.IOTA

@@ -99,6 +99,8 @@ export default class extends React.Component {
   }
 
   async componentDidMount() {
+    console.log('WALLET MOUNT')
+    console.log(store.get('purchases'))
     const state = await store.get("state")
     if (state && state.closed) this.setState({ page: "closed" })
     this.setState({
