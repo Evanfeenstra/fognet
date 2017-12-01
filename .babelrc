@@ -1,9 +1,23 @@
 {
   "plugins": [
-    "transform-object-rest-spread"
+    [
+      "module-resolver", {
+        "root": ["."],
+        "alias": {
+          "styles": "./styles"
+        },
+        "cwd": "babelrc"
+    }],
+    [
+      "wrap-in-js",
+      {
+        "extensions": ["css$", "scss$"]
+      }
+    ],
+	  "transform-object-rest-spread"
   ],
   "presets": [
     "next/babel",
-    "stage-2"
-  ]
+  ],
+  "ignore": []
 }

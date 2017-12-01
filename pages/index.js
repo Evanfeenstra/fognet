@@ -1,11 +1,16 @@
 import React from "react"
 import styled from "styled-components"
-import { Link } from "../routes"
 import FAB from "../components/wallet"
+import Pet from '../components/pet'
+
+import Wallet from '../react-iota/Wallet'
 
 export default () => (
   <App>
     <FAB />
+    <Wallet>
+      <Pet />
+    </Wallet>
   </App>
 )
 
