@@ -11,3 +11,7 @@ export default {
   SECURITY: 2,
 }
 //http://52.58.212.188:14700
+
+
+
+// ADDRESS is the receiving address of the server flash channel

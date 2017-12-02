@@ -51,8 +51,8 @@ export const localAttachToTangle = function(trunkTransaction, branchTransaction,
             // trunkTransaction together
 
             var txObject = iotaObj.utils.transactionObject(thisTrytes);
-            console.log(thisTrytes.length)
-            console.log(txObject)
+            // console.log(thisTrytes.length)
+            // console.log(txObject)
             txObject.tag = txObject.obsoleteTag;
             txObject.attachmentTimestamp = Date.now();
             txObject.attachmentTimestampLowerBound = 0;

@@ -1,7 +1,12 @@
-import IOTA from "../node_modules/iota.lib.js/lib/iota.js"
-import Presets from "./config"
+import IOTA from '../node_modules/iota.lib.js/lib/iota.js'
+import Presets from './config'
 import registerWebworker from 'webworker-promise/lib/register'
-import curl from "../static/curl.min.js"
+import curl from "./curl.min.js"
+
+// changes to curl.js
+// var canvas = new OffscreenCanvas(300, 150) instead of document.createElement('canvas')
+// global.curl instead of window.curl
+// added a "var" to states? (line 5830)
 
 const iota = new IOTA({
   provider: Presets.IOTA
@@ -9,29 +14,36 @@ const iota = new IOTA({
 
 const actions = {
 
-  initIota: (args) => {
-    console.log(iota)
-    return "blalllaal"
+  getInputs: async ({seed}) => {
+    return new Promise(function (resolve, reject) {
+      iota.api.getInputs(seed, function (error, success) {
+        if (error) reject(error)
+        else resolve(success)
+      })
+    })
   },
 
-  getInputs: async (args) => {
-    return new Promise(
-      function (resolve, reject) {
-        iota.api.getInputs(args.seed, function (error, success) {
-          if (error) {
-            reject(error)
-          }
-          else {
-            resolve(success)
-          }
-        })
-      }
-    )
-  }
+  getNewAddress: async ({seed, args}) => {
+    return new Promise(function (resolve, reject) {
+      iota.api.getNewAddress(seed, args, function (error, success) {
+        if (error) reject(error)
+        else resolve(success)
+      })
+    })
+  },
+
+  sendTransfer: async ({seed, transfers}) => {
+    return new Promise(function (resolve, reject) {
+      iota.api.sendTransfer(seed, 5, 9, transfers, (e, r) => {
+        if (e !== null) reject(e)
+        else resolve(r)
+      })
+    })
+  },
 
 }
 
-registerWebworker(async (m, emit) => actions[m.cmd](m.args))
+registerWebworker(async (m, emit) => actions[m.cmd](m))
 
 
 
@@ -42,8 +54,7 @@ const MAX_TIMESTAMP_VALUE = (Math.pow(3,27) - 1) / 2 // from curl.min.js
 const localAttachToTangle = function(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback) {
     const ccurlHashing = function(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback) {
         const iotaObj = iota;
-        console.log(curl)
-        //const curl = window.curl
+        const curl = global.curl
         curl.init()
 
         // inputValidator: Check if correct hash
@@ -89,8 +100,8 @@ const localAttachToTangle = function(trunkTransaction, branchTransaction, minWei
             // trunkTransaction together
 
             var txObject = iotaObj.utils.transactionObject(thisTrytes);
-            console.log(thisTrytes.length)
-            console.log(txObject)
+            // console.log(thisTrytes.length)
+            // console.log(txObject)
             txObject.tag = txObject.obsoleteTag;
             txObject.attachmentTimestamp = Date.now();
             txObject.attachmentTimestampLowerBound = 0;

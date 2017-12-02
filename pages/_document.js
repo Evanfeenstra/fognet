@@ -1,7 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet, injectGlobal } from 'styled-components'
-import muicss from '../styles/mui.css'
-import appcss from '../styles/app.css'
 
 export default class MyDocument extends Document {
   render() {
@@ -19,10 +17,8 @@ export default class MyDocument extends Document {
             href="/static/favicon.png"
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          {/*<script src={'/static/curl.min.js'} />*/}
+          <script src={'/static/curl.min.js'} />
           {styleTags}
-          <style dangerouslySetInnerHTML={{ __html: muicss }} />
-          <style dangerouslySetInnerHTML={{ __html: appcss }} />
         </Head>
         <body>
           <div className="root">{main}</div>
@@ -33,14 +29,15 @@ export default class MyDocument extends Document {
   }
 }
 
+
 injectGlobal`
   body {
     margin: 0 auto;
     font-family: avenir, sans-serif;
-    font-weight: 400;
-    color: #white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 100;
   }
-
   @font-face {
     font-family: 'avenir';
     src: url('/static/fonts/regular.ttf');
@@ -56,5 +53,4 @@ injectGlobal`
     src: url('/static/fonts/medium.ttf');
     font-weight: 600;
   }
-
 `

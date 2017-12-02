@@ -28,7 +28,7 @@ export const seedGen = length => {
     )
 }
 
-export const Reducer = amount => {
+export const reducer = amount => {
   if (amount < Math.pow(10, 3)) {
     var num = amount
     if (num % 1 != 0) return num.toFixed(2) + "i";
@@ -51,3 +51,16 @@ export const Reducer = amount => {
     return num + "Ti";
   }
 };
+
+export const isClient =
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+
+// Check if window is available
+export const isWindow = () => {
+  if (typeof window === "undefined" || typeof localStorage === "undefined") {
+    return false
+  }
+  return true
+}

@@ -119,6 +119,7 @@ export default class extends React.Component {
     this.setState(
       { page: "loading", message: "Funding the channel!" },
       async () => {
+        console.log("NOW FUND ADDY", state.flash.root.address)
         var funded = await fund(state.flash.root.address)
 
         console.log("Funded!", funded)
