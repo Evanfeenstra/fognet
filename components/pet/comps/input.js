@@ -1,23 +1,22 @@
 import React from 'react';
-import styled from "styled-components"
+import styled from 'styled-components'
 
 const I = props => {
-  return <Content>
-    <Input {...props} />
+  return <Content width={props.width}>
+    <Input {...props} type={props.type || 'text'} />
     <Label value={props.value}>
       {props.label}
     </Label>
   </Content>
 }
 
-export default I
-
 const Content = styled.div`
-  display: block;
+  display: inline-block;
   padding-top: 10px;
   margin-bottom: 15px;
   position: relative;
   text-align: left;
+  width: ${p => p.width ? p.width : 'auto'};
 `
 
 const Input = styled.input`
@@ -58,6 +57,11 @@ const Input = styled.input`
     line-height: 15px;
     color: #00a0a0;
   }
+  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 `
 
 const Label = styled.label`
@@ -81,4 +85,4 @@ const Label = styled.label`
   pointer-events: none;
 `
 
-
+export default I

@@ -6,18 +6,18 @@ require("isomorphic-fetch")
 
 export class Iota {
 
-  static async initWorker() {
+  static initWorker() {
     this.worker = new WebworkerPromise(new Worker());
   }
 
-  static async getBalance(seed) {
+  static getBalance(seed) {
     return this.worker.postMessage({
       cmd: 'getInputs',
       seed: seed
     })
   }
 
-  static async createAddresses(seed, amount, index) {
+  static createAddresses(seed, amount, index) {
     if (index == undefined) {
       // start with 0
       index = 0
@@ -35,7 +35,7 @@ export class Iota {
     })
   }
   
-  static async fundFromTestnet(address) {
+  static async fundFromTestnet(address, amount) {
     // Get your free seeeed
     var response = await fetch("https://seeds.tangle.works/")
     var wallet = await response.json()
@@ -43,10 +43,17 @@ export class Iota {
     //   seed:
     //     "FQLYDKWEBVIFC9UQKYWXNCDFVRNMAPADSTLXNHPQQFGTCSCJABEULUKBIZCGGRWYFSPTKMKIRBATVCMAZ"
     // }
+    return await this.sendTransfer(
+      wallet.seed,
+      [{ address, value: Math.min(amount, 2000) }]
+    )
+  }
+
+  static sendTransfer(seed, transfers) {
     return this.worker.postMessage({
       cmd: 'sendTransfer',
-      seed: wallet.seed,
-      transfers: [{ address, value: 400 }]
+      seed: seed,
+      transfers: transfers
     })
   }
 

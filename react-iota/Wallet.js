@@ -10,7 +10,7 @@ class Wallet extends Component {
     this.state={
       seed:null,
       gettingBalance:false,
-      balanceInputs:null,
+      balanceInputs:[],
       balance:null,
       gettingAddresses:false,
       addresses:null,
@@ -24,62 +24,98 @@ class Wallet extends Component {
     }
   }
 
-  createRandom = () => {
-    const seed = '9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER'
-    //const seed = seedGen(81)
-    this.setState({seed}, ()=>{
-      this.getBalance(seed)
+  login = (seed) => {
+    this.setState({seed}, () => {
+      this.getBalance()
     })
   }
 
-  fundFromTestnet = (address) => {
+  createRandom = () => {
+    if(!this.state.creatingRandom){
+      this.setState({creatingRandom:true})
+      const seed = utils.seedGen(81)
+      this.setState({seed}, async () => {
+        const a = await this.getAddresses(1)
+        this.setState({addresses:a})
+        await this.fundFromTestnet(a[0], 2000)
+        this.setState({creatingRandom:false})
+      })
+    }
+  }
+
+  fundFromTestnet = async (address, amount) => {
     if(!this.state.fundingAddressFromTestnet){
       this.setState({fundingAddressFromTestnet: address})
-      Iota.fundFromTestnet(address)
-      .then(r=>{
-        console.log('SENT FROM TESTNET!!!!', r)
+      try {
+        const r = await Iota.fundFromTestnet(address, amount)
+        const addy = r[0].address
+        const balanceInputs = [...this.state.balanceInputs]
+        const input = balanceInputs && balanceInputs.find(bi=>addy.includes(bi.address))
+        if(input && input.balance){
+          input.balance += amount
+        } else {
+          balanceInputs[r[0].currentIndex] = {
+            address:addy, balance:r[0].value, keyIndex:r[0].currentIndex
+          }
+        }
+        let balance = this.state.balance || 0
+        balance += amount
+        this.setState({fundingAddressFromTestnet:null, balance, balanceInputs})
+        return r
+      } catch (error) {
         this.setState({fundingAddressFromTestnet:null})
-      })
-      .catch(e=>{
-        this.setState({fundingAddressFromTestnet:null})
-        console.error(e)
-      })
+        return error
+      }
     }
   }
 
-  getBalance = () => {
+  getBalance = async () => {
     if(!this.state.gettingBalance){
       this.setState({balance:null, gettingBalance:true})
-      console.log('GET BALANCE', this.state.seed)
-      Iota.getBalance(this.state.seed)
-      .then(r=>{
+      console.log('GET BALANCE')
+      try {
+        const r = await Iota.getBalance(this.state.seed)
         this.setState({balance:r.totalBalance, gettingBalance:false, balanceInputs:r.inputs})
-      })
-      .catch(e=>{
+        return r
+      } catch (error) {
         this.setState({gettingBalance:false})
-        console.error(e)
-      })
+        return error
+      }
     }
   }
 
-  getAddresses = () => {
+  getAddresses = async (num) => {
     if(!this.state.gettingAddresses){
       this.setState({gettingAddresses:true})
       console.log('GET ADDRESSES')
-      Iota.createAddresses(this.state.seed, 10)
-      .then(a=>{
-        console.log(a)
+      try {
+        const a = await Iota.createAddresses(this.state.seed, num)
         this.setState({addresses:a, gettingAddresses:false})
-      })
-      .catch(e=>{
+        return a
+      } catch (error) {
         this.setState({gettingAddresses:false})
-        console.error(e)
-      })
+        return error
+      }
     }
-    
   }
 
-  sendIota = (amount, address, message, tag) => {
+  sendTransfer = async (transfer) => {
+    console.log(transfer)
+    if(!this.state.sendingTransfer){
+      this.setState({sendingTransfer:true})
+      console.log('SEND TRANSFER')
+      try {
+        const t = await Iota.sendTransfer(this.state.seed, transfer)
+        this.setState({sendingTransfer:false})
+        return t
+      } catch (error) {
+        this.setState({sendingTransfer:false})
+        return error
+      }
+    }
+  }
+
+  /*sendIota = (amount, address, message, tag) => {
     this.setState({sendingIota:true})
     this.iota.createBundle(this.props.seed, amount, address, message, tag)
     .then((b)=>this.iota.isCorrectBundle(b))
@@ -88,17 +124,18 @@ class Wallet extends Component {
       console.log(r)
       this.setState({sendingIota:false})
     })
-  }
+  }*/
 
   render() {
     const {children} = this.props
     const childProps = {
       ...this.state,
       utils: utils,
+      login: this.login,
       createRandom: this.createRandom,
       getBalance: this.getBalance,
       getAddresses: this.getAddresses,
-      sendIota: this.sendIota,
+      sendTransfer: this.sendTransfer,
       fundFromTestnet: this.fundFromTestnet,
     }
     return (React.isValidElement(children) ?

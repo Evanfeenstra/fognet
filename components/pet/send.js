@@ -1,74 +1,70 @@
 import React, { Component } from 'react';
-import styled from "styled-components"
-import Input from './input'
+import styled from 'styled-components'
+import Input from './comps/input'
+import Button from './comps/button'
 
 export default class Send extends Component {
+
+  constructor(){
+    super()
+    this.state={
+      recipient:'',
+      amount:''
+    }
+  }
 
   componentDidMount(){
     if(!this.props.recipient){
       setTimeout(()=>{
-        this.inputRef.focus()
+        this.addressInputRef.focus()
       },150)
     }
   }
 
-  onSubmit = (e) => {
-    e.preventDefault()
+  componentWillReceiveProps(newProps){
+    console.log('newProps',newProps)
+  }
+
+  onSubmit = () => {
     console.log('submit')
-    this.props.sendIota(1, this.props.recipient, 'sent with react-iota', '')
+    this.props.sendTransfer([{
+      address: this.state.recipient,
+      value: parseInt(this.state.amount)
+    }])
   }
 
   render(){
-    const {recipient, setRecipient, sendingIota} = this.props
+    const {hidden, sendingTransfer, utils} = this.props
+    if (hidden) return <span />
     return <Content>
-      <Wrap>
-        <Input label="Send to Address"
-          innerRef={r=>this.inputRef=r}
-          onChange={(e)=>setRecipient(e.target.value)}
-          value={recipient || ''} />
-        <Button color="teal" variant="raised"
-          onClick={this.onSubmit}
-          disabled={!recipient || sendingIota}>
-          {'Send'}
-        </Button>
-      </Wrap>
+        <Input type="text" label="Send to Address"
+          innerRef={r=>this.addressInputRef=r}
+          onChange={(e)=>this.setState({recipient:utils.validSeed(e.target.value)})}
+          value={this.state.recipient}
+          width="100%" />
+        <Wrap>
+          <Input type="text" label="Amount"
+            onChange={(e)=>this.setState({amount: utils.validAmount(e.target.value)})}
+            value={this.state.amount}
+            width="50%" />
+          <Button title="Send" active={sendingTransfer}
+            onClick={this.onSubmit} margin="7px 0 7px 14px"
+            disabled={!this.state.recipient || !this.state.amount || sendingTransfer} />
+        </Wrap>
     </Content>
   }
 }
 
-const Button = styled.div`
-  float:right;
-  height:32px;
-  color: white;
-  border: 1px solid white;
-  transition: all .15s ease-in-out;
-  display: inline-block;
-  padding: 0 26px;
-  margin: 8px 0;
-  cursor: pointer;
-  touch-action: manipulation;
-  text-align: center;
-  line-height: 33px;
-  vertical-align: middle;
-  white-space: nowrap;
-  user-select: none;
-  -webkit-user-select: none;
-  font-size: 14px;
-  letter-spacing: .03em;
-  position: relative;
-  overflow: hidden;
-  &:hover{
-    background:teal;
-  }
-`
-
 const Content = styled.div`
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  overflow: hidden;
+  overflow:hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `
 
 const Wrap = styled.div`
-  padding: 10px;
+  display:flex;
+  flex:1;
 `
+

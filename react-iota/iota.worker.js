@@ -102,6 +102,7 @@ const localAttachToTangle = function(trunkTransaction, branchTransaction, minWei
             var txObject = iotaObj.utils.transactionObject(thisTrytes);
             // console.log(thisTrytes.length)
             // console.log(txObject)
+            console.log('localAttachToTangle', txObject)
             txObject.tag = txObject.obsoleteTag;
             txObject.attachmentTimestamp = Date.now();
             txObject.attachmentTimestampLowerBound = 0;

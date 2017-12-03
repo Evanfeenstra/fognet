@@ -31,10 +31,7 @@ export const fund = async address => {
   //   seed:
   //     "FQLYDKWEBVIFC9UQKYWXNCDFVRNMAPADSTLXNHPQQFGTCSCJABEULUKBIZCGGRWYFSPTKMKIRBATVCMAZ"
   // }
-  console.log("FUND FROM TESTNET WALLET NOW", wallet)
   var transfers = [{ address, value: 400 }]
-  console.log(transfers)
-
   return new Promise(function(resolve, reject) {
     iota.api.sendTransfer(wallet.seed, 5, 9, transfers, (e, r) => {
       if (e !== null) {
