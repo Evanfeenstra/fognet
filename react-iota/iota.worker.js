@@ -8,6 +8,14 @@ import curl from "./curl.min.js"
 // global.curl instead of window.curl
 // added a "var" to states? (line 5830)
 
+/*
+
+Hi Lewis! For the FlashHack I am working on a UI and protocol for serving web content over bluetooth.. A "gateway node" will serve web requests to connected nodes over bluetooth, and charge per MB using flash channels. With the new bluetooth 5 mesh standard, this could enable people to pool together resources for shared internet access (believe it or not, there are many inner-city neighborhoods in the USA without any internet, and without any investment plans to build infrastructure). Long-term it could be the first step toward a decentralized internet without big service providers!
+
+I only recently got into IOTA, but I am completely blown away by its transformative potential. Thanks a lot for sharing the SatoshiPay demo code, its really helpful for getting started. 
+
+*/
+
 const iota = new IOTA({
   provider: Presets.IOTA
 })
@@ -51,7 +59,7 @@ registerWebworker(async (m, emit) => actions[m.cmd](m))
 
 const MAX_TIMESTAMP_VALUE = (Math.pow(3,27) - 1) / 2 // from curl.min.js
 
-const localAttachToTangle = function(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback) {
+const workerAttachToTangle = function(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback) {
     const ccurlHashing = function(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback) {
         const iotaObj = iota;
         const curl = global.curl
@@ -156,4 +164,4 @@ const localAttachToTangle = function(trunkTransaction, branchTransaction, minWei
     })
 }
 
-iota.api.attachToTangle = localAttachToTangle
+iota.api.attachToTangle = workerAttachToTangle

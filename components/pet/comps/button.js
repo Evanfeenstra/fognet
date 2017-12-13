@@ -3,11 +3,11 @@ import styled from 'styled-components'
 
 const B = (props) => <Button {...props}>
   {!props.active ? props.title :
-  <Spinner src="/static/img/ajax-loader-small.gif" />}
+  <Spinner src="/static/img/ajax-loader-small.gif" size={props.size} />}
 </Button>
 
 const Spinner = styled.img`
-  height: 7px;
+  height: ${p=> p.size==='tiny' ? '4px' : '7px'};
 `
 
 const Button = styled.div`
@@ -20,8 +20,8 @@ const Button = styled.div`
   flex:1;
   justify-content:center;
   align-items:center;
-  max-height:32px;
-  min-height:32px;
+  max-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
+  min-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
   transition: all .15s ease-in-out;
   cursor: ${p=> p.active ? 'default' : 'pointer'};
   touch-action: manipulation;
@@ -29,7 +29,7 @@ const Button = styled.div`
   white-space: nowrap;
   user-select: none;
   -webkit-user-select: none;
-  font-size: 14px;
+  font-size: ${p=> p.size==='tiny' ? '9' : '14'}px;
   letter-spacing: .03em;
   overflow: hidden;
   &:hover{

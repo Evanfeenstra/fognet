@@ -4,7 +4,7 @@ const prod = false
 export default {
   API: prod
     ? "https://satoshipay.iotaledger.net/"
-    : "https://satoshipay.iotaledger.net/",
+    : "http://localhost:9000/",
   ADDRESS: `GQMHDLS9XPSNURUCPKKJJTULZRPH9WSKUKQQQPJOY9CPRCNAUSIFWCLHVDSUHJJCPMQDARUIFFXKXFVQD`,
   IOTA: prod ? "https://node.tangle.works" : "https://testnet140.tangle.works",
   PROD: prod ? true : false

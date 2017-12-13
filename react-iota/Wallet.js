@@ -35,9 +35,9 @@ class Wallet extends Component {
       this.setState({creatingRandom:true})
       const seed = utils.seedGen(81)
       this.setState({seed}, async () => {
-        const a = await this.getAddresses(1)
+        const a = await this.getAddresses(10)
         this.setState({addresses:a})
-        await this.fundFromTestnet(a[0], 2000)
+        await this.fundFromTestnet(a[0], 420)
         this.setState({creatingRandom:false})
       })
     }
@@ -63,6 +63,7 @@ class Wallet extends Component {
         this.setState({fundingAddressFromTestnet:null, balance, balanceInputs})
         return r
       } catch (error) {
+        console.error(error)
         this.setState({fundingAddressFromTestnet:null})
         return error
       }
@@ -78,21 +79,24 @@ class Wallet extends Component {
         this.setState({balance:r.totalBalance, gettingBalance:false, balanceInputs:r.inputs})
         return r
       } catch (error) {
+        console.error(error)
         this.setState({gettingBalance:false})
         return error
       }
     }
   }
 
-  getAddresses = async (num) => {
+  getAddresses = async (num, startingIndex) => {
     if(!this.state.gettingAddresses){
       this.setState({gettingAddresses:true})
       console.log('GET ADDRESSES')
       try {
-        const a = await Iota.createAddresses(this.state.seed, num)
-        this.setState({addresses:a, gettingAddresses:false})
+        const a = await Iota.createAddresses(this.state.seed, num, startingIndex)
+        const addys = this.state.addresses || []
+        this.setState({addresses:addys.concat(a), gettingAddresses:false})
         return a
       } catch (error) {
+        console.error(error)
         this.setState({gettingAddresses:false})
         return error
       }
@@ -109,6 +113,7 @@ class Wallet extends Component {
         this.setState({sendingTransfer:false})
         return t
       } catch (error) {
+        console.error(error)
         this.setState({sendingTransfer:false})
         return error
       }

@@ -4,6 +4,7 @@ import Receive from './receive'
 import Send from './send'
 import Input from './comps/input'
 import Button from './comps/button'
+import Flash from './flash'
 
 /*
 9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER
@@ -15,17 +16,16 @@ export default class Pet extends Component {
     super()
     this.state={
       mode:null,
-      seedInput:''
+      seedInput:'',
     }
   }
 
   render() {
     const {utils, createRandom, creatingRandom, login, balance, gettingBalance, getBalance, getAddresses, addresses, gettingAddresses} = this.props
-    const isConnected = balance || balance===0
+    const isConnected = true//balance || balance===0
     let {mode} = this.state
 
-    mode = mode === 'receive' && gettingAddresses ? null : mode
-
+    //mode = mode === 'receive' && !addresses ? null : mode
     return (<Wallet>
       <Content>
 
@@ -44,12 +44,23 @@ export default class Pet extends Component {
             onClick={()=>login(this.state.seedInput)} />
         </Seed>}
 
-        {isConnected && <Header>
+        {isConnected && <Header mode={mode}>
           <Balance>Balance:&nbsp;&nbsp;{utils.reducer(balance)}&nbsp;</Balance>
-          {mode && <HeaderExit onClick={()=>this.setState({mode:null})}>
-            <X style={{width:12, height:20, stroke:'white'}} />
-          </HeaderExit>}
+          <div>
+            <HeaderFab show={mode==='send'||mode==='flash'} 
+              lineHeight="33px" hideBorder mode={mode}
+              onClick={()=>this.setState({mode:'flash'})}>
+              <Lightning style={{fill:'white',height:18}}/>
+            </HeaderFab>
+            <HeaderFab show={mode} onClick={()=>{
+              this.setState({mode:mode==='flash'?'send':null})
+            }}>
+              <X style={{width:12, height:20, stroke:'white'}} />
+            </HeaderFab>
+          </div>
         </Header>}
+
+        <Flash {...this.props} show={mode==='flash'} />
 
         {isConnected && <Tabs mode={mode}>
 
@@ -58,7 +69,7 @@ export default class Pet extends Component {
           </Tab>}
           {!mode && <Tab onClick={()=>{
               this.setState({mode:'receive'})
-              if(!addresses) getAddresses(10)
+              if(!addresses) getAddresses(20)
             }} active={gettingAddresses}>
             {!gettingAddresses ? 'Receive' :
             <Spinner src="/static/img/ajax-loader-small.gif" />}
@@ -66,7 +77,7 @@ export default class Pet extends Component {
 
           <Send {...this.props} hidden={!(mode==='send')} />
 
-          {mode==='receive' && addresses && <Receive {...this.props} />}
+          {mode==='receive' && <Receive {...this.props} />}
         </Tabs>}
 
       </Content>
@@ -82,6 +93,12 @@ const X = ({style}) => {
   </svg>
 }
 
+const Lightning = ({style}) => {
+  return <svg style={style} viewBox="0 0 512 512">
+    <path d="M302.7,64L143,288h95.8l-29.5,160L369,224h-95.8L302.7,64L302.7,64z"/>
+  </svg>
+}
+
 const Wallet = styled.div`
   transform: scale(1.3,1.3);
   width: 240px;
@@ -91,7 +108,9 @@ const Wallet = styled.div`
   position: relative;
   display: flex;
   color: white;
-`
+  overflow:hidden;
+  background: #140061; 
+`//009dad
 
 const Content = styled.div`
   display:flex;
@@ -99,6 +118,7 @@ const Content = styled.div`
   width:100%;
   flex-direction:column;
   justify-content:space-between;
+  overflow:hidden;
 `
 
 const Seed = styled.div`
@@ -116,6 +136,19 @@ const Header = styled.div`
   flex-direction:row;
   justify-content:space-between;
   min-height:42px;
+  overflow:hidden;
+  z-index:100;
+  position:relative;
+  background: #140061;
+  &::after{
+    content:"";
+    background:${p=> p.mode==='flash' ? 'white' : 'transparent'};
+    height:1px;
+    width:100%;
+    position:absolute;
+    bottom:-1px;
+    left:0px;
+  }
 `
 
 const Balance = styled.div`
@@ -123,22 +156,28 @@ const Balance = styled.div`
   margin-left: 13px;
 `
 
-const HeaderExit = styled.div`
-  transition: all .15s ease-in-out;
+const HeaderFab = styled.div`
+  transition: all .12s ease-in-out;
+  transform: translateY(${p=> p.show ? '0px' : '-35px'});
+  display: inline-block;
+  vertical-align: top;
   margin-top:11px;
   margin-right:13px;
   font-size: 9px;
-  cursor: pointer;
+  cursor: ${p=> p.mode==='flash' ? 'default' : 'pointer'};
+  pointer-events: ${p=> p.mode==='flash' ? 'none' : 'auto'};
   height: 20px;
   width: 20px;
   color: white;
-  border: 1px solid white;
+  background: ${p=> p.mode==='flash' ? 'teal' : 'transparent'};
+  border: 1px solid ${p=> p.hideBorder && p.mode!=='flash' ? 'transparent' : 'white'};
   border-radius: 50%;
   text-align: center;
   &:hover{
     background: teal;
-    color: white;
+    border: 1px solid white;
   }
+  line-height: ${p=> p.lineHeight || 'auto'};
 `
 
 const Tabs = styled.div`

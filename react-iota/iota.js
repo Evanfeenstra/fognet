@@ -43,13 +43,13 @@ export class Iota {
     //   seed:
     //     "FQLYDKWEBVIFC9UQKYWXNCDFVRNMAPADSTLXNHPQQFGTCSCJABEULUKBIZCGGRWYFSPTKMKIRBATVCMAZ"
     // }
-    return await this.sendTransfer(
+    return this.sendTransfer(
       wallet.seed,
       [{ address, value: Math.min(amount, 2000) }]
     )
   }
 
-  static sendTransfer(seed, transfers) {
+  static async sendTransfer(seed, transfers) {
     return this.worker.postMessage({
       cmd: 'sendTransfer',
       seed: seed,

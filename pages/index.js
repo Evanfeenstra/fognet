@@ -20,6 +20,6 @@ const App = styled.div`
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(315deg, #009dad 4%, #140061);
+  background: linear-gradient(135deg, #00646d 4%, #411cce);
   background-size: cover;
 `
