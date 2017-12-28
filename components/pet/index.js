@@ -7,7 +7,24 @@ import Button from './comps/button'
 import Flash from './flash'
 
 /*
+
 9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER
+
+
+navigator.bluetooth.requestDevice({ 
+  filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
+})
+.then(device => device.gatt.connect())
+.then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
+.then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
+.then(characteristic => {
+  console.log(characteristic)
+  this.setState({char:characteristic})
+  clearInterval(this.interval)
+  this.interval = null
+})
+.catch(error => { console.log(error); });
+
 */
 
 export default class Pet extends Component {
@@ -16,14 +33,15 @@ export default class Pet extends Component {
     super()
     this.state={
       mode:null,
+      flash:false,
       seedInput:'',
     }
   }
 
   render() {
     const {utils, createRandom, creatingRandom, login, balance, gettingBalance, getBalance, getAddresses, addresses, gettingAddresses} = this.props
-    const isConnected = true//balance || balance===0
-    let {mode} = this.state
+    const isConnected = balance || balance===0
+    let {mode, flash} = this.state
 
     //mode = mode === 'receive' && !addresses ? null : mode
     return (<Wallet>
@@ -47,32 +65,28 @@ export default class Pet extends Component {
         {isConnected && <Header mode={mode}>
           <Balance>Balance:&nbsp;&nbsp;{utils.reducer(balance)}&nbsp;</Balance>
           <div>
-            <HeaderFab show={mode==='send'||mode==='flash'} 
-              lineHeight="33px" hideBorder mode={mode}
-              onClick={()=>this.setState({mode:'flash'})}>
-              <Lightning style={{fill:'white',height:18}}/>
-            </HeaderFab>
-            <HeaderFab show={mode} onClick={()=>{
-              this.setState({mode:mode==='flash'?'send':null})
+            <HeaderFab show={mode||flash} onClick={()=>{
+              this.setState({mode:null,flash:null})
             }}>
               <X style={{width:12, height:20, stroke:'white'}} />
+            </HeaderFab>
+            <HeaderFab show
+              lineHeight="33px" hideBorder mode={mode}
+              onClick={()=>this.setState({flash:true,mode:null})}>
+              <Lightning style={{fill:'white',height:18}}/>
             </HeaderFab>
           </div>
         </Header>}
 
-        <Flash {...this.props} show={mode==='flash'} />
+        {isConnected && <Flash {...this.props} show={flash} />}
 
         {isConnected && <Tabs mode={mode}>
 
           {!mode && <Tab onClick={()=>this.setState({mode:'send'})}>
             Send
           </Tab>}
-          {!mode && <Tab onClick={()=>{
-              this.setState({mode:'receive'})
-              if(!addresses) getAddresses(20)
-            }} active={gettingAddresses}>
-            {!gettingAddresses ? 'Receive' :
-            <Spinner src="/static/img/ajax-loader-small.gif" />}
+          {!mode && <Tab onClick={()=>this.setState({mode:'receive'})}>
+            Receive
           </Tab>}
 
           <Send {...this.props} hidden={!(mode==='send')} />
@@ -100,10 +114,9 @@ const Lightning = ({style}) => {
 }
 
 const Wallet = styled.div`
-  transform: scale(1.3,1.3);
+  transform: scale(1.3,1.3) translateY(20px);
   width: 240px;
   border: 1px solid white;
-  margin: 58px;
   height: 170px;
   position: relative;
   display: flex;
@@ -124,11 +137,6 @@ const Content = styled.div`
 const Seed = styled.div`
   margin:0 12px;
   display:flex;
-`
-
-const Spinner = styled.img`
-  height: 7px;
-  margin-bottom: 2px;
 `
 
 const Header = styled.div`

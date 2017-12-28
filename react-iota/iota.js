@@ -7,7 +7,15 @@ require("isomorphic-fetch")
 export class Iota {
 
   static initWorker() {
-    this.worker = new WebworkerPromise(new Worker());
+    if(typeof OffscreenCanvas !== "undefined") {
+      this.worker = new WebworkerPromise(new Worker())
+      this.worker.postMessage({
+        cmd: 'init',
+        provider: Presets.IOTA
+      })
+    } else  {
+      this.worker = mainThread
+    }
   }
 
   static getBalance(seed) {
@@ -25,11 +33,11 @@ export class Iota {
     return this.worker.postMessage({
       cmd: 'getNewAddress',
       seed: seed,
-      args: {
+      options: {
         'index': index, 
         'checksum': true, 
         'total': amount, 
-        'security': Presets.SECURITY, 
+        'security': Presets.SECURITY,
         'returnAll': true
       }
     })
@@ -56,6 +64,23 @@ export class Iota {
       transfers: transfers
     })
   }
+
+  static async prepareTransfers(seed, transfers) {
+    return this.worker.postMessage({
+      cmd: 'prepareTransfers',
+      seed: seed,
+      transfers: transfers
+    })
+  }
+
+  static async sendTrytes(transfers) {
+    return this.worker.postMessage({
+      cmd: 'sendTrytes',
+      transfers: transfers
+    })
+  }
+
+
 
 }
 
@@ -134,5 +159,11 @@ export class Attach {
     } catch (e) {
       return e
     }
+  }
+}
+
+const mainThread = {
+  postMessage: function(args) {
+    console.log(args)
   }
 }

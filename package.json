@@ -17,6 +17,8 @@
     "react": "^15.6.1",
     "react-clipboard": "^1.3.2",
     "react-dom": "^15.6.1",
+    "react-iota": "^0.1.3",
+    "react-render-html": "^0.6.0",
     "shortid": "^2.2.8",
     "styled-components": "^2.1.2",
     "webworker-promise": "^0.3.1"

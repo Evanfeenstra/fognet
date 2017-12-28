@@ -46,7 +46,7 @@ export default class extends React.Component {
   }
   render() {
     isWindow()
-    Channel.initialize()
+    //Channel.initialize()
     var { drawerOpen, balance } = this.state
     return (
       <div>

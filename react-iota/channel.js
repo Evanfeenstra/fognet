@@ -1,8 +1,8 @@
-import { API, seedGen } from "./utils"
+import { API } from "./utils"
 import shortid from "shortid"
 import { multisig, transfer } from "iota.flash.js"
-import { Attach, iota } from "./iota"
-import Presets from "./presets"
+import { actions, iota } from "./actions"
+import Presets from "./config"
 
 var initialising = false
 
@@ -19,20 +19,18 @@ export default class Channel {
   static flash = {}
 
   // Initiate the local state and store it localStorage
-  static async initialize(
-    userID = shortid.generate(),
-    index = 0,
-    security = Channel.SECURITY,
-    signersCount = Channel.SIGNERS_COUNT,
-    treeDepth = Channel.TREE_DEPTH,
-    balance = 0,
-    deposit = Array(Channel.SIGNERS_COUNT).fill(0)
-  ) {
+  static async initialize(userSeed) {
+    let userID = shortid.generate()
+    let index = 0
+    let security = Channel.SECURITY
+    let signersCount = Channel.SIGNERS_COUNT
+    let treeDepth = Channel.TREE_DEPTH
+    let balance = 0
+    let deposit = Array(Channel.SIGNERS_COUNT).fill(0)
+    console.log("HIHI", userSeed)
     // Escape the function when server rendering
     if (!isWindow()) return false
     
-    var userSeed = seedGen(81)
-
     // Stop if local state exists
     const localState = await store.get("state")
     if (localState) {
@@ -42,7 +40,7 @@ export default class Channel {
     if (initialising) return
     initialising = true
 
-    console.log("Initialising Channel")
+    console.log("Initialising Channel!!!")
 
     // Initialize state object
     const state = {
@@ -121,8 +119,8 @@ export default class Channel {
     for (let i = 1; i < multisigs.length; i++) {
       multisigs[i - 1].children.push(multisigs[i])
     }
-    console.log(multisigs[0])
-    console.log(iota.utils.addChecksum(multisigs[0].address))
+    //console.log(multisigs[0])
+    //console.log(iota.utils.addChecksum(multisigs[0].address))
 
     return {
       remainder: remainderAddress,

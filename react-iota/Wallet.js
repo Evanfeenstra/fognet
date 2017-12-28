@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Iota } from './iota'
 import * as utils from './utils'
 import Worker from './iota.worker.js';
+import Channel from './channel'
 
 class Wallet extends Component {
 
@@ -27,6 +28,9 @@ class Wallet extends Component {
   login = (seed) => {
     this.setState({seed}, () => {
       this.getBalance()
+      .then(()=>{
+        this.getAddresses(10)
+      })
     })
   }
 
@@ -120,6 +124,94 @@ class Wallet extends Component {
     }
   }
 
+  webRequest = async (url) => {
+    console.log(transfer)
+    if(!this.state.requestingWeb){
+      this.setState({requestingWeb:true})
+      console.log('WEB REQ')
+      try {
+        const opts = {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({
+            id: userID,
+            url: url
+          })
+        }
+        const t = await utils.API('fognet', url)
+        this.setState({requestingWeb:false})
+        return t
+      } catch (error) {
+        console.error(error)
+        this.setState({requestingWeb:false})
+        return error
+      }
+    }
+  }
+
+  initializeFlashChannel = async () => {
+    console.log('init flahs')
+    Channel.initialize(this.state.seed)
+  }
+
+  fundFlashChannel = async () => {
+    console.log('fund flahs channel')
+  }
+
+  prepareTransfers = async (transfers) => {
+    try {
+      const t = await Iota.prepareTransfers(this.state.seed, transfers)
+      console.log(t)
+      return t
+    } catch (error) {
+      console.error(error)
+      return error
+    }
+    /*async function createBundle (amount, address, message, tag) {
+      return new Promise(
+        function (resolve, reject) {
+          if (!message || message === '') {
+            // take from config if empty
+            message = iota.utils.toTrytes(config.message)
+          }
+          else {
+            if (!iota.valid.isTrytes(message)) {
+              message = iota.utils.toTrytes(message)
+            }
+          }
+          if (!tag || tag === '' || !iota.valid.isTrytes(tag, 27)) {
+            tag = config.tag
+          }
+          var transfersArray = [{ 'address': address, 'value': amount, message: message, tag: tag}]
+          console.log(transfersArray)
+          iota.api.prepareTransfers(seed, transfersArray, function (error, success) {
+            if (error) {
+              reject(error)
+            }
+            else {
+              resolve(success)
+            }
+          })
+        }
+      )
+      }*/
+
+  }
+
+  sendTrytes = async (bundle) => {
+    try {
+      const t = await Iota.sendTrytes(bundle, 5, 14)
+      console.log(t)
+      return t
+    } catch (error) {
+      console.error(error)
+      return error
+    }
+  }
+
   /*sendIota = (amount, address, message, tag) => {
     this.setState({sendingIota:true})
     this.iota.createBundle(this.props.seed, amount, address, message, tag)
@@ -133,6 +225,8 @@ class Wallet extends Component {
 
   render() {
     const {children} = this.props
+    console.log(children)
+    console.log('hi')
     const childProps = {
       ...this.state,
       utils: utils,
@@ -142,6 +236,11 @@ class Wallet extends Component {
       getAddresses: this.getAddresses,
       sendTransfer: this.sendTransfer,
       fundFromTestnet: this.fundFromTestnet,
+      prepareTransfers: this.prepareTransfers,
+      sendTrytes: this.sendTrytes,
+      initializeFlashChannel: this.initializeFlashChannel,
+      fundFlashChannel: this.fundFlashChannel,
+      webRequest: this.webRequest
     }
     return (React.isValidElement(children) ?
       React.cloneElement(children,
