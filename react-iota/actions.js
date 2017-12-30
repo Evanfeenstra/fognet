@@ -8,6 +8,11 @@ const actions = {
   init: ({provider}) => {
     iota = new IOTA({provider})
     iota.api.attachToTangle = workerAttachToTangle
+    /*self.XMLHttpRequest.prototype.open = async () => {
+      console.log("XMLHttpRequest HEREREREREREERE webworker")
+      await timeout(1000)
+      return true
+    }*/
   },
 
   getInputs: async ({seed}) => {

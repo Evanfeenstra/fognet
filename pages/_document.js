@@ -37,6 +37,7 @@ injectGlobal`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 100;
+    overflow:hidden;
   }
   @font-face {
     font-family: 'avenir';

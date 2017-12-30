@@ -6,7 +6,7 @@ export default {
     ? "https://satoshipay.iotaledger.net/"
     : "http://localhost:9000/",
   ADDRESS: `GQMHDLS9XPSNURUCPKKJJTULZRPH9WSKUKQQQPJOY9CPRCNAUSIFWCLHVDSUHJJCPMQDARUIFFXKXFVQD`,
-  IOTA: prod ? "https://node.tangle.works" : "https://testnet140.tangle.works",
+  IOTA: prod ? "https://node.tangle.works" : "https://testnet140.tangle.works:443",
   PROD: prod ? true : false,
   SECURITY: 2,
 }
@@ -15,3 +15,11 @@ export default {
 
 
 // ADDRESS is the receiving address of the server flash channel
+
+
+
+
+//https://testnet140.tangle.works:443
+
+
+//http://p101.iotaledger.net:14700

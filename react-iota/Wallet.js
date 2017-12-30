@@ -225,8 +225,6 @@ class Wallet extends Component {
 
   render() {
     const {children} = this.props
-    console.log(children)
-    console.log('hi')
     const childProps = {
       ...this.state,
       utils: utils,

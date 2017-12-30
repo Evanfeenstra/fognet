@@ -5,13 +5,12 @@ import FAB from "../components/wallet"
 import Pet from '../components/pet'
 import Browser from '../components/browser'
 
-
 export default () => (
   <App>
     <FAB />
-    {/*<Wallet>  
+    <Wallet>  
       <Pet />
-    </Wallet>*/}
+    </Wallet>
     <Browser />
   </App>
 )

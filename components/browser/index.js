@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import * as util from './aScript'
+import Gooey from './gooey'
+
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /*
 
@@ -16,22 +21,35 @@ export default class B extends Component {
       html:'',
       loading:false,
       index:0,
-      sites:[]
+      sites:[],
+      toggle:false,
+      char: null,
     }
   }
 
-  componentWillMount(){
+  componentDidMount(){
     /*if(typeof WebSocket !== 'undefined'){
       this.ws = new WebSocket('ws://localhost:8000/fognet')
       this.ws.onmessage = this.onMessage
     }*/
     if(util.isWindow()){
       window.addEventListener('message', (e) => {
-        var r = JSON.parse(e.data)
-        if(r.hasOwnProperty('fognetHref')){
-          this.go(r.fognetHref)
+        if(e.data && e.data.hasOwnProperty && e.data.hasOwnProperty('fognetHref')){
+          this.go(e.data.fognetHref)
         }
       })
+
+      /*window.fetch = async () => {
+        console.log("FETHC HEREREERERERE")
+        await timeout(1000)
+        return true
+      }
+
+      window.XMLHttpRequest.prototype.open = async () => {
+        console.log("XMLHttpRequest HEREREREREREERE")
+        await timeout(1000)
+        return true
+      }*/
     }
   }
 
@@ -47,6 +65,12 @@ export default class B extends Component {
     this.setState({index, ...site})
   }
 
+  forward = () => {
+    const index = this.state.index + 1
+    const site = this.state.sites[index]
+    this.setState({index, ...site})
+  }
+
   onFrameLoad = () => {
     const doc = this.frame.contentDocument || this.frame.document
     var iFrameHead = doc.getElementsByTagName("head")[0]
@@ -56,12 +80,52 @@ export default class B extends Component {
     iFrameHead.appendChild(myscript)
   }
 
+  connectToBLE = () => {
+    if(!this.interval){
+      this.interval = setInterval(()=>{
+        this.toggler()
+      },420)
+    }
+    navigator.bluetooth.requestDevice({ 
+      filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
+    })
+    .then(device => device.gatt.connect())
+    .then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
+    .then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
+    .then(characteristic => {
+      console.log(characteristic)
+      this.setState({char:characteristic, toggle:false})
+      clearInterval(this.interval)
+      this.interval = null
+    })
+    .catch(error => { 
+      clearInterval(this.interval)
+      this.setState({toggle:false})
+      this.interval = null
+    });
+  }
+
+  toggler = () => {
+    this.setState({toggle:!this.state.toggle}) 
+  }
+
   go = async (url) => {
     this.setState({loading:true})
     setTimeout(()=>{
       this.setState({html: ''})
     },200)
-    const opts = {
+
+    var enc = new TextEncoder("utf-8");
+    const byteArray = enc.encode(url)
+    this.state.char.writeValue(byteArray)
+    .then(r=>{
+      console.log("GATT COMPLETE", r)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+
+    /*const opts = {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -75,22 +139,17 @@ export default class B extends Component {
     const response = await util.API("fognet", opts)
     const sites = [...this.state.sites]
     sites.push({url, html: response.html})
-    this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
+    this.setState({html: response.html, loading:false, sites, index: sites.length - 1})*/
   }
 
   render() {
-    const {index, loading, url, html, sites} = this.state
+    const {index, loading, url, html, sites, toggle, char} = this.state
     return (<Browser>
+      
       <TopBar>
-        <Things style={{margin:5}}>
-          <Back onClick={this.back} 
-            disabled={sites.length<2}>
-            ◀
-          </Back>
-          <Forward onClick={this.forward} 
-            disabled={!url || loading}>
-            ▶
-          </Forward>
+        {char && <Things style={{margin:5}}>
+          <Back onClick={this.back} disabled={index===0}>◀</Back>
+          <Forward onClick={this.forward} disabled={index>=sites.length-1}>▶</Forward>
           <Input value={url} 
             onChange={(e)=>this.setState({url:e.target.value})} 
             onKeyPress={this.inputKeyPress} />
@@ -98,7 +157,11 @@ export default class B extends Component {
             disabled={!url || loading}>
             go
           </Button>
-        </Things>
+        </Things>}
+        {!char && <Things>
+          <Connect>Connect</Connect>
+          <Gooey onClick={this.connectToBLE} checked={toggle} />
+        </Things>}
       </TopBar>
 
       {html && <iframe srcDoc={html} 
@@ -124,16 +187,25 @@ const Browser = styled.div`
   justify-content:flex-start;
   box-shadow: 0px 1px 9px 1px rgba(94,94,94,.5);
   border: 1px solid white;
+  position: relative;
 `
 const TopBar = styled.div`
   height:32px;
   width:100%;
-  background: linear-gradient(340deg, #004a51 4%, #291184);
+  background: linear-gradient(340deg, #004a51 4%, #30139d);
   border-bottom: 1px solid white;
+  position:relative;
 `
 const Things = styled.div`
   margin:5;
   position:relative;
+`
+const Connect = styled.div`
+  position:absolute;
+  color:white;
+  top: 5px;
+  font-size: 12px;
+  right: 23px;
 `
 const Back = styled.button`
   width: 21px;
@@ -142,7 +214,7 @@ const Back = styled.button`
   position: absolute;
   left: 0px;
   top: 0px;
-  padding-left:5px;
+  padding-left:4px;
 `
 const Forward = styled.button`
   width: 22px;
@@ -151,6 +223,7 @@ const Forward = styled.button`
   position: absolute;
   left: 24px;
   top: 0px;
+  padding-left: 6px;
 `
 const Button = styled.button`
   width: 48px;
@@ -168,7 +241,8 @@ const Loading = styled.div`
   display:flex;
   justify-content:center;
   align-items: center;
-  flex:1;
+  position:absolute;
+  top:32px;left:0;bottom:0;right:0;
 `
 const Spinner = styled.img`
   height:10px;

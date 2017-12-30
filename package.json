@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "clipboard-polyfill": "^2.3.0",
+    "fetch-intercept": "^2.2.3",
     "iota.flash.js": "github:l3wi/iota.flash.js.git",
     "iota.lib.js": "github:l3wi/iota.lib.js",
     "isomorphic-fetch": "^2.2.1",

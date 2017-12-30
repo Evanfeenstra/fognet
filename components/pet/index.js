@@ -34,7 +34,7 @@ export default class Pet extends Component {
     this.state={
       mode:null,
       flash:false,
-      seedInput:'',
+      seedInput:'9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER',
     }
   }
 

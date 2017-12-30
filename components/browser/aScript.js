@@ -10,7 +10,7 @@ export const script = (url) => `
       } else {
         href = e.srcElement.href
       }
-      parent.postMessage(JSON.stringify({fognetHref:href}),'*')
+      parent.postMessage({fognetHref:href},'*')
       return false
     })
   }
