@@ -24,10 +24,33 @@ export const isWindow = () => {
 
 export const API = async (url, options) => {
   try {
-    let response = await fetch('http://localhost:9000/' + url, options)
+    let response = await fetch('http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/' + url, options)
     let responseJson = await response.json()
     return responseJson
   } catch (error) {
     console.error(error)
   }
 }
+
+export const BleChunk = (s) => {
+  var enc = new TextEncoder('utf-8')
+  const num = Math.ceil(s.length / 18)
+  const chunks = []
+  for(var i=0; i<num; i++){
+    var sub = s.substr(i*18, 19)
+    const chunk = enc.encode(sub)
+    chunks.push(chunk)
+  }
+  //const bytes = enc.encode(s)
+  const start = enc.encode('<start>')
+  const done = enc.encode('<done>')
+  return [start, ...chunks, done]
+}
+
+
+
+
+
+
+
+

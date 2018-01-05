@@ -23,8 +23,9 @@ export default class B extends Component {
       index:0,
       sites:[],
       toggle:false,
-      char: null,
+      connected: false,
     }
+    this.char = null
   }
 
   componentDidMount(){
@@ -94,14 +95,17 @@ export default class B extends Component {
     .then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
     .then(characteristic => {
       console.log(characteristic)
-      this.setState({char:characteristic, toggle:false})
+      this.char = characteristic
+      this.setState({connected:true, toggle:false})
       clearInterval(this.interval)
       this.interval = null
     })
     .catch(error => { 
+      console.log(error)
       clearInterval(this.interval)
-      this.setState({toggle:false})
+      this.setState({toggle:false, connected:false})
       this.interval = null
+      this.char = null
     });
   }
 
@@ -110,21 +114,16 @@ export default class B extends Component {
   }
 
   go = async (url) => {
-    this.setState({loading:true})
+    //this.setState({loading:true})
     setTimeout(()=>{
       this.setState({html: ''})
     },200)
-
-    var enc = new TextEncoder("utf-8");
-    const byteArray = enc.encode(url)
-    this.state.char.writeValue(byteArray)
-    .then(r=>{
-      console.log("GATT COMPLETE", r)
-    })
-    .catch(err=>{
-      console.log(err)
-    })
-
+    const byteArray = util.BleChunk(url)
+    byteArray.reduce((prev, val) => {
+      // recursive promise chain
+      return prev.then(() => this.char.writeValue(val))
+    }, Promise.resolve())
+    
     /*const opts = {
       method: "POST",
       headers: {
@@ -143,11 +142,11 @@ export default class B extends Component {
   }
 
   render() {
-    const {index, loading, url, html, sites, toggle, char} = this.state
+    const {index, loading, url, html, sites, toggle, connected} = this.state
     return (<Browser>
       
       <TopBar>
-        {char && <Things style={{margin:5}}>
+        {connected && <Things style={{margin:5}}>
           <Back onClick={this.back} disabled={index===0}>◀</Back>
           <Forward onClick={this.forward} disabled={index>=sites.length-1}>▶</Forward>
           <Input value={url} 
@@ -158,7 +157,7 @@ export default class B extends Component {
             go
           </Button>
         </Things>}
-        {!char && <Things>
+        {!connected && <Things>
           <Connect>Connect</Connect>
           <Gooey onClick={this.connectToBLE} checked={toggle} />
         </Things>}
