@@ -7,6 +7,8 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const DEMO = false
+
 /*
 
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/manifest.json"><link rel="shortcut icon" href="/favicon.ico"><link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet"><title>FogNet</title><link href="/static/css/main.e226bfb7.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="fognet-landing-root"></div><script type="text/javascript" src="/static/js/main.b44b5db2.js"></script></body></html>
@@ -95,18 +97,27 @@ export default class B extends Component {
     .then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
     .then(characteristic => {
       console.log(characteristic)
-      this.char = characteristic
       this.setState({connected:true, toggle:false})
       clearInterval(this.interval)
       this.interval = null
+      this.char = characteristic
+      //this.char.startNotifications()
+      return this.char.startNotifications().then(_ => {
+        console.log('> Notifications started')
+        this.char.addEventListener('characteristicvaluechanged', this.bleNotification)
+      })
     })
-    .catch(error => { 
+    .catch(error => {
       console.log(error)
       clearInterval(this.interval)
       this.setState({toggle:false, connected:false})
       this.interval = null
       this.char = null
-    });
+    })
+  }
+
+  bleNotification = (a,b,c) => {
+    console.log(a,b,c)
   }
 
   toggler = () => {
@@ -118,27 +129,17 @@ export default class B extends Component {
     setTimeout(()=>{
       this.setState({html: ''})
     },200)
-    const byteArray = util.BleChunk(url)
-    byteArray.reduce((prev, val) => {
-      // recursive promise chain
-      return prev.then(() => this.char.writeValue(val))
-    }, Promise.resolve())
     
-    /*const opts = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        id: "hi",
-        url: url
-      })
+    if(!DEMO){
+      util.BleAPI('web', url).reduce((prev, val) => {
+        return prev.then(() => this.char.writeValue(val))
+      }, Promise.resolve())
+    } else {
+      const response = await util.API("fognetdemo", opts)
+      const sites = [...this.state.sites]
+      sites.push({url, html: response.html})
+      this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
     }
-    const response = await util.API("fognet", opts)
-    const sites = [...this.state.sites]
-    sites.push({url, html: response.html})
-    this.setState({html: response.html, loading:false, sites, index: sites.length - 1})*/
   }
 
   render() {

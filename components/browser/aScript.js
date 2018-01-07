@@ -32,21 +32,24 @@ export const API = async (url, options) => {
   }
 }
 
-export const BleChunk = (s) => {
+export const BleAPI = (cmd, a) => {
   var enc = new TextEncoder('utf-8')
-  const num = Math.ceil(s.length / 18)
+  const num = Math.ceil(a.length / 18)
   const chunks = []
   for(var i=0; i<num; i++){
-    var sub = s.substr(i*18, 19)
+    var sub = a.substr(i*18, 19)
     const chunk = enc.encode(sub)
     chunks.push(chunk)
   }
-  //const bytes = enc.encode(s)
-  const start = enc.encode('<start>')
-  const done = enc.encode('<done>')
-  return [start, ...chunks, done]
+  const go = enc.encode(`<*>${cmd}`)
+  const no = enc.encode(`<^>${cmd}`)
+  return [go, ...chunks, no]
+  
 }
 
+const BleReturns = {
+  url: 'hi'
+}
 
 
 
