@@ -19,7 +19,7 @@ export default class B extends Component {
   constructor(){
     super()
     this.state={
-      url:'https://coinmarketcap.com',
+      url:'https://varvy.com/pagespeed/wicked-fast.html',
       html:'',
       loading:false,
       index:0,
@@ -94,17 +94,23 @@ export default class B extends Component {
     })
     .then(device => device.gatt.connect())
     .then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
-    .then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
-    .then(characteristic => {
-      console.log(characteristic)
-      this.setState({connected:true, toggle:false})
-      clearInterval(this.interval)
-      this.interval = null
-      this.char = characteristic
-      //this.char.startNotifications()
-      return this.char.startNotifications().then(_ => {
-        console.log('> Notifications started')
-        this.char.addEventListener('characteristicvaluechanged', this.bleNotification)
+    .then(service => {
+      // CATCH THIS ONE TOO! PROMISE ALL?
+      service.getCharacteristic('00001235-0000-1000-8000-00805f9b34fb')
+      .then(notifyChar => {
+        console.log(notifyChar)
+        notifyChar.startNotifications().then(_ => {
+          console.log('> Notifications started')
+          notifyChar.addEventListener('characteristicvaluechanged', this.bleNotification)
+        })
+      })
+      service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb')
+      .then(characteristic => {
+        console.log(characteristic)
+        this.setState({connected:true, toggle:false})
+        clearInterval(this.interval)
+        this.interval = null
+        this.char = characteristic
       })
     })
     .catch(error => {
@@ -116,8 +122,8 @@ export default class B extends Component {
     })
   }
 
-  bleNotification = (a,b,c) => {
-    console.log(a,b,c)
+  bleNotification = (e) => {
+    util.decode(e.target.value)
   }
 
   toggler = () => {
@@ -131,6 +137,7 @@ export default class B extends Component {
     },200)
     
     if(!DEMO){
+      console.log("SEND URL NOw", url)
       util.BleAPI('web', url).reduce((prev, val) => {
         return prev.then(() => this.char.writeValue(val))
       }, Promise.resolve())

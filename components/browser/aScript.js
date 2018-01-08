@@ -15,12 +15,6 @@ export const script = (url) => `
     })
   }
 `
-export const isWindow = () => {
-  if (typeof window === "undefined" || typeof localStorage === "undefined") {
-    return false
-  }
-  return true
-}
 
 export const API = async (url, options) => {
   try {
@@ -44,16 +38,41 @@ export const BleAPI = (cmd, a) => {
   const go = enc.encode(`<*>${cmd}`)
   const no = enc.encode(`<^>${cmd}`)
   return [go, ...chunks, no]
-  
 }
 
 const BleReturns = {
-  url: 'hi'
+  web: function(msg){
+    console.log('ALL DA WAY AROuND!!',msg)
+  }
 }
 
+var chunks = []
+export const decode = (s) => {
+  var dec = new TextDecoder('utf-8')
+  const text = dec.decode(s)
+  console.log('From BLE ', text)
+  if(text.includes('<*>')){
+    const cmd = text.substr(3,15).replace(/\s/g, '')
+    chunks = []
+  } else if (text.includes('<^>')){
+    const cmd = text.substr(3,15).replace(/\s/g, '')
+    var s = ''
+    chunks.forEach(function(chunk){
+      s += chunk.substr(0,18)
+    })
+    //BleReturns[cmd](s)
+    console.log('FROm BLE WHOLE', s)
+    chunks = [] 
+  } else {
+    chunks.push(text)
+  }
+}
 
-
-
-
+export const isWindow = () => {
+  if (typeof window === "undefined" || typeof localStorage === "undefined") {
+    return false
+  }
+  return true
+}
 
 
