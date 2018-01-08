@@ -123,11 +123,14 @@ export default class B extends Component {
   }
 
   bleNotification = (e) => {
-    util.decode(e.target.value)
+    util.decode(e.target.value,(html)=>{
+      console.log(html)
+      this.setState({html})
+    })
   }
 
   toggler = () => {
-    this.setState({toggle:!this.state.toggle}) 
+    this.setState({toggle:!this.state.toggle})
   }
 
   go = async (url) => {
@@ -142,6 +145,16 @@ export default class B extends Component {
         return prev.then(() => this.char.writeValue(val))
       }, Promise.resolve())
     } else {
+      const opts = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: url
+        })
+      }
       const response = await util.API("fognetdemo", opts)
       const sites = [...this.state.sites]
       sites.push({url, html: response.html})
@@ -173,7 +186,7 @@ export default class B extends Component {
 
       {html && <iframe srcDoc={html} 
         height="468" frameBorder="0"
-        style={{opacity:loading?0:1,transition:'all 0.2s'}}
+        style={{opacity:loading?0:1,transition:'all 0.2s',background:html?'white':'transparent'}}
         ref={ref=>this.frame=ref} onLoad={this.onFrameLoad}>
       </iframe>}
 
@@ -210,9 +223,9 @@ const Things = styled.div`
 const Connect = styled.div`
   position:absolute;
   color:white;
-  top: 5px;
-  font-size: 12px;
-  right: 23px;
+  top: 7px;
+  font-size: 13px;
+  right: 15px;
 `
 const Back = styled.button`
   width: 21px;

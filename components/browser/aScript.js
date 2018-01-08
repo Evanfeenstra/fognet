@@ -15,10 +15,10 @@ export const script = (url) => `
     })
   }
 `
-
+//'http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/'
 export const API = async (url, options) => {
   try {
-    let response = await fetch('http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/' + url, options)
+    let response = await fetch('http://localhost:8081/' + url, options)
     let responseJson = await response.json()
     return responseJson
   } catch (error) {
@@ -47,7 +47,7 @@ const BleReturns = {
 }
 
 var chunks = []
-export const decode = (s) => {
+export const decode = (s, cb) => {
   var dec = new TextDecoder('utf-8')
   const text = dec.decode(s)
   console.log('From BLE ', text)
@@ -62,6 +62,7 @@ export const decode = (s) => {
     })
     //BleReturns[cmd](s)
     console.log('FROm BLE WHOLE', s)
+    cb(s)
     chunks = [] 
   } else {
     chunks.push(text)
