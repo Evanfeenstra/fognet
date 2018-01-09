@@ -22,7 +22,7 @@ export default class Send extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    console.log('newProps',newProps)
+    //console.log('newProps',newProps)
   }
 
   onSubmit = () => {

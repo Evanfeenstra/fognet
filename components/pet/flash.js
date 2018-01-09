@@ -9,19 +9,25 @@ export default class F extends Component {
   constructor(){
     super()
     this.state={
-      hi:'hi'
+      state:null
     }
   }
 
   componentWillMount(){
-    this.props.initializeFlashChannel()
+    //this.props.initializeFlashChannel()
+    localStorage.clear()
+  }
+
+  connectToFlashChannel = async () => {
+    const state = await this.props.initializeFlashChannel()
+    this.setState({state})
   }
 
   render(){
-    const {show, fundFlashChannel} = this.props
+    const {show, fundFlashChannel, initializeFlashChannel} = this.props
     return <Flash show={show}>
       <Content>
-        <Button title="Connect to Flash Channel" onClick={fundFlashChannel}/>
+        <Button title="Connect to Flash Channel" onClick={()=>this.connectToFlashChannel()}/>
       </Content>
     </Flash>
   }

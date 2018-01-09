@@ -54,11 +54,11 @@ export default class Pet extends Component {
 
         {!isConnected && <Seed>
           <Input label="Enter Seed" width="50%"
-            value={this.state.seedInput} disabled={creatingRandom}
+            value={this.state.seedInput}
             onChange={(e)=>this.setState({seedInput:utils.validSeed(e.target.value)})}
              />
           <Button title="Login" margin="7px 0 7px 14px"
-            disabled={!this.state.seedInput} active={gettingBalance} 
+            disabled={!this.state.seedInput || creatingRandom} active={gettingBalance} 
             onClick={()=>login(this.state.seedInput)} />
         </Seed>}
 

@@ -44,9 +44,9 @@ class G extends Component {
 
 const Gooey = styled.div`
   position: absolute;
-  right: -139px;
-  top: -34px;
-  transform: scale(0.3,0.3);
+  right: -144px;
+  top: -33px;
+  transform: scale(0.35,0.35);
 `
 const Nav = styled.nav`
   filter: url("#shadowed-goo");
@@ -59,8 +59,8 @@ const Open = styled.div`
   z-index: 2;
   background: #38f9d7;
   border-radius: 100%;
-  width: 42px;
-  height: 42px;
+  width: 41px;
+  height: 41px;
   margin-left:40px;
   position: absolute;
   top: 20px;

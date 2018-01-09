@@ -7,7 +7,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const DEMO = false
+const DEMO = true
 
 /*
 
@@ -89,37 +89,43 @@ export default class B extends Component {
         this.toggler()
       },420)
     }
-    navigator.bluetooth.requestDevice({ 
-      filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
-    })
-    .then(device => device.gatt.connect())
-    .then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
-    .then(service => {
-      // CATCH THIS ONE TOO! PROMISE ALL?
-      service.getCharacteristic('00001235-0000-1000-8000-00805f9b34fb')
-      .then(notifyChar => {
-        console.log(notifyChar)
-        notifyChar.startNotifications().then(_ => {
-          console.log('> Notifications started')
-          notifyChar.addEventListener('characteristicvaluechanged', this.bleNotification)
+    if(!DEMO){
+      navigator.bluetooth.requestDevice({ 
+        filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
+      })
+      .then(device => device.gatt.connect())
+      .then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
+      .then(service => {
+        // CATCH THIS ONE TOO! PROMISE ALL?
+        service.getCharacteristic('00001235-0000-1000-8000-00805f9b34fb')
+        .then(notifyChar => {
+          console.log(notifyChar)
+          notifyChar.startNotifications().then(_ => {
+            console.log('> Notifications started')
+            notifyChar.addEventListener('characteristicvaluechanged', this.bleNotification)
+          })
+        })
+        service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb')
+        .then(characteristic => {
+          console.log(characteristic)
+          this.setState({connected:true, toggle:false})
+          clearInterval(this.interval)
+          this.interval = null
+          this.char = characteristic
         })
       })
-      service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb')
-      .then(characteristic => {
-        console.log(characteristic)
-        this.setState({connected:true, toggle:false})
+      .catch(error => {
+        console.log(error)
         clearInterval(this.interval)
+        this.setState({toggle:false, connected:false})
         this.interval = null
-        this.char = characteristic
+        this.char = null
       })
-    })
-    .catch(error => {
-      console.log(error)
+    } else {
+      this.setState({toggle:false, connected:true})
       clearInterval(this.interval)
-      this.setState({toggle:false, connected:false})
       this.interval = null
-      this.char = null
-    })
+    }
   }
 
   bleNotification = (e) => {
@@ -134,16 +140,17 @@ export default class B extends Component {
   }
 
   go = async (url) => {
-    //this.setState({loading:true})
+    this.setState({loading:true})
     setTimeout(()=>{
       this.setState({html: ''})
-    },200)
+    },2)
     
     if(!DEMO){
       console.log("SEND URL NOw", url)
       util.BleAPI('web', url).reduce((prev, val) => {
         return prev.then(() => this.char.writeValue(val))
       }, Promise.resolve())
+      this.setState({loading:true})
     } else {
       const opts = {
         method: 'POST',

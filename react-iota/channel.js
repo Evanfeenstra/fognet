@@ -20,14 +20,7 @@ export default class Channel {
 
   // Initiate the local state and store it localStorage
   static async initialize(userSeed) {
-    let userID = shortid.generate()
-    let index = 0
-    let security = Channel.SECURITY
-    let signersCount = Channel.SIGNERS_COUNT
-    let treeDepth = Channel.TREE_DEPTH
-    let balance = 0
-    let deposit = Array(Channel.SIGNERS_COUNT).fill(0)
-    console.log("HIHI", userSeed)
+    
     // Escape the function when server rendering
     if (!isWindow()) return false
     
@@ -41,19 +34,19 @@ export default class Channel {
     initialising = true
 
     console.log("Initialising Channel!!!")
-
+    const userID = shortid.generate()
     // Initialize state object
     const state = {
       userID: userID,
       userSeed: userSeed,
-      index: index,
-      security: security,
-      depth: treeDepth,
+      index: 0,
+      security: Channel.SECURITY,
+      depth: Channel.TREE_DEPTH,
       bundles: [],
       flash: {
-        signersCount: signersCount,
-        balance: balance,
-        deposit: deposit,
+        signersCount: Channel.SIGNERS_COUNT,
+        balance: 0,
+        deposit: Array(Channel.SIGNERS_COUNT).fill(0),
         outputs: {},
         transfers: []
       }
@@ -66,7 +59,7 @@ export default class Channel {
     // Fetch new multisig addresses
     // consists of { root, remainder }
     const digests = []
-    for (let i = 0; i < treeDepth + 1; i++) {
+    for (let i = 0; i < Channel.TREE_DEPTH + 1; i++) {
       const digest = await Channel.getNewDigest()
       digests.push(digest)
     }
@@ -99,7 +92,6 @@ export default class Channel {
         digests: digests
       })
     }
-    console.log(opts)
     // Send digests to server and obtain new multisig addresses
     const response = await API("register", opts)
 

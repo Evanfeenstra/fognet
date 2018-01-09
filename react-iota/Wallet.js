@@ -153,8 +153,7 @@ class Wallet extends Component {
   }
 
   initializeFlashChannel = async () => {
-    console.log('init flahs')
-    Channel.initialize(this.state.seed)
+    return await Channel.initialize(this.state.seed)
   }
 
   fundFlashChannel = async () => {
