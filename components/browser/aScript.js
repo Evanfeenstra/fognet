@@ -47,12 +47,15 @@ const BleReturns = {
 }
 
 var chunks = []
-export const decode = (s, cb) => {
+export const decode = (s, start, tick, finish) => {
   var dec = new TextDecoder('utf-8')
   const text = dec.decode(s)
-  console.log('From BLE ', text)
+  //console.log('From BLE ', text)
   if(text.includes('<*>')){
-    const cmd = text.substr(3,15).replace(/\s/g, '')
+    const ts = text.substr(3,15).replace(/\s/g, '').split("<*>")
+    const cmd = ts[0]
+    const len = parseInt(ts[1])
+    start(cmd, len)
     chunks = []
   } else if (text.includes('<^>')){
     const cmd = text.substr(3,15).replace(/\s/g, '')
@@ -61,10 +64,11 @@ export const decode = (s, cb) => {
       s += chunk.substr(0,18)
     })
     //BleReturns[cmd](s)
-    console.log('FROm BLE WHOLE', s)
-    cb(s)
+    console.log('FROm BLE WHOLE')
+    finish(s)
     chunks = [] 
   } else {
+    tick()
     chunks.push(text)
   }
 }

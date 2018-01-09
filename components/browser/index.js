@@ -7,7 +7,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const DEMO = true
+const DEMO = false
 
 /*
 
@@ -25,7 +25,9 @@ export default class B extends Component {
       index:0,
       sites:[],
       toggle:false,
-      connected: false,
+      connected:false,
+      streamProgress:0,
+      streamLength:0
     }
     this.char = null
   }
@@ -129,9 +131,15 @@ export default class B extends Component {
   }
 
   bleNotification = (e) => {
-    util.decode(e.target.value,(html)=>{
-      console.log(html)
-      this.setState({html})
+    util.decode(e.target.value,(cmd,len)=>{
+      console.log('stream started',cmd,len)
+      this.setState({streamLength:len})
+    },()=>{
+      this.setState({streamProgress:this.state.streamProgress+1})
+    },(v)=>{
+      const html = v.trim()
+      console.log('set html length ',html.length)
+      this.setState({html, loading:false, streamLength:0, streamProgress:0})
     })
   }
 
@@ -164,6 +172,7 @@ export default class B extends Component {
       }
       const response = await util.API("fognetdemo", opts)
       const sites = [...this.state.sites]
+      console.log(response.html)
       sites.push({url, html: response.html})
       this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
     }
@@ -191,14 +200,18 @@ export default class B extends Component {
         </Things>}
       </TopBar>
 
-      {html && <iframe srcDoc={html} 
-        height="468" frameBorder="0"
+      {html && <iframe srcDoc={html} height="468" frameBorder="0"
         style={{opacity:loading?0:1,transition:'all 0.2s',background:html?'white':'transparent'}}
         ref={ref=>this.frame=ref} onLoad={this.onFrameLoad}>
       </iframe>}
 
       {loading && <Loading>
+        <Bar length={this.state.streamLength} progress={this.state.streamProgress}/>
         <Spinner src="/static/img/ajax-loader-small.gif" />
+        <div style={{color:'white',padding:10}}>
+            {this.state.streamLength}&nbsp;
+            {this.state.streamProgress}
+          </div>
       </Loading>}
     </Browser>)
   }
@@ -270,6 +283,13 @@ const Loading = styled.div`
   align-items: center;
   position:absolute;
   top:32px;left:0;bottom:0;right:0;
+`
+const Bar = styled.div`
+  position:absolute;
+  top:0;left:0;
+  height:4px;
+  background:white;
+  width:${p=> Math.ceil(500 / (p.length / p.progress))}px;
 `
 const Spinner = styled.img`
   height:10px;
