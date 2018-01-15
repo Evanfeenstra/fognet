@@ -16,9 +16,11 @@ export const script = (url) => `
   }
 `
 //'http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/'
+//Lyle.local:8081
+//'http://localhost:8081/'
 export const API = async (url, options) => {
   try {
-    let response = await fetch('http://localhost:8081/' + url, options)
+    let response = await fetch('Lyle.local:8081/' + url, options)
     let responseJson = await response.json()
     return responseJson
   } catch (error) {
@@ -50,7 +52,7 @@ var chunks = []
 export const decode = (s, start, tick, finish) => {
   var dec = new TextDecoder('utf-8')
   const text = dec.decode(s)
-  //console.log('From BLE ', text)
+  console.log('From BLE ', text)
   if(text.includes('<*>')){
     const ts = text.substr(3,15).replace(/\s/g, '').split("<*>")
     const cmd = ts[0]

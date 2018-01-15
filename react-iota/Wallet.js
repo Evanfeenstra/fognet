@@ -15,7 +15,10 @@ class Wallet extends Component {
       balance:null,
       gettingAddresses:false,
       addresses:null,
-      fundingAddressFromTestnet:null
+      fundingAddressFromTestnet:null,
+      initializingFlash:false,
+      fundingFlash:false,
+      flash:null
     }
   }
 
@@ -107,57 +110,60 @@ class Wallet extends Component {
     }
   }
 
-  sendTransfer = async (transfer) => {
-    console.log(transfer)
+  sendTransfer = async (address, amount) => {
     if(!this.state.sendingTransfer){
       this.setState({sendingTransfer:true})
       console.log('SEND TRANSFER')
       try {
-        const t = await Iota.sendTransfer(this.state.seed, transfer)
+        const t = await Iota.sendTransfer(this.state.seed, [{
+          address, value: amount
+        }])
         this.setState({sendingTransfer:false})
         return t
       } catch (error) {
         console.error(error)
         this.setState({sendingTransfer:false})
-        return error
-      }
-    }
-  }
-
-  webRequest = async (url) => {
-    console.log(transfer)
-    if(!this.state.requestingWeb){
-      this.setState({requestingWeb:true})
-      console.log('WEB REQ')
-      try {
-        const opts = {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: 'POST',
-          body: JSON.stringify({
-            id: userID,
-            url: url
-          })
-        }
-        const t = await utils.API('fognet', url)
-        this.setState({requestingWeb:false})
-        return t
-      } catch (error) {
-        console.error(error)
-        this.setState({requestingWeb:false})
         return error
       }
     }
   }
 
   initializeFlashChannel = async () => {
-    return await Channel.initialize(this.state.seed)
+    if(!this.state.initializingFlash){
+      this.setState({initializingFlash:true})
+      try {
+        const f = await Channel.initialize(this.state.seed)
+        this.setState({initializingFlash:false, flash:f})
+        return f
+      } catch (error) {
+        console.error(error)
+        this.setState({initializingFlash:false, flash:null})
+        return error
+      }
+    }
   }
 
-  fundFlashChannel = async () => {
-    console.log('fund flahs channel')
+  fundFlashChannel = async (address, amount) => {
+    console.log('fund flash channel',amount)
+    if(!this.state.fundingFlash){
+      this.setState({fundingFlash:true})
+      try {
+        const {flash, fundAmount} = this.state
+        const transactions = await this.sendTransfer(address, amount)
+        const stake = transactions[0].value
+        console.log('stake', stake)
+        flash.channel.deposit = [stake, 0]
+        flash.channel.balance = stake
+        this.setState({fundingFlash:false, flash})
+        Channel.setLocalState(flash)
+        this.props.onFundFlash(flash.userID, stake)
+        return transactions
+      } catch (error) {
+        console.error(error)
+        this.setState({fundingFlash:false})
+        return error
+      }
+    }
   }
 
   prepareTransfers = async (transfers) => {
@@ -225,19 +231,20 @@ class Wallet extends Component {
   render() {
     const {children} = this.props
     const childProps = {
-      ...this.state,
+      iota: this.state,
+      actions: {
+        login: this.login,
+        createRandom: this.createRandom,
+        getBalance: this.getBalance,
+        getAddresses: this.getAddresses,
+        sendTransfer: this.sendTransfer,
+        fundFromTestnet: this.fundFromTestnet,
+        prepareTransfers: this.prepareTransfers,
+        sendTrytes: this.sendTrytes,
+        initializeFlashChannel: this.initializeFlashChannel,
+        fundFlashChannel: this.fundFlashChannel,
+      },
       utils: utils,
-      login: this.login,
-      createRandom: this.createRandom,
-      getBalance: this.getBalance,
-      getAddresses: this.getAddresses,
-      sendTransfer: this.sendTransfer,
-      fundFromTestnet: this.fundFromTestnet,
-      prepareTransfers: this.prepareTransfers,
-      sendTrytes: this.sendTrytes,
-      initializeFlashChannel: this.initializeFlashChannel,
-      fundFlashChannel: this.fundFlashChannel,
-      webRequest: this.webRequest
     }
     return (React.isValidElement(children) ?
       React.cloneElement(children,

@@ -1,6 +1,7 @@
 import Presets from "./config"
 import Worker from './iota.worker.js';
 import WebworkerPromise from 'webworker-promise';
+import {actions} from './actions'
 
 require("isomorphic-fetch")
 
@@ -11,10 +12,16 @@ export class Iota {
       this.worker = new WebworkerPromise(new Worker())
       this.worker.postMessage({
         cmd: 'init',
-        provider: Presets.IOTA
+        provider: Presets.IOTA,
+        worker: true
       })
     } else  {
-      this.worker = mainThread
+      this.worker = {postMessage: async (m) => actions[m.cmd](m)}
+      this.worker.postMessage({
+        cmd: 'init',
+        provider: Presets.IOTA,
+        worker: false
+      })
     }
   }
 
@@ -159,11 +166,5 @@ export class Attach {
     } catch (e) {
       return e
     }
-  }
-}
-
-const mainThread = {
-  postMessage: function(args) {
-    console.log(args)
   }
 }

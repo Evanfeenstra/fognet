@@ -26,15 +26,13 @@ export default class Send extends Component {
   }
 
   onSubmit = () => {
-    console.log('submit')
-    this.props.sendTransfer([{
-      address: this.state.recipient,
-      value: parseInt(this.state.amount)
-    }])
+    console.log('send iota')
+    this.props.actions.sendTransfer(this.state.recipient, parseInt(this.state.amount))
   }
 
   render(){
-    const {hidden, sendingTransfer, utils} = this.props
+    const {iota, hidden, utils} = this.props
+    const {sendingTransfer} = iota
     if (hidden) return <span />
     return <Content>
         <Input type="text" label="Send to Address"

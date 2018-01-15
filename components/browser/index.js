@@ -19,7 +19,7 @@ export default class B extends Component {
   constructor(){
     super()
     this.state={
-      url:'https://varvy.com/pagespeed/wicked-fast.html',
+      url:'https://fognet.world',
       html:'',
       loading:false,
       index:0,
@@ -139,7 +139,12 @@ export default class B extends Component {
     },(v)=>{
       const html = v.trim()
       console.log('set html length ',html.length)
-      this.setState({html, loading:false, streamLength:0, streamProgress:0})
+      const sites = [...this.state.sites]
+      sites.push({url:this.state.url, html})
+      this.setState({html, loading:false,
+        streamLength:0, streamProgress:0,
+        sites, index:sites.length-1
+      })
     })
   }
 
@@ -172,7 +177,6 @@ export default class B extends Component {
       }
       const response = await util.API("fognetdemo", opts)
       const sites = [...this.state.sites]
-      console.log(response.html)
       sites.push({url, html: response.html})
       this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
     }

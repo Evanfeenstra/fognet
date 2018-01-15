@@ -20,12 +20,13 @@ export default class Channel {
 
   // Initiate the local state and store it localStorage
   static async initialize(userSeed) {
+    console.log('init flash')
     
     // Escape the function when server rendering
     if (!isWindow()) return false
     
     // Stop if local state exists
-    const localState = await store.get("state")
+    const localState = await store.get("flash-state")
     if (localState) {
       return localState
     }
@@ -43,7 +44,7 @@ export default class Channel {
       security: Channel.SECURITY,
       depth: Channel.TREE_DEPTH,
       bundles: [],
-      flash: {
+      channel: {
         signersCount: Channel.SIGNERS_COUNT,
         balance: 0,
         deposit: Array(Channel.SIGNERS_COUNT).fill(0),
@@ -53,7 +54,7 @@ export default class Channel {
     }
 
     // Initiate the state in local storage
-    await store.set("state", state)
+    await store.set("flash-state", state)
 
     // Get a new digest
     // Fetch new multisig addresses
@@ -66,11 +67,11 @@ export default class Channel {
     const addresses = await Channel.register(digests, userID)
 
     // Update root and remainder address
-    state.flash.remainderAddress = addresses.remainder
-    state.flash.root = addresses.root
+    state.channel.remainderAddress = addresses.remainder
+    state.channel.root = addresses.root
     
     // Update root & remainder in state
-    await store.set("state", state)
+    await store.set("flash-state", state)
 
     // Create a flash instance
     initialising = false
@@ -100,7 +101,7 @@ export default class Channel {
     let multisigs = digests.map((digest, index) => {
       let addy = multisig.composeAddress([digest, serverDigests[index]])
       addy.index = digest.index
-      addy.signingIndex = 0 * digest.security      
+      addy.signingIndex = 0 * digest.security
       addy.securitySum = digest.security + serverDigests[index].security
       addy.security = digest.security
       return addy
@@ -160,7 +161,7 @@ export default class Channel {
   // Get a new digest and update index in state
   static async getNewDigest() {
     // Fetch state from localStorage
-    const state = store.get("state")
+    const state = store.get("flash-state")
 
     // Create new digest
     const digest = multisig.getDigest(
@@ -174,14 +175,14 @@ export default class Channel {
     state.init = true
 
     // Update local state
-    await store.set("state", state)
+    await store.set("flash-state", state)
 
     return digest
   }
 
   // Obtain address by sending digest, update multisigs in state
   static async getNewAddress(digest) {
-    const state = await store.get("state")
+    const state = await store.get("flash-state")
 
     if (!digest) {
       digest = getNewDigest()
@@ -209,12 +210,12 @@ export default class Channel {
   // Initiate transaction from anywhere in the app.
   static async composeTransfer(value, settlementAddress, id) {
     // Get latest state from localstorage
-    const state = await store.get("state")
+    const state = await store.get("flash-state")
     var purchases = await store.get("purchases")
 
     // TODO: check/generate tree
-    if (!state.flash.root) return
-    let toUse = multisig.updateLeafToRoot(state.flash.root)
+    if (!state.channel.root) return
+    let toUse = multisig.updateLeafToRoot(state.channel.root)
     if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
       const digests = await Promise.all(
@@ -224,11 +225,11 @@ export default class Channel {
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
       // state was modified
-      let modifiedState = await store.get("state")
+      let modifiedState = await store.get("flash-state")
       state.index = modifiedState.index
     }
     // Compose transfer
-    const flash = state.flash
+    const channel = state.channel
     let bundles
     try {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
@@ -244,12 +245,12 @@ export default class Channel {
         ]
       )
       bundles = transfer.compose(
-        flash.balance,
-        flash.deposit,
-        flash.outputs,
+        channel.balance,
+        channel.deposit,
+        channel.outputs,
         toUse.multisig,
-        flash.remainderAddress,
-        flash.transfers,
+        channel.remainderAddress,
+        channel.transfers,
         newTansfers
       )
     } catch (e) {
@@ -269,7 +270,7 @@ export default class Channel {
     // Sign transfer
     const signatures = transfer.sign(toUse.multisig, state.userSeed, bundles)
     console.log("Signatures", signatures)
-   
+
     // Update bundles in local state
     let partiallySigned = transfer.appliedSignatures(bundles, signatures)
     console.log(partiallySigned)
@@ -291,15 +292,15 @@ export default class Channel {
     const res = await API("purchase", opts)
     if (res.bundles) {
       transfer.applyTransfers(
-        state.flash.root,
-        state.flash.deposit,
-        state.flash.outputs,
-        state.flash.remainderAddress,
-        state.flash.transfers,
+        state.channel.root,
+        state.channel.deposit,
+        state.channel.outputs,
+        state.channel.remainderAddress,
+        state.channel.transfers,
         res.bundles
       )
       // Save updated state
-      await store.set("state", state)
+      await store.set("flash-state", state)
 
       // Check is purchases exists
       if (!purchases) var purchases = []
@@ -318,20 +319,24 @@ export default class Channel {
   // Update bundles in local state by applying the diff
   static applyTransferDiff(diff) {
     // Get state
-    const state = store.get("state")
+    const state = store.get("flash-state")
 
     // Apply diff to bundles in state
     ///state.bundles = TODO: bundles with applied diff;
 
-    store.set("state", state)
+    store.set("flash-state", state)
+  }
+
+  static setLocalState(state) {
+    store.set("flash-state", state)
   }
 
   static async close() {
     // Get latest state from localstorage
-    const state = await store.get("state")
+    const state = await store.get("flash-state")
 
     // TODO: check/generate tree
-    let toUse = multisig.updateLeafToRoot(state.flash.root)
+    let toUse = multisig.updateLeafToRoot(state.channel.root)
     if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
       const digests = await Promise.all(
@@ -341,24 +346,24 @@ export default class Channel {
       )
       await Channel.getNewBranch(state.userID, toUse.multisig, digests)
       // state was modified
-      let modifiedState = await store.get("state")
+      let modifiedState = await store.get("flash-state")
       state.index = modifiedState.index
     }
     console.log(state)
     // Compose transfer
-    const flash = state.flash
+    const channel = state.channel
     let bundles
     try {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
-      let newTansfers = transfer.close([Presets.ADDRESS, Presets.ADDRESS], flash.deposit)
+      let newTansfers = transfer.close([Presets.ADDRESS, Presets.ADDRESS], channel.deposit)
 
       bundles = transfer.compose(
-        flash.balance,
-        flash.deposit,
-        flash.outputs,
+        channel.balance,
+        channel.deposit,
+        channel.outputs,
         toUse.multisig,
-        flash.remainderAddress,
-        flash.transfers,
+        channel.remainderAddress,
+        channel.transfers,
         newTansfers,
         true
       )
@@ -403,15 +408,15 @@ export default class Channel {
 
     if (res.bundles) {
       transfer.applyTransfers(
-        state.flash.root,
-        state.flash.deposit,
-        state.flash.outputs,
-        state.flash.remainderAddress,
-        state.flash.transfers,
+        state.channel.root,
+        state.channel.deposit,
+        state.channel.outputs,
+        state.channel.remainderAddress,
+        state.channel.transfers,
         res.bundles
       )
       // Save updated state
-      await store.set("state", state)
+      await store.set("flash-state", state)
     } else {
       return console.error(e)
     }

@@ -8,22 +8,7 @@ import Flash from './flash'
 
 /*
 
-9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER
-
-
-navigator.bluetooth.requestDevice({ 
-  filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
-})
-.then(device => device.gatt.connect())
-.then(server => server.getPrimaryService('00001234-0000-1000-8000-00805f9b34fb'))
-.then(service => service.getCharacteristic('00001234-0000-1000-8000-00805f9b34fb'))
-.then(characteristic => {
-  console.log(characteristic)
-  this.setState({char:characteristic})
-  clearInterval(this.interval)
-  this.interval = null
-})
-.catch(error => { console.log(error); });
+LUQBPZTP9NLPRLRNWERYUEGKLORTXIE99VSGFR9UDIMMFUNRTGATAOCTMGZPPKODSEYEAA9IVXRWSQFXB
 
 */
 
@@ -34,12 +19,13 @@ export default class Pet extends Component {
     this.state={
       mode:null,
       flash:false,
-      seedInput:'9XRIFNSYV9LRLKFUGXVVZHNQURAGKL9IJDCZOMLHEHGQKERFGOAAAT9TQELRRIWCUCJMPYAVFFBSDBPER',
+      seedInput:'LUQBPZTP9NLPRLRNWERYUEGKLORTXIE99VSGFR9UDIMMFUNRTGATAOCTMGZPPKODSEYEAA9IVXRWSQFXB',
     }
   }
 
   render() {
-    const {utils, createRandom, creatingRandom, login, balance, gettingBalance, getBalance, getAddresses, addresses, gettingAddresses} = this.props
+    const {iota, actions, utils} = this.props
+    const {balance, addresses, creatingRandom, gettingBalance, gettingAddresses} = iota
     const isConnected = balance || balance===0
     let {mode, flash} = this.state
 
@@ -50,7 +36,7 @@ export default class Pet extends Component {
         {!isConnected && <Button title="Random Seed"
           disabled={gettingBalance}
           active={creatingRandom} margin="12px"
-          onClick={()=>createRandom()} />}
+          onClick={()=>actions.createRandom()} />}
 
         {!isConnected && <Seed>
           <Input label="Enter Seed" width="50%"
@@ -59,7 +45,7 @@ export default class Pet extends Component {
              />
           <Button title="Login" margin="7px 0 7px 14px"
             disabled={!this.state.seedInput || creatingRandom} active={gettingBalance} 
-            onClick={()=>login(this.state.seedInput)} />
+            onClick={()=>actions.login(this.state.seedInput)} />
         </Seed>}
 
         {isConnected && <Header mode={mode}>

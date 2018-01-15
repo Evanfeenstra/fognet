@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import Button from './comps/button'
 
 const Receive = (props) => {
-  const {addresses, balanceInputs, getAddresses, gettingAddresses} = props
+  const {addresses, balanceInputs} = props.iota
+  const {getAddresses, gettingAddresses} = props.actions
   console.log('balanceInputs',balanceInputs)
   console.log('addresses', addresses)
   return <Content>
@@ -34,13 +35,14 @@ class Addy extends Component {
   }
 
   render() {
-    const {utils, address, input, fundFromTestnet, fundingAddressFromTestnet} = this.props
+    const {iota, actions, utils, address, input} = this.props
+    const {fundingAddressFromTestnet} = iota
     return <Address>
       <Icon>
         {fundingAddressFromTestnet === address ?
           <Spin src="/static/img/ajax-loader-small.gif" /> :
           <Link viewBox="0 0 512 512" active={fundingAddressFromTestnet}
-            onClick={()=>fundFromTestnet(address, 441)}>
+            onClick={()=>actions.fundFromTestnet(address, 441)}>
             <G />
           </Link>
         }
