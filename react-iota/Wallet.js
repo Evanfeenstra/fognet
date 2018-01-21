@@ -3,6 +3,7 @@ import { Iota } from './iota'
 import * as utils from './utils'
 import Worker from './iota.worker.js';
 import Channel from './channel'
+import Presets from './config'
 
 class Wallet extends Component {
 
@@ -25,6 +26,38 @@ class Wallet extends Component {
   componentWillMount(){
     if(utils.isClient){
       Iota.initWorker()
+      this.checkForFlashState()
+    }
+  }
+
+  componentWillReceiveProps(newProps){
+    console.log('recieveProps',newProps)
+    if(newProps.spend && newProps.spend !== 0 && newProps.spend !== this.props.spend){
+      this.purchase(newProps.spend)
+    }
+  }
+
+  purchase = async (flashSpent) => {
+    console.log('purchase')
+    var flashTransfer = await Channel.composeTransfer(
+      flashSpent - this.props.spend,
+      Presets.ADDRESS,
+    )
+    if(flashTransfer){
+      this.setState({flashSpent})
+      this.props.onConfirmSpend(flashSpent)
+    } else {
+      this.props.onConfirmSpend(null)
+    }
+    
+  }
+
+  checkForFlashState = async () => {
+    if(localStorage.getItem('flash-state')){
+      const flash = await this.initializeFlashChannel()
+      if(flash.channel.balance, this.props.onFundFlash){
+        this.props.onFundFlash(flash.userID, flash.channel.balance)
+      }
     }
   }
 
@@ -128,11 +161,11 @@ class Wallet extends Component {
     }
   }
 
-  initializeFlashChannel = async () => {
+  initializeFlashChannel = async (fundAmount) => {
     if(!this.state.initializingFlash){
       this.setState({initializingFlash:true})
       try {
-        const f = await Channel.initialize(this.state.seed)
+        const f = await Channel.initialize(this.state.seed, fundAmount)
         this.setState({initializingFlash:false, flash:f})
         return f
       } catch (error) {
@@ -154,13 +187,35 @@ class Wallet extends Component {
         console.log('stake', stake)
         flash.channel.deposit = [stake, 0]
         flash.channel.balance = stake
-        this.setState({fundingFlash:false, flash})
+        /*flash.channel.transfers.push({
+          address, value: amount
+        })*/
+        this.setState({fundingFlash:false, flash, balance:this.state.balance-stake})
         Channel.setLocalState(flash)
-        this.props.onFundFlash(flash.userID, stake)
+        if(this.props.onFundFlash){
+          this.props.onFundFlash(flash.userID, stake)
+        }
         return transactions
       } catch (error) {
         console.error(error)
         this.setState({fundingFlash:false})
+        return error
+      }
+    }
+  }
+
+  closeFlashChannel = async () => {
+    console.log('CLOSE')
+    if(!this.state.closingFlash){
+      this.setState({fundingFlash:true})
+      try {
+        const c = await Channel.close()
+        console.log(c)
+        this.setState({closingFlash:false})
+        return c
+      } catch (error) {
+        console.error(error)
+        this.setState({closingFlash:false})
         return error
       }
     }
@@ -175,35 +230,6 @@ class Wallet extends Component {
       console.error(error)
       return error
     }
-    /*async function createBundle (amount, address, message, tag) {
-      return new Promise(
-        function (resolve, reject) {
-          if (!message || message === '') {
-            // take from config if empty
-            message = iota.utils.toTrytes(config.message)
-          }
-          else {
-            if (!iota.valid.isTrytes(message)) {
-              message = iota.utils.toTrytes(message)
-            }
-          }
-          if (!tag || tag === '' || !iota.valid.isTrytes(tag, 27)) {
-            tag = config.tag
-          }
-          var transfersArray = [{ 'address': address, 'value': amount, message: message, tag: tag}]
-          console.log(transfersArray)
-          iota.api.prepareTransfers(seed, transfersArray, function (error, success) {
-            if (error) {
-              reject(error)
-            }
-            else {
-              resolve(success)
-            }
-          })
-        }
-      )
-      }*/
-
   }
 
   sendTrytes = async (bundle) => {
@@ -216,17 +242,6 @@ class Wallet extends Component {
       return error
     }
   }
-
-  /*sendIota = (amount, address, message, tag) => {
-    this.setState({sendingIota:true})
-    this.iota.createBundle(this.props.seed, amount, address, message, tag)
-    .then((b)=>this.iota.isCorrectBundle(b))
-    .then((b)=>this.iota.attachBundle(b))
-    .then((r)=>{
-      console.log(r)
-      this.setState({sendingIota:false})
-    })
-  }*/
 
   render() {
     const {children} = this.props
@@ -243,6 +258,7 @@ class Wallet extends Component {
         sendTrytes: this.sendTrytes,
         initializeFlashChannel: this.initializeFlashChannel,
         fundFlashChannel: this.fundFlashChannel,
+        closeFlashChannel: this.closeFlashChannel
       },
       utils: utils,
     }

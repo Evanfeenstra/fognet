@@ -7,7 +7,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const DEMO = false
+const DEMO = true
 
 /*
 
@@ -19,7 +19,7 @@ export default class B extends Component {
   constructor(){
     super()
     this.state={
-      url:'https://fognet.world',
+      url:'http://motherfuckingwebsite.com/',//'https://fognet.world',
       html:'',
       loading:false,
       index:0,
@@ -134,6 +134,7 @@ export default class B extends Component {
     util.decode(e.target.value,(cmd,len)=>{
       console.log('stream started',cmd,len)
       this.setState({streamLength:len})
+      this.spend(len)
     },()=>{
       this.setState({streamProgress:this.state.streamProgress+1})
     },(v)=>{
@@ -179,11 +180,22 @@ export default class B extends Component {
       const sites = [...this.state.sites]
       sites.push({url, html: response.html})
       this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
+      // each ble packet is 18 bytes
+      this.spend(Math.ceil(response.html.length / 18))
+    }
+  }
+
+  spend = (packetCount) => {
+    //Cost is one iota per kilobyte
+    const iotaAmount = Math.round(packetCount/55.555)
+    if(this.props.onSpend){
+      this.props.onSpend(iotaAmount)
     }
   }
 
   render() {
     const {index, loading, url, html, sites, toggle, connected} = this.state
+    const {spendConfirmed, flashFund, totalSpent, spend} = this.props
     return (<Browser>
       
       <TopBar>
@@ -194,9 +206,10 @@ export default class B extends Component {
             onChange={(e)=>this.setState({url:e.target.value})} 
             onKeyPress={this.inputKeyPress} />
           <Button onClick={()=>this.go(url)} 
-            disabled={!url || loading}>
+            disabled={!url || loading || flashFund<1}>
             go
           </Button>
+          <Balance>{flashFund - totalSpent}i</Balance>
         </Things>}
         {!connected && <Things>
           <Connect>Connect</Connect>
@@ -204,18 +217,18 @@ export default class B extends Component {
         </Things>}
       </TopBar>
 
-      {html && <iframe srcDoc={html} height="468" frameBorder="0"
+      {(html && spendConfirmed) && <iframe srcDoc={html} height="468" frameBorder="0"
         style={{opacity:loading?0:1,transition:'all 0.2s',background:html?'white':'transparent'}}
         ref={ref=>this.frame=ref} onLoad={this.onFrameLoad}>
       </iframe>}
 
-      {loading && <Loading>
+      {(loading || spend!==0) && <Loading>
         <Bar length={this.state.streamLength} progress={this.state.streamProgress}/>
         <Spinner src="/static/img/ajax-loader-small.gif" />
         <div style={{color:'white',padding:10}}>
-            {this.state.streamLength}&nbsp;
-            {this.state.streamProgress}
-          </div>
+          {this.state.streamLength}&nbsp;
+          {this.state.streamProgress}
+        </div>
       </Loading>}
     </Browser>)
   }
@@ -274,12 +287,24 @@ const Button = styled.button`
   height: 21px;
   cursor: pointer;
   position: absolute;
-  right: 0px;
+  right: 47px;
   top: 0px;
 `
 const Input = styled.input`
-  width:382px;
+  width:335px;
   margin-left:50px;
+`
+const Balance = styled.div`
+  border:1px solid white;
+  text-align:center;
+  color:white;
+  position: absolute;
+  width: 40px;
+  right: 0px;
+  top: 1px;
+  font-size: 11px;
+  line-height: 19px;
+  height: 18px;
 `
 const Loading = styled.div`
   display:flex;

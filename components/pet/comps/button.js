@@ -17,15 +17,14 @@ const Button = styled.div`
   width:${p=> p.width || 'auto'};
   margin: ${p=> p.margin || '7px 0'};
   display:flex;
+  align-items:center;
   flex:1;
   justify-content:center;
-  align-items:center;
   max-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
   min-height: ${p=> p.size==='tiny' ? '16' : '32'}px;
   transition: all .15s ease-in-out;
   cursor: ${p=> p.active ? 'default' : 'pointer'};
   touch-action: manipulation;
-  line-height: 33px;
   white-space: nowrap;
   user-select: none;
   -webkit-user-select: none;
@@ -36,6 +35,4 @@ const Button = styled.div`
     background:${p=> p.active ? 'transparent' : 'teal'};
   }
 `
-
-
 export default B

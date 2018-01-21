@@ -6,8 +6,8 @@ import Button from './comps/button'
 const Receive = (props) => {
   const {addresses, balanceInputs} = props.iota
   const {getAddresses, gettingAddresses} = props.actions
-  console.log('balanceInputs',balanceInputs)
-  console.log('addresses', addresses)
+  // console.log('balanceInputs',balanceInputs)
+  // console.log('addresses', addresses)
   return <Content>
     <Title>Addresses</Title>
     {!addresses && <IntroSpinner src="/static/img/ajax-loader-small.gif" size={props.size} />}

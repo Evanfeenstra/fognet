@@ -8,7 +8,7 @@ import Flash from './flash'
 
 /*
 
-LUQBPZTP9NLPRLRNWERYUEGKLORTXIE99VSGFR9UDIMMFUNRTGATAOCTMGZPPKODSEYEAA9IVXRWSQFXB
+FUMFHAPNIEHJFPIXMWPIAJJSFSPTBOOBPOJQGCQMJSOLOCZWHTIIFPOWKIAFYTHTFGLNOWMXIPKFNYPPR
 
 */
 
@@ -19,7 +19,7 @@ export default class Pet extends Component {
     this.state={
       mode:null,
       flash:false,
-      seedInput:'LUQBPZTP9NLPRLRNWERYUEGKLORTXIE99VSGFR9UDIMMFUNRTGATAOCTMGZPPKODSEYEAA9IVXRWSQFXB',
+      seedInput:'FUMFHAPNIEHJFPIXMWPIAJJSFSPTBOOBPOJQGCQMJSOLOCZWHTIIFPOWKIAFYTHTFGLNOWMXIPKFNYPPR',
     }
   }
 
@@ -59,7 +59,7 @@ export default class Pet extends Component {
             <HeaderFab show
               lineHeight="33px" hideBorder mode={mode}
               onClick={()=>this.setState({flash:true,mode:null})}>
-              <Lightning style={{fill:'white',height:18}}/>
+              <Lightning style={{fill:iota.flash?'#38f9d7':'white',height:18}}/>
             </HeaderFab>
           </div>
         </Header>}

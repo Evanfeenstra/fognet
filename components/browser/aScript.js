@@ -20,7 +20,7 @@ export const script = (url) => `
 //'http://localhost:8081/'
 export const API = async (url, options) => {
   try {
-    let response = await fetch('Lyle.local:8081/' + url, options)
+    let response = await fetch('http://localhost:8081/' + url, options)
     let responseJson = await response.json()
     return responseJson
   } catch (error) {
@@ -42,12 +42,6 @@ export const BleAPI = (cmd, a) => {
   return [go, ...chunks, no]
 }
 
-const BleReturns = {
-  web: function(msg){
-    console.log('ALL DA WAY AROuND!!',msg)
-  }
-}
-
 var chunks = []
 export const decode = (s, start, tick, finish) => {
   var dec = new TextDecoder('utf-8')
@@ -65,7 +59,6 @@ export const decode = (s, start, tick, finish) => {
     chunks.forEach(function(chunk){
       s += chunk.substr(0,18)
     })
-    //BleReturns[cmd](s)
     console.log('FROm BLE WHOLE')
     finish(s)
     chunks = [] 

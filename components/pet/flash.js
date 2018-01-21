@@ -13,84 +13,44 @@ export default class F extends Component {
     }
   }
 
-  /*
-    NEED TO INITIALIZE AND FUND AT THE SAME TIME?
-    Right now the server automatically creates a record of 400 iota
-    in the flash channel. Need to pass that data in
-  */
-
-  componentWillMount(){
-    //this.props.initializeFlashChannel()
-    //localStorage.clear()
-    if(localStorage.getItem('flash-state')){
-      this.props.actions.initializeFlashChannel()
-    }
-  }
-
-  // connectToFlashChannel = async () => {
-  //   const state = await 
-  // }
-
   fundFlashChannel = async () => {
     const {fundAmount} = this.state
     const {actions, iota} = this.props
-    const {flash} = iota
-    const transactions = await actions.fundFlashChannel(
+
+    const flash = await actions.initializeFlashChannel(fundAmount)
+    console.log("retunred",flash)
+    const t = await actions.fundFlashChannel(
       flash.channel.root.address, parseInt(fundAmount)
     )
     this.setState({fundAmount:''})
-    // const stake = transactions[0].value
-    // console.log('stake', stake)
-    // flash.deposit = [stake, 0]
-    // flash.balance = stake
-    // this.setState({flash})
   }
-
-  // SEND A TRANSFER TO THE FLASH CHANNEL TO FUND
-  // set "fundingFlash to true on Wallet"
-
-  /*fund = async () => {
-    this.setState(
-      { page: "loading", message: "Funding the channel!" },
-      async () => {
-        console.log("NOW FUND ADDY", state.flash.root.address)
-        console.log(state.flash.root.address)
-        var funded = await fund(state.flash.root.address)
-
-        console.log("Funded!", funded)
-        state.flash.deposit = [400, 0]
-        state.flash.balance = 400
-
-        if (funded) {
-          this.props.updateState({ ...state, funded: true })
-          store.set("state", { ...state, funded: true })
-          this.setState({ channel: { ...state, funded: true }, page: "home" })
-        } else {
-          alert("There was an error funding your channel.")
-        }
-      }
-    )
-  }*/
 
   render(){
     const {iota, show, actions, utils} = this.props
     const {userId, fundAmount} = this.state
-    const {flash, initializingFlash, fundingFlash} = iota
+    const {flash, initializingFlash, fundingFlash, flashSpent, closingFlash} = iota
+    const spent = flashSpent || 0
+    const isBalance = flash && flash.channel && flash.channel.balance
+
     return <Flash show={show} flash={flash}>
+      {isBalance ? <WrapInfo>
+        <Info>Stake in Flash Channel: {utils.reducer(flash.channel.balance - spent)}</Info>
+        <Button title="Close" size="tiny" margin="7px 13px" width="42px" 
+          onClick={actions.closeFlashChannel} active={closingFlash} />
+      </WrapInfo> : <Info>
+        Send iota to the Flash server to open an instant payments channel.
+      </Info>}
       <Content>
-        {!flash && <Button title="Connect to Flash Channel" 
-          active={initializingFlash}
-          onClick={actions.initializeFlashChannel}
-        />}
-        {flash && <Wrap>
+        <Wrap>
           <Input type="text" label="Fund Channel"
             onChange={(e)=>this.setState({fundAmount: utils.validAmount(e.target.value)})}
             value={fundAmount}
             width="50%" />
-          <Button title="Commit" active={fundingFlash}
+          <Button title="Commit" active={initializingFlash || fundingFlash}
             onClick={this.fundFlashChannel} margin="7px 0 7px 14px"
-            disabled={!this.state.fundAmount} />
-        </Wrap>}
+            disabled={!this.state.fundAmount ||
+              parseInt(this.state.fundAmount)>iota.balance} />
+        </Wrap>
       </Content>
     </Flash>
   }
@@ -102,7 +62,7 @@ const Flash = styled.div`
   width:100%;
   top:42px;
   left:0;
-  border-bottom:1px solid white;
+  border-bottom:1px solid ${p=> p.show ? 'white' : 'transparent'};
   border-top:1px solid ${p=> p.flash ? 'white' : 'transparent'};
   background:#140061;
   z-index:99;
@@ -111,13 +71,20 @@ const Flash = styled.div`
   transform: translateY(${p=> p.show ? '0px' : '-130px'});
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
+  justify-content:space-between;
+`
+const Info = styled.div`
+  margin:15px;
+  font-size:11px;
 `
 const Content = styled.div`
   padding:8px 16px;
 `
 const Wrap = styled.div`
   display:flex;
-  flex:1;
+`
+const WrapInfo = styled.div`
+  display:flex;
+  align-items:center;
 `
 

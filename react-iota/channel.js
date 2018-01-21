@@ -16,12 +16,8 @@ export default class Channel {
   // Flash tree depth
   static TREE_DEPTH = 4
 
-  static flash = {}
-
   // Initiate the local state and store it localStorage
-  static async initialize(userSeed) {
-    console.log('init flash')
-    
+  static async initialize(userSeed, fundAmount) {    
     // Escape the function when server rendering
     if (!isWindow()) return false
     
@@ -64,7 +60,7 @@ export default class Channel {
       const digest = await Channel.getNewDigest()
       digests.push(digest)
     }
-    const addresses = await Channel.register(digests, userID)
+    const addresses = await Channel.register(digests, userID, fundAmount)
 
     // Update root and remainder address
     state.channel.remainderAddress = addresses.remainder
@@ -79,7 +75,7 @@ export default class Channel {
     return state
   }
 
-  static async register(digests, userID) {
+  static async register(digests, userID, fundAmount) {
     console.log("Address Digests: ", digests)
 
     const opts = {
@@ -90,7 +86,8 @@ export default class Channel {
       method: "POST",
       body: JSON.stringify({
         id: userID,
-        digests: digests
+        digests: digests,
+        amount: fundAmount
       })
     }
     // Send digests to server and obtain new multisig addresses
@@ -208,13 +205,15 @@ export default class Channel {
   }
 
   // Initiate transaction from anywhere in the app.
-  static async composeTransfer(value, settlementAddress, id) {
+  static async composeTransfer(value, settlementAddress) {
     // Get latest state from localstorage
     const state = await store.get("flash-state")
-    var purchases = await store.get("purchases")
-
+    var purchases = await store.get("flash-purchases")
     // TODO: check/generate tree
-    if (!state.channel.root) return
+    if (!(state && state.channel && state.channel.root)) {
+      alert("Insufficient funds")
+      return
+    }
     let toUse = multisig.updateLeafToRoot(state.channel.root)
     if (toUse.generate != 0) {
       // Tell the server to generate new addresses, attach to the multisig you give
@@ -235,7 +234,7 @@ export default class Channel {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
       let newTansfers = transfer.prepare(
         [Presets.ADDRESS, null],
-        flash.deposit,
+        channel.deposit,
         0,
         [
           {
@@ -264,16 +263,14 @@ export default class Channel {
       }
       return false
     }
-    console.log("Unsigned", bundles)
+    bundles = bundles.filter(b=>b)
     state.bundles = bundles
-    
     // Sign transfer
     const signatures = transfer.sign(toUse.multisig, state.userSeed, bundles)
     console.log("Signatures", signatures)
 
     // Update bundles in local state
     let partiallySigned = transfer.appliedSignatures(bundles, signatures)
-    console.log(partiallySigned)
     // Return signed bundles
     const opts = {
       headers: {
@@ -284,11 +281,8 @@ export default class Channel {
       body: JSON.stringify({
         id: state.userID,
         bundles: partiallySigned,
-        item: id
       })
     }
-    console.log(opts)
-
     const res = await API("purchase", opts)
     if (res.bundles) {
       transfer.applyTransfers(
@@ -307,7 +301,7 @@ export default class Channel {
       // Push the purchase recipt to the browser
       purchases.push({ ...res, value })
       // save purchases for reload
-      store.set("purchases", purchases)
+      store.set("flash-purchases", purchases)
     } else {
       console.error(res)
     }
@@ -332,6 +326,7 @@ export default class Channel {
   }
 
   static async close() {
+    console.log("CLOSING CHANNEL")
     // Get latest state from localstorage
     const state = await store.get("flash-state")
 
@@ -349,14 +344,20 @@ export default class Channel {
       let modifiedState = await store.get("flash-state")
       state.index = modifiedState.index
     }
-    console.log(state)
     // Compose transfer
     const channel = state.channel
     let bundles
     try {
       // No settlement addresses and Index is 0 as we are alsways sending from the client
       let newTansfers = transfer.close([Presets.ADDRESS, Presets.ADDRESS], channel.deposit)
-
+      console.log({
+        balance: channel.balance,
+        deposit: channel.deposit,
+        outputs: channel.outputs,
+        multisig: toUse.multisig,
+        remainderadress: channel.remainderAddress,
+        transfers: channel.transfers,
+        newtransfers: newTansfers})
       bundles = transfer.compose(
         channel.balance,
         channel.deposit,
@@ -365,7 +366,7 @@ export default class Channel {
         channel.remainderAddress,
         channel.transfers,
         newTansfers,
-        true
+        true // close
       )
       
     } catch (e) {
