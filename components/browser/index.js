@@ -7,8 +7,6 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const DEMO = true
-
 /*
 
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/manifest.json"><link rel="shortcut icon" href="/favicon.ico"><link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet"><title>FogNet</title><link href="/static/css/main.e226bfb7.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="fognet-landing-root"></div><script type="text/javascript" src="/static/js/main.b44b5db2.js"></script></body></html>
@@ -19,7 +17,7 @@ export default class B extends Component {
   constructor(){
     super()
     this.state={
-      url:'http://motherfuckingwebsite.com/',//'https://fognet.world',
+      url:'https://fognet.world',
       html:'',
       loading:false,
       index:0,
@@ -27,7 +25,7 @@ export default class B extends Component {
       toggle:false,
       connected:false,
       streamProgress:0,
-      streamLength:0
+      streamLength:0,
     }
     this.char = null
   }
@@ -91,7 +89,7 @@ export default class B extends Component {
         this.toggler()
       },420)
     }
-    if(!DEMO){
+    if(this.props.initialized==='BLE'){
       navigator.bluetooth.requestDevice({ 
         filters: [{ services: ['00001234-0000-1000-8000-00805f9b34fb'] }]
       })
@@ -134,7 +132,6 @@ export default class B extends Component {
     util.decode(e.target.value,(cmd,len)=>{
       console.log('stream started',cmd,len)
       this.setState({streamLength:len})
-      this.spend(len)
     },()=>{
       this.setState({streamProgress:this.state.streamProgress+1})
     },(v)=>{
@@ -142,6 +139,7 @@ export default class B extends Component {
       console.log('set html length ',html.length)
       const sites = [...this.state.sites]
       sites.push({url:this.state.url, html})
+      this.spend(this.state.streamLength)
       this.setState({html, loading:false,
         streamLength:0, streamProgress:0,
         sites, index:sites.length-1
@@ -159,7 +157,7 @@ export default class B extends Component {
       this.setState({html: ''})
     },2)
     
-    if(!DEMO){
+    if(this.props.initialized==='BLE'){
       console.log("SEND URL NOw", url)
       util.BleAPI('web', url).reduce((prev, val) => {
         return prev.then(() => this.char.writeValue(val))
@@ -179,7 +177,7 @@ export default class B extends Component {
       const response = await util.API("fognetdemo", opts)
       const sites = [...this.state.sites]
       sites.push({url, html: response.html})
-      this.setState({html: response.html, loading:false, sites, index: sites.length - 1})
+      this.setState({html:response.html, loading:false, sites, index:sites.length - 1})
       // each ble packet is 18 bytes
       this.spend(Math.ceil(response.html.length / 18))
     }
@@ -202,11 +200,11 @@ export default class B extends Component {
         {connected && <Things style={{margin:5}}>
           <Back onClick={this.back} disabled={index===0}>◀</Back>
           <Forward onClick={this.forward} disabled={index>=sites.length-1}>▶</Forward>
-          <Input value={url} 
+          <Input value={url}
             onChange={(e)=>this.setState({url:e.target.value})} 
             onKeyPress={this.inputKeyPress} />
           <Button onClick={()=>this.go(url)} 
-            disabled={!url || loading || flashFund<1}>
+            disabled={!url || loading || flashFund<1 || sites.length}>
             go
           </Button>
           <Balance>{flashFund - totalSpent}i</Balance>
@@ -225,10 +223,10 @@ export default class B extends Component {
       {(loading || spend!==0) && <Loading>
         <Bar length={this.state.streamLength} progress={this.state.streamProgress}/>
         <Spinner src="/static/img/ajax-loader-small.gif" />
-        <div style={{color:'white',padding:10}}>
+        {/*<div style={{color:'white',padding:10}}>
           {this.state.streamLength}&nbsp;
           {this.state.streamProgress}
-        </div>
+        </div>*/}
       </Loading>}
     </Browser>)
   }

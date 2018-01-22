@@ -1,16 +1,18 @@
 import IOTA from 'iota.lib.js'
-import curl from './curl.worker.min.js'
+import './curl.worker.min.js'
+import './curl.min.js'
 
 let iota = null
 
 const actions = {
 
   init: ({provider, worker}) => {
+    console.log("INIT NOW", worker)
     iota = new IOTA({provider})
     if(worker){
         iota.api.attachToTangle = workerAttachToTangle
-    } else {
-        iota.api.attachToTangle = localAttachToTangle
+    } else if(typeof window !== "undefined"){
+        iota.api.attachToTangle = localAttachToTangle        
     }
     /*self.XMLHttpRequest.prototype.open = async () => {
       console.log("XMLHttpRequest HERE webworker")

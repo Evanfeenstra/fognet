@@ -10,6 +10,7 @@ class A extends Component {
   constructor(){
     super()
     this.state={
+      initialized:null, // demo or BLE
       flashFund:0,
       spend:0,
       spendConfirmed:true,
@@ -38,16 +39,26 @@ class A extends Component {
   }
 
   render(){
+    const {initialized} = this.state
     return (<App>
-      <FAB />
-      <Wallet onFundFlash={this.onFundFlash} spend={this.state.spend} 
+      {!initialized && <Intro>
+        <Buttonz>
+          <Button onClick={()=>this.setState({initialized:'demo'})}>Start Web Demo</Button>
+          <Button onClick={()=>this.setState({initialized:'BLE'})}>Start Bluetooth</Button>
+        </Buttonz>
+        <Wordz>
+          Please enable <strong>Experimental Canvas Features</strong> in <strong>chrome://flags</strong> in order to perform Proof of Work in a background thread for a smoother experience.
+        </Wordz>
+      </Intro>}
+      {initialized && <Wallet onFundFlash={this.onFundFlash} spend={this.state.spend} 
         amount={this.state.amount} onConfirmSpend={this.onConfirmSpend}>
         <Pet />
-      </Wallet>
-      <Browser flashFund={this.state.flashFund} 
+      </Wallet>}
+      {initialized && <Browser flashFund={this.state.flashFund} 
         onSpend={this.onSpend} spend={this.state.spend}
         spendConfirmed={this.state.spendConfirmed}
-        totalSpent={this.state.totalSpent} />
+        totalSpent={this.state.totalSpent} 
+        initialized={initialized} />}
     </App>)
   }
   
@@ -63,4 +74,43 @@ const App = styled.div`
   background: linear-gradient(135deg, #00646d 4%, #411cce);
   background-size: cover;
   padding-top:50px;
+`
+const Button = styled.div`
+  color: white;
+  border: 2px solid white;
+  width:200px;
+  height:50px;
+  margin:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition: all .15s ease-in-out;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 18px;
+  letter-spacing: .03em;
+  overflow: hidden;
+  &:hover{
+    background:teal;
+  }
+  font-weight:bold;
+`
+const Intro = styled.div`
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  flex-direction: column;
+`
+const Buttonz = styled.div`
+  display:flex;
+  align-items:center;
+`
+const Wordz = styled.div`
+  color:white;
+  width:530px;
+  margin-bottom:100px;
 `

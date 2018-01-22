@@ -31,7 +31,6 @@ class Wallet extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    console.log('recieveProps',newProps)
     if(newProps.spend && newProps.spend !== 0 && newProps.spend !== this.props.spend){
       this.purchase(newProps.spend)
     }
@@ -54,10 +53,11 @@ class Wallet extends Component {
 
   checkForFlashState = async () => {
     if(localStorage.getItem('flash-state')){
-      const flash = await this.initializeFlashChannel()
+      localStorage.clear()
+      /*const flash = await this.initializeFlashChannel()
       if(flash.channel.balance, this.props.onFundFlash){
         this.props.onFundFlash(flash.userID, flash.channel.balance)
-      }
+      }*/
     }
   }
 
@@ -78,7 +78,7 @@ class Wallet extends Component {
         const a = await this.getAddresses(10)
         this.setState({addresses:a})
         await this.fundFromTestnet(a[0], 420)
-        this.setState({creatingRandom:false})
+        this.setState({creatingRandom:false, randomTestnetSeed:true})
       })
     }
   }
@@ -105,7 +105,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({fundingAddressFromTestnet:null})
-        return error
+        throw error
       }
     }
   }
@@ -121,7 +121,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({gettingBalance:false})
-        return error
+        throw error
       }
     }
   }
@@ -138,7 +138,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({gettingAddresses:false})
-        return error
+        throw error
       }
     }
   }
@@ -156,7 +156,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({sendingTransfer:false})
-        return error
+        throw error
       }
     }
   }
@@ -171,7 +171,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({initializingFlash:false, flash:null})
-        return error
+        throw error
       }
     }
   }
@@ -181,15 +181,18 @@ class Wallet extends Component {
     if(!this.state.fundingFlash){
       this.setState({fundingFlash:true})
       try {
-        const {flash, fundAmount} = this.state
-        const transactions = await this.sendTransfer(address, amount)
+        const {flash, fundAmount, randomTestnetSeed} = this.state
+        let transactions
+        if(randomTestnetSeed){
+          console.log('use seeds.tangle.works to fund flash channel')
+          transactions = await Iota.fundFromTestnet(address, amount)
+        } else {
+          transactions = await this.sendTransfer(address, amount)
+        }
         const stake = transactions[0].value
         console.log('stake', stake)
         flash.channel.deposit = [stake, 0]
         flash.channel.balance = stake
-        /*flash.channel.transfers.push({
-          address, value: amount
-        })*/
         this.setState({fundingFlash:false, flash, balance:this.state.balance-stake})
         Channel.setLocalState(flash)
         if(this.props.onFundFlash){
@@ -199,7 +202,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({fundingFlash:false})
-        return error
+        throw error
       }
     }
   }
@@ -216,7 +219,7 @@ class Wallet extends Component {
       } catch (error) {
         console.error(error)
         this.setState({closingFlash:false})
-        return error
+        throw error
       }
     }
   }
@@ -228,7 +231,7 @@ class Wallet extends Component {
       return t
     } catch (error) {
       console.error(error)
-      return error
+      throw error
     }
   }
 
@@ -239,7 +242,7 @@ class Wallet extends Component {
       return t
     } catch (error) {
       console.error(error)
-      return error
+      throw error
     }
   }
 

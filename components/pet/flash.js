@@ -18,7 +18,7 @@ export default class F extends Component {
     const {actions, iota} = this.props
 
     const flash = await actions.initializeFlashChannel(fundAmount)
-    console.log("retunred",flash)
+    console.log("returned",flash)
     const t = await actions.fundFlashChannel(
       flash.channel.root.address, parseInt(fundAmount)
     )
@@ -35,8 +35,8 @@ export default class F extends Component {
     return <Flash show={show} flash={flash}>
       {isBalance ? <WrapInfo>
         <Info>Stake in Flash Channel: {utils.reducer(flash.channel.balance - spent)}</Info>
-        <Button title="Close" size="tiny" margin="7px 13px" width="42px" 
-          onClick={actions.closeFlashChannel} active={closingFlash} />
+        {/*<Button title="Close" size="tiny" margin="7px 13px" width="42px" 
+          onClick={actions.closeFlashChannel} active={closingFlash} />*/}
       </WrapInfo> : <Info>
         Send iota to the Flash server to open an instant payments channel.
       </Info>}

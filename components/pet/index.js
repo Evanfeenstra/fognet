@@ -109,6 +109,7 @@ const Wallet = styled.div`
   color: white;
   overflow:hidden;
   background: #140061; 
+  margin-left:37px;
 `//009dad
 
 const Content = styled.div`

@@ -15,12 +15,13 @@ export const script = (url) => `
     })
   }
 `
-//'http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/'
-//Lyle.local:8081
-//'http://localhost:8081/'
-export const API = async (url, options) => {
+
+const url = 'http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/'
+// const url = 'Lyle.local:8081'
+// const url = 'http://localhost:8081/'
+export const API = async (path, options) => {
   try {
-    let response = await fetch('http://localhost:8081/' + url, options)
+    let response = await fetch(url + path, options)
     let responseJson = await response.json()
     return responseJson
   } catch (error) {
@@ -59,7 +60,7 @@ export const decode = (s, start, tick, finish) => {
     chunks.forEach(function(chunk){
       s += chunk.substr(0,18)
     })
-    console.log('FROm BLE WHOLE')
+    //console.log('FROm BLE WHOLE')
     finish(s)
     chunks = [] 
   } else {
