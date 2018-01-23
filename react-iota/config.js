@@ -1,25 +1,14 @@
 // const prod = process.env.NODE_ENV === 'production'
-const prod = false
+
+// const url = 'http://Lyle.local:8081/'
+// const url = 'http://localhost:8081/'
+const url = 'https://iota.studio/'
+
 
 export default {
-  API: prod
-    ? "https://satoshipay.iotaledger.net/"
-    : "http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/",//'http://Lyle.local:8081/',//"http://localhost:8081/",
+  API: url,
   ADDRESS: `GQMHDLS9XPSNURUCPKKJJTULZRPH9WSKUKQQQPJOY9CPRCNAUSIFWCLHVDSUHJJCPMQDARUIFFXKXFVQD`,
-  IOTA: prod ? "https://node.tangle.works" : "https://testnet140.tangle.works:443",
-  PROD: prod ? true : false,
+  IOTA: "https://testnet140.tangle.works:443",
+  PROD: false,
   SECURITY: 2,
 }
-//http://52.58.212.188:14700
-
-
-
-// ADDRESS is the receiving address of the server flash channel
-
-
-
-
-//https://testnet140.tangle.works:443
-
-
-//http://p101.iotaledger.net:14700

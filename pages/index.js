@@ -1,7 +1,6 @@
 import React, {Component} from "react"
 import styled from "styled-components"
 import Wallet from '../react-iota/Wallet'
-import FAB from "../components/wallet"
 import Pet from '../components/pet'
 import Browser from '../components/browser'
 
@@ -10,11 +9,12 @@ class A extends Component {
   constructor(){
     super()
     this.state={
-      initialized:null, // demo or BLE
+      initialized:null, // 'demo' or 'BLE'
       flashFund:0,
       spend:0,
       spendConfirmed:true,
-      totalSpent:0
+      totalSpent:0,
+      spendError:null
     }
   }
 
@@ -24,9 +24,11 @@ class A extends Component {
 
   onSpend = (spend) => {
     console.log("SPEND", spend)
-    this.setState({spendConfirmed:false})
+    this.setState({spendConfirmed:false,spendError:null})
     if(this.state.flashFund > spend){
       this.setState({spend})
+    } else {
+      this.onError('Not enough flash funds.')
     }
   }
 
@@ -35,11 +37,20 @@ class A extends Component {
     this.setState({spend:0})
     if(spend){
       this.setState({spendConfirmed:true,totalSpent:this.state.totalSpent+spend})
+    } else {
+      this.onError('Flash channel error.')
     }
   }
 
+  onError = (spendError) => {
+    this.setState({spendError})
+    setTimeout(()=>{
+      this.setState({spendError:null})
+    },3000)
+  }
+
   render(){
-    const {initialized} = this.state
+    const {spend, amount, flashFund, initialized, spendConfirmed, totalSpent, spendError} = this.state
     return (<App>
       {!initialized && <Intro>
         <Buttonz>
@@ -47,18 +58,17 @@ class A extends Component {
           <Button onClick={()=>this.setState({initialized:'BLE'})}>Start Bluetooth</Button>
         </Buttonz>
         <Wordz>
-          Please enable <strong>Experimental Canvas Features</strong> in <strong>chrome://flags</strong> in order to perform Proof of Work in a background thread for a smoother experience.
+          To run IOTA and Proof of Work in a background thread, please enable <strong>Experimental Canvas Features</strong> in <strong>chrome://flags</strong> and restart Chrome.
         </Wordz>
       </Intro>}
-      {initialized && <Wallet onFundFlash={this.onFundFlash} spend={this.state.spend} 
-        amount={this.state.amount} onConfirmSpend={this.onConfirmSpend}>
+      {initialized && <Wallet onFundFlash={this.onFundFlash} spend={spend} 
+        onConfirmSpend={this.onConfirmSpend}>
         <Pet />
       </Wallet>}
-      {initialized && <Browser flashFund={this.state.flashFund} 
-        onSpend={this.onSpend} spend={this.state.spend}
-        spendConfirmed={this.state.spendConfirmed}
-        totalSpent={this.state.totalSpent} 
-        initialized={initialized} />}
+      {initialized && <Browser flashFund={flashFund} spend={spend}
+        spendConfirmed={spendConfirmed} totalSpent={totalSpent}
+        initialized={initialized} spendError={spendError} 
+        onSpend={this.onSpend} />}
     </App>)
   }
   
@@ -113,4 +123,5 @@ const Wordz = styled.div`
   color:white;
   width:530px;
   margin-bottom:100px;
+  margin-left:37px;
 `

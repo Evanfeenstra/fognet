@@ -211,8 +211,7 @@ export default class Channel {
     var purchases = await store.get("flash-purchases")
     // TODO: check/generate tree
     if (!(state && state.channel && state.channel.root)) {
-      alert("Insufficient funds")
-      return
+      return null
     }
     let toUse = multisig.updateLeafToRoot(state.channel.root)
     if (toUse.generate != 0) {
@@ -263,6 +262,7 @@ export default class Channel {
       }
       return false
     }
+    console.log(bundles)
     bundles = bundles.filter(b=>b)
     state.bundles = bundles
     // Sign transfer

@@ -16,7 +16,7 @@ export default class Send extends Component {
   componentDidMount(){
     if(!this.props.recipient){
       setTimeout(()=>{
-        this.addressInputRef.focus()
+        //this.addressInputRef.focus()
       },150)
     }
   }

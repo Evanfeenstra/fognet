@@ -9,15 +9,14 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
-          <title>IOTA - Satoshi Pay</title>
+          <title>FogNet - IOTA Browser</title>
           <link
             rel="shortcut icon"
             type="image/png"
             sizes="16x16"
-            href="/static/favicon.png"
+            href="/static/favicon.ico"
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          {/*<script src={'/static/curl.min.js'} />*/}
           {styleTags}
         </Head>
         <body>

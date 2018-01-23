@@ -12,6 +12,9 @@ function timeout(ms) {
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/manifest.json"><link rel="shortcut icon" href="/favicon.ico"><link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet"><title>FogNet</title><link href="/static/css/main.e226bfb7.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="fognet-landing-root"></div><script type="text/javascript" src="/static/js/main.b44b5db2.js"></script></body></html>
 
 */
+
+const dev = false;
+
 export default class B extends Component {
 
   constructor(){
@@ -139,7 +142,9 @@ export default class B extends Component {
       console.log('set html length ',html.length)
       const sites = [...this.state.sites]
       sites.push({url:this.state.url, html})
-      this.spend(this.state.streamLength)
+      if(!dev){
+        this.spend(this.state.streamLength)
+      }
       this.setState({html, loading:false,
         streamLength:0, streamProgress:0,
         sites, index:sites.length-1
@@ -179,7 +184,9 @@ export default class B extends Component {
       sites.push({url, html: response.html})
       this.setState({html:response.html, loading:false, sites, index:sites.length - 1})
       // each ble packet is 18 bytes
-      this.spend(Math.ceil(response.html.length / 18))
+      if(!dev){
+        this.spend(Math.ceil(response.html.length / 18))
+      }
     }
   }
 
@@ -193,7 +200,7 @@ export default class B extends Component {
 
   render() {
     const {index, loading, url, html, sites, toggle, connected} = this.state
-    const {spendConfirmed, flashFund, totalSpent, spend} = this.props
+    const {spendConfirmed, flashFund, totalSpent, spend, spendError} = this.props
     return (<Browser>
       
       <TopBar>
@@ -204,7 +211,7 @@ export default class B extends Component {
             onChange={(e)=>this.setState({url:e.target.value})} 
             onKeyPress={this.inputKeyPress} />
           <Button onClick={()=>this.go(url)} 
-            disabled={!url || loading || flashFund<1 || sites.length}>
+            disabled={!url || loading || (!dev && (flashFund<1 || totalSpent))}>
             go
           </Button>
           <Balance>{flashFund - totalSpent}i</Balance>
@@ -223,11 +230,10 @@ export default class B extends Component {
       {(loading || spend!==0) && <Loading>
         <Bar length={this.state.streamLength} progress={this.state.streamProgress}/>
         <Spinner src="/static/img/ajax-loader-small.gif" />
-        {/*<div style={{color:'white',padding:10}}>
-          {this.state.streamLength}&nbsp;
-          {this.state.streamProgress}
-        </div>*/}
       </Loading>}
+      {spendError && <Loading><Err>
+        {spendError}
+      </Err></Loading>}
     </Browser>)
   }
 
@@ -310,6 +316,10 @@ const Loading = styled.div`
   align-items: center;
   position:absolute;
   top:32px;left:0;bottom:0;right:0;
+`
+const Err = styled.div`
+  height:11px;
+  color:white;
 `
 const Bar = styled.div`
   position:absolute;

@@ -16,7 +16,7 @@ export const script = (url) => `
   }
 `
 
-const url = 'http://fognet.sg3npvvuir.us-west-2.elasticbeanstalk.com/'
+const url = 'https://iota.studio/'
 // const url = 'Lyle.local:8081'
 // const url = 'http://localhost:8081/'
 export const API = async (path, options) => {

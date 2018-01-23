@@ -7,7 +7,7 @@ let iota = null
 const actions = {
 
   init: ({provider, worker}) => {
-    console.log("INIT NOW", worker)
+    console.log("init IOTA", worker ? "(webworker)" : "(no webworker)")
     iota = new IOTA({provider})
     if(worker){
         iota.api.attachToTangle = workerAttachToTangle
