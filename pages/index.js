@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import styled from "styled-components"
-import Wallet from '../react-iota/Wallet'
-import Pet from '../components/pet'
+import IotaProvider from '../react-iota'
+import Wallet from '../components/wallet'
 import Browser from '../components/browser'
 
 class A extends Component {
@@ -61,10 +61,10 @@ class A extends Component {
           To run IOTA and Proof of Work in a background thread, please enable <strong>Experimental Canvas Features</strong> in <strong>chrome://flags</strong> and restart Chrome.
         </Wordz>
       </Intro>}
-      {initialized && <Wallet onFundFlash={this.onFundFlash} spend={spend} 
+      {initialized && <IotaProvider onFundFlash={this.onFundFlash} spend={spend} 
         onConfirmSpend={this.onConfirmSpend}>
-        <Pet />
-      </Wallet>}
+        <Wallet />
+      </IotaProvider>}
       {initialized && <Browser flashFund={flashFund} spend={spend}
         spendConfirmed={spendConfirmed} totalSpent={totalSpent}
         initialized={initialized} spendError={spendError} 

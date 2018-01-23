@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
-import * as util from './aScript'
+import * as util from './utils'
 import Gooey from './gooey'
 
 function timeout(ms) {
