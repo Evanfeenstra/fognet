@@ -16,13 +16,14 @@ export default class F extends Component {
   fundFlashChannel = async () => {
     const {fundAmount} = this.state
     const {actions, iota} = this.props
-
-    const flash = await actions.initializeFlashChannel(fundAmount)
-    console.log("returned",flash)
-    const t = await actions.fundFlashChannel(
-      flash.channel.root.address, parseInt(fundAmount)
-    )
-    this.setState({fundAmount:''})
+    if(iota.balance >= fundAmount){
+      const flash = await actions.initializeFlashChannel(fundAmount)
+      console.log("returned",flash)
+      const t = await actions.fundFlashChannel(
+        flash.channel.root.address, parseInt(fundAmount)
+      )
+      this.setState({fundAmount:''})
+    }
   }
 
   render(){
