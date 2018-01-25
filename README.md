@@ -1,6 +1,8 @@
 # FogNet
 Free internet via Bluetooth mesh
 
+[![FogNet](https://raw.githubusercontent.com/Evanfeenstra/fognet/master/static/img/fognetscreen.png)](https://vimeo.com/252654479)
+
 ### Future plans
 
  - optimize ble throughput
