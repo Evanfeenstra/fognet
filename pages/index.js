@@ -57,6 +57,7 @@ class A extends Component {
           <Button onClick={()=>this.setState({initialized:'demo'})}>Start Web Demo</Button>
           <Button onClick={()=>this.setState({initialized:'BLE'})}>Start Bluetooth</Button>
         </Buttonz>
+        <iframe src="https://player.vimeo.com/video/252654479" width="480" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
         <Wordz>
           To run IOTA and Proof of Work in a background thread, please enable <strong>Experimental Canvas Features</strong> in <strong>chrome://flags</strong> and restart Chrome.
         </Wordz>

@@ -1,7 +1,8 @@
 // const prod = process.env.NODE_ENV === 'production'
 
-// const url = 'http://Lyle.local:8081/'
-// const url = 'http://localhost:8081/'
+//const url = 'Lyle.local:8089/'
+//const url = 'http://166.167.187.45:8089/'
+//const url = 'http://localhost:8081/'
 const url = 'https://iota.studio/'
 
 

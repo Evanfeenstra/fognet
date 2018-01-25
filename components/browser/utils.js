@@ -17,8 +17,8 @@ export const script = (url) => `
 `
 
 const url = 'https://iota.studio/'
-// const url = 'Lyle.local:8081'
-// const url = 'http://localhost:8081/'
+//const url = 'http://lyle.local:8089/'
+//const url = 'http://localhost:8081/'
 export const API = async (path, options) => {
   try {
     let response = await fetch(url + path, options)
@@ -62,7 +62,7 @@ export const decode = (s, start, tick, finish) => {
     })
     //console.log('FROm BLE WHOLE')
     finish(s)
-    chunks = [] 
+    chunks = []
   } else {
     tick()
     chunks.push(text)

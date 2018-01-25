@@ -191,8 +191,8 @@ export default class B extends Component {
   }
 
   spend = (packetCount) => {
-    //Cost is one iota per kilobyte
-    const iotaAmount = Math.round(packetCount/55.555)
+    //Cost is one iota per megabyte
+    const iotaAmount = Math.ceil(packetCount/55.555/1000)
     if(this.props.onSpend){
       this.props.onSpend(iotaAmount)
     }
