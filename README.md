@@ -1,7 +1,7 @@
 # FogNet
 Free internet via Bluetooth mesh
 
-[![FogNet](https://raw.githubusercontent.com/Evanfeenstra/fognet/master/static/img/fognetscreen.png)](https://vimeo.com/252654479 | width=240)
+[![FogNet](https://raw.githubusercontent.com/Evanfeenstra/fognet/master/static/img/fognetscreen.png | width=240)](https://vimeo.com/252654479)
 
 ### Future plans
 
