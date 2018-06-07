@@ -5,7 +5,7 @@ import Send from './send'
 import Input from './comps/input'
 import Button from './comps/button'
 import Flash from './flash'
-
+import keyGen from './comps/keyGen'
 /*
 
 FUMFHAPNIEHJFPIXMWPIAJJSFSPTBOOBPOJQGCQMJSOLOCZWHTIIFPOWKIAFYTHTFGLNOWMXIPKFNYPPR
@@ -34,9 +34,10 @@ export default class Pet extends Component {
       <Content>
 
         {!isConnected && <Button title="Random Seed"
-          disabled={gettingBalance}
-          active={creatingRandom} margin="12px"
-          onClick={()=>actions.createRandom()} />}
+          disabled={false}
+          active={false} margin="12px"
+          onClick={()=>this.setState({seedInput:keyGen(81)})} 
+        />}
 
         {!isConnected && <Seed>
           <Input label="Enter Seed" width="50%"

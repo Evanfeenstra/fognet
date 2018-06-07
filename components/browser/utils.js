@@ -1,3 +1,4 @@
+
 export const script = (url) => `
   var as = document.getElementsByTagName("a")
   for (var i = 0; i < as.length; i++) {
