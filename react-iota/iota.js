@@ -87,8 +87,6 @@ export class Iota {
     })
   }
 
-
-
 }
 
 // Get node info

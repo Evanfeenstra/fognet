@@ -16,7 +16,7 @@ export const script = (url) => `
   }
 `
 
-const url = 'https://iota.studio/'
+const url = 'https://flash.iota.studio/'
 //const url = 'http://lyle.local:8089/'
 //const url = 'http://localhost:8081/'
 export const API = async (path, options) => {

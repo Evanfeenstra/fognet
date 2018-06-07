@@ -3,7 +3,7 @@
 //const url = 'Lyle.local:8089/'
 //const url = 'http://166.167.187.45:8089/'
 //const url = 'http://localhost:8081/'
-const url = 'https://iota.studio/'
+const url = 'https://flash.iota.studio/'
 
 
 export default {
